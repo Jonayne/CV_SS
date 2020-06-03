@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 5')
+@section('title', 'Lista de temas a impartir')
 
 @section('content')
     <h1 class="text-secondary text-center">Lista de temas a impartir</h1>
@@ -49,13 +49,15 @@
                     </li>
                 @endforelse
             </ul>
+            <hr>
             <a class="btn btn-success btn-lg"  href="{{route('subjects.create')}}">
                 Agregar tema
             </a>
         </div>
+        <hr>
         <div class="text-center">
             <div class="btn-group">
-                    <a href={{route('home')}} class="btn btn-danger btn-lg mt-5">Salir</a>
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
             </div>
         </div>
     </div>

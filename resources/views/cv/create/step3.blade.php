@@ -91,6 +91,6 @@
                 Agregar curso
             </a>
         </div>
-        <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary">Siguiente</a>
+        <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg">Siguiente</a>
     </div>
 @endsection

@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Editar CV - Paso 2')
+@section('title', 'Datos académicos')
 
 @section('content')
     <h1 class="text-secondary text-center">Grado académico y carrera</h1>
@@ -12,7 +12,9 @@
 
     <form action="{{route('curricula.update', $curriculum)}}" method="POST">
         @csrf @method('PATCH')
-        <div class="container bg-primary text-black py-2">
+        <div class="container bg-primary text-black py-3">
+                <h2 class="text-secondary font-italic font-weight-bold text-center">No olvide guardar sus cambios antes de continuar</h2>
+                <hr>
                 <div class="form-group">
                         <label for="estudios_grado_maximo_estudios">Grado máximo de estudios</label>
                         <input type="text" name="estudios_grado_maximo_estudios" id="estudios_grado_maximo_estudios" class="form-control" placeholder="Grado máximo de estudios" 
@@ -40,7 +42,7 @@
                 </div>
                 <div class="text-center">
                         <div class="btn-group">
-                                <a href={{route('home')}} class="btn btn-danger btn-lg mx-5">Salir</a>
+                                <a href={{route('home')}} class="btn btn-outline-danger btn-lg mx-5">Salir</a>
                                 <button type="submit" name="formNum" value="2" class="btn btn-info btn-lg mx-5">Guardar cambios</button>        
                         </div>
                 </div>

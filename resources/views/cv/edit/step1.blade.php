@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Editar CV - Paso 1')
+@section('title', 'Datos personales')
 
 @section('content')
 
@@ -10,10 +10,10 @@
         <br>
         @include('partials.form_errors')
         
-        <h2 class="text-danger text-center">No olvide guardar sus cambios antes de continuar</h2>
         <form action="{{route('curricula.update', $curriculum)}}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PATCH')
                 <div class="container bg-primary text-black py-3">
+                        <h2 class="text-secondary font-italic font-weight-bold text-center">No olvide guardar sus cambios antes de continuar</h2>
                         <hr>
                         <div class="form-group">
                                 <input type="hidden" id='edit' name="edit" value="true">
@@ -210,7 +210,7 @@
                         <hr>
                         <div class="text-center">
                                 <div class="btn-group">
-                                        <a href={{route('home')}} class="btn btn-danger btn-lg mx-5">Salir</a>
+                                        <a href={{route('home')}} class="btn btn-outline-danger btn-lg mx-5">Salir</a>
                                         <button type="submit" name="formNum" value="1" class="btn btn-info btn-lg mx-5">Guardar cambios</button>        
                                 </div>
                         </div>

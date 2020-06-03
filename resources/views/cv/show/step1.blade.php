@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Muestra de CV - Datos personales')
+@section('title', 'Datos personales')
 
 @section('content')
 
@@ -202,7 +202,9 @@
                         <hr>
                 </fieldset>
                 @if ($curriculum->user_id == auth()->user()->id)
-                        <a class="btn btn-primary" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                <div class="text-center">
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                </div>
                 @endif
         </div>
 @endsection

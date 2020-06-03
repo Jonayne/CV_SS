@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Muestra de CV - Datos académicos')
+@section('title', 'Datos académicos')
 
 @section('content')
     <h1 class="text-secondary text-center">Grado académico y carrera</h1>
@@ -37,7 +37,9 @@
                         value="{{$curriculum->cedula_profesional}}">
                 </div>
                 @if ($curriculum->user_id == auth()->user()->id)
-                        <a class="btn btn-primary" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                <div class="text-center">
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                </div>
                 @endif
         </div>
     

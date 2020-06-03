@@ -804,12 +804,15 @@ class CurriculumController extends Controller
 
      // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
     private function isUsersCurriculum($curriculum){
-        $user_id = Auth::user()->id;
-        if ($user_id != $curriculum->user_id){
-            return false;
-        }
+        if($curriculum){
+            $user_id = Auth::user()->id;
+            if ($user_id != $curriculum->user_id){
+                return false;
+            }
 
-        return true;
+            return true;
+        }
+        return false;
     }
 
     // Método auxiliar que sirve para que al editar un CV, se valide que los

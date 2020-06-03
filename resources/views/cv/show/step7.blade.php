@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Muestra de CV - Documentos probatorios')
+@section('title', 'Documentos probatorios')
 
 @section('content')
     <h1 class="text-secondary text-center">Documentos probatorios</h1>
@@ -78,7 +78,9 @@
             <br>
         </div>
             @if ($curriculum->user_id == auth()->user()->id)
-                <a class="btn btn-primary" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                <div class="text-center">
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                </div>
             @endif
     </div>
 

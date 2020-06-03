@@ -28,15 +28,15 @@ class CurriculumFormRequest extends FormRequest
             case 1:
                 return [
                     "fotografia" => "bail|required_without_all:edit|image|max:9999",
-                    "nombre" => "required",
-                    "apellido_paterno" => "required",
-                    "apellido_materno" => "required",
-                    "domicilio_calle" => "required",
+                    "nombre" => "required|string|max:255",
+                    "apellido_paterno" => "required|string|max:255",
+                    "apellido_materno" => "required|string|max:255",
+                    "domicilio_calle" => "required|string|max:255",
                     "domicilio_num_ext" => "required|numeric",
                     "domicilio_num_int" => "nullable|numeric",
                     "domicilio_cp" => "required|bail|numeric|digits:5",
-                    "domicilio_colonia" => "required",
-                    "domicilio_delegacion" => "required",
+                    "domicilio_colonia" => "required|string|max:255",
+                    "domicilio_delegacion" => "required|string|max:255",
                     "tel_casa" => "sometimes|nullable|bail|digits_between:8,12|numeric",
                     "tel_oficina" => "sometimes|nullable|bail|digits_between:8,12|numeric",
                     "tel_recado" => "sometimes|nullable|bail|digits_between:8,12|numeric",
@@ -45,9 +45,9 @@ class CurriculumFormRequest extends FormRequest
                     "email_cursos_linea" => "sometimes|nullable|email",
                     "twitter" => "sometimes|nullable",
                     "fecha_nacimiento" => "required|date_format:Y-m-d|before:today|after:1900-01-01",
-                    "disponibilidad_horario" => "sometimes|nullable",
-                    "dias_disponibles" => "sometimes|nullable",
-                    "nacionalidad" => "required",
+                    "disponibilidad_horario" => "sometimes|nullable|string|max:255",
+                    "dias_disponibles" => "sometimes|nullable|string|max:255",
+                    "nacionalidad" => "required|string|max:255",
                     "rfc" => "bail|required|alpha_num|size:13",
                     "curp" => "bail|required|alpha_num|size:18",
                     "num_ife" => "sometimes|nullable|bail|numeric|digits_between:10,13",
@@ -61,25 +61,25 @@ class CurriculumFormRequest extends FormRequest
                 break;
             case 2:
                 return [
-                    "estudios_grado_maximo_estudios" => "required",
-                    "estudios_escuela" => "required",
-                    "estudios_carrera" => "required",
-                    "estudios_estatus" => "required",
-                    "estudios_documento_obtenido" => "required",
-                    "cedula_profesional" => "sometimes"
+                    "estudios_grado_maximo_estudios" => "required|string|max:255",
+                    "estudios_escuela" => "required|string|max:255",
+                    "estudios_carrera" => "required|string|max:255",
+                    "estudios_estatus" => "required|string|max:255",
+                    "estudios_documento_obtenido" => "required|string|max:255",
+                    "cedula_profesional" => "sometimes|string|max:255"
                 ];
                 break;
             case 3:
                 return [
-                    "nombre" => "required",
+                    "nombre" => "required|string|max:255",
                     "anio" => "bail|required|date_format:Y|before:today|after:1900",
-                    "documento_obtenido" => "required",
+                    "documento_obtenido" => "required|string|max:255",
                     "es_curso_tecnico" => "required"
                 ];
                 break;
             case 4:
                 return [
-                    "certificaciones_obtenidas" => "required|min:10|max:1000"
+                    "certificaciones_obtenidas" => "required|string|min:10|max:1000"
                 ];
                 break;
             case 5:
@@ -91,15 +91,15 @@ class CurriculumFormRequest extends FormRequest
                 break;
             case 6:
                 return [
-                    "periodo" => "required",
-                    "institucion" => "required",
-                    "cargo" => "required",
-                    "actividades_principales" => "required"
+                    "periodo" => "required|string|max:255",
+                    "institucion" => "required|string|max:255",
+                    "cargo" => "required|string|max:255",
+                    "actividades_principales" => "required|string|max:255"
                 ];
                 break;
             case 7:
                 return [
-                    "nombre" => "required",
+                    "nombre" => "required|string|max:255",
                     "es_documento_academico" => "required",
                     "documento" => "required_without_all:edit|max:100000|mimes:doc,docx,dot,pdf,odt,odi,jpeg,bpm,jpg,png,jpe"
                 ];

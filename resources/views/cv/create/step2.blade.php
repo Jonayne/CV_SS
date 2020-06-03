@@ -38,7 +38,7 @@
                         <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
                                 value="{{ old('cedula_profesional', session()->get('curriculum.cedula_profesional')) }}">
                 </div>
-                <button type="submit" name="formNum" value="2" class="btn btn-primary">Siguiente</button>
+                <button type="submit" name="formNum" value="2" class="btn btn-primary btn-lg">Siguiente</button>
         </div>
     
     </form>

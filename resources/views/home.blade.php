@@ -6,7 +6,7 @@
     <div class="container-fluid">
     <h1 class="text-secondary text-center"><strong>Bienvenido(a), <p class="font-italic">{{ formatName(auth()->user()) }}<p></strong></h1>
     
-    {{-- Si tiene permisos para capturar una CV. --}}
+    {{-- Si tiene permisos para capturar un CV. --}}
     @can('capturar-cv')
         {{-- Revisamos si ya capturó su CV, si es así, la agregamos a la vista. --}}
         <div class="text-center mt-4">
@@ -23,7 +23,7 @@
         </div>
     @endcan
     
-    {{-- Si tiene permisos para buscar una CV. --}}
+    {{-- Si tiene permisos para buscar un CV. --}}
     @can('buscar-profesor')
         <div class="text-center mt-4">
             <a class="btn btn-primary btn-lg text-dark" href="{{ route('buscar_profesor.index') }}">
@@ -32,22 +32,14 @@
         </div>
     @endcan
 
-    {{-- Si puede registrar a un profesor --}}
-    @can('registrar-profesor')
+    {{-- Si puede registrar a un usuario     --}}
+    @can('registrar-usuario')
         <div class="text-center mt-4">
-            <button class="btn btn-primary btn-lg text-dark" type="submit">
-                Registrar profesor
-            </button>
+            <a class="btn btn-primary btn-lg text-dark" href="{{ route('registrar_usuario.index') }}">
+                Registrar un usuario
+            </a>
         </div>
     @endcan
 
-    {{-- Si puede registrar a un encargado de CE --}}
-    @can('registrar-encargado-ce')
-        <div class="text-center mt-4">
-            <button class="btn btn-primary btn-lg text-dark" type="submit">
-                Registrar encargado de Control escolar
-            </button>
-        </div>
-    @endcan
 </div>
 @endsection

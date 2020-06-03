@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 3')
+@section('title', 'Cursos extracurriculares')
 
 @section('content')
     <h1 class="text-secondary text-center">Cursos extracurriculares</h1>
@@ -91,9 +91,10 @@
                 Agregar curso
             </a>
         </div>
+        <hr>
         <div class="text-center">
             <div class="btn-group">
-                    <a href={{route('home')}} class="btn btn-danger btn-lg mt-5">Salir</a>
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
             </div>
         </div>
     </div>

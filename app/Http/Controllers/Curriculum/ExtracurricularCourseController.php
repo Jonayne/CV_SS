@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Curriculum;
 
+use App\Http\Controllers\Controller;
 use App\ExtracurricularCourse;
 use App\Http\Requests\CurriculumFormRequest;
 use Illuminate\Http\Request;

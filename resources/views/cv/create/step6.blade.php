@@ -58,12 +58,12 @@
                     </li>
                 @endforelse
             </ul>
-
+            <hr>
             <a class="btn btn-success btn-lg" name="formNum" value="6" href="{{route('previous_experiences.create')}}">
                 Registrar experiencia profesional
             </a>
             <br>
         </div>
-        <a type="submit" href="/capturar_cv_documentos_probatorios" class="btn btn-primary">Siguiente</a>
+        <a type="submit" href="/capturar_cv_documentos_probatorios" class="btn btn-primary btn-lg">Siguiente</a>
     </div>    
 @endsection

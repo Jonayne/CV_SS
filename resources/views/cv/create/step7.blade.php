@@ -113,16 +113,19 @@
                     </li>
                 @endforelse
             </ul>
-
+            <hr>
             <a class="btn btn-success btn-lg" name="formNum" value="7" href="{{route('supporting_documents.create')}}">
                 Subir documento probatorio
             </a>
             <br>
         </div>
-        <form action="{{route('curricula.store')}}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-primary">Capturar CV</button>
-        </form>
+        <hr>
+        <div class="text-center">
+            <form action="{{route('curricula.store')}}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-primary btn-lg mt-4">Capturar CV</button>
+            </form>
+        </div>
     </div>
 
 @endsection

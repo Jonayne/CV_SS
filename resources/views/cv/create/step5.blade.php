@@ -49,11 +49,12 @@
                     </li>
                 @endforelse
             </ul>
+            <hr>
             <a class="btn btn-success btn-lg"  name="formNum" value="5" href="{{route('subjects.create')}}">
                 Agregar tema
             </a>
         </div>
-        <a type="submit" href="/capturar_cv_experiencia_previa" class="btn btn-primary">Siguiente</a>
+        <a type="submit" href="/capturar_cv_experiencia_previa" class="btn btn-primary btn-lg">Siguiente</a>
 
     </div>
     <br>

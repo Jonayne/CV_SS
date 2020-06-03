@@ -180,6 +180,7 @@
                                                         value="{{ old('num_autorizacion_de_impresion', session()->get('curriculum.num_autorizacion_de_impresion')) }}">
                                         </div>
                                 </div>
+                                <br>
                                 <label for="tipo_contratacion">Tipo de contratación</label>
                                 <select class="form-control" name="tipo_contratacion" id="tipo_contratacion">
                                 @if (old('tipo_contratacion', session()->get('curriculum.tipo_contratacion')) == 'UNAM' )
@@ -212,7 +213,7 @@
                                 value="{{ old('cursos_impartir_sdpc', session()->get('curriculum.cursos_impartir_sdpc')) }}">
                         </div>
                         <hr>
-                        <button type="submit" name="formNum" value="1" class="btn btn-primary">Siguiente</button>
+                        <button type="submit" name="formNum" value="1" class="btn btn-primary btn-lg">Siguiente</button>
                 </div>
         </form>
 

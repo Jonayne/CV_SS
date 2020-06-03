@@ -66,3 +66,8 @@ Route::group(['namespace' => 'Curriculum'], function () {
     Route::resource('supporting_document', 'SupportingDocumentController')->
         names('supporting_documents')->except(['index', 'show']);
 });
+
+Route::group(['namespace' => 'Register'], function () {
+    Route::get('/registrar_usuario', 'RegisterUserController@index')->name('registrar_usuario.index');
+    Route::post('/registrar_usuario', 'RegisterUserController@registerUser')->name('registrar_usuario.registerUser');
+});
