@@ -11,13 +11,13 @@
         {{-- Revisamos si ya capturó su CV, si es así, la agregamos a la vista. --}}
         <div class="text-center mt-4">
             @if(auth()->user()->curriculum)
-            <a class="btn btn-primary btn-lg text-dark" href="{{ route('curricula.show', auth()->user()->curriculum->id) }}">
-                Ir a mi CURRICULUM
+            <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', auth()->user()->curriculum->id) }}">
+                Ir a mi Curriculum
             </a>
             @else
-                <p> ¡Todavía no ha capturado su CV! </p>
-                <a class="btn btn-primary btn-lg text-dark" href="{{ route('curricula.create') }}">
-                    CAPTURAR CV
+                <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV aún no ha sido capturado </h2>
+                <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.create') }}">
+                    Capturar Curriculum
                 </a>
             @endif
         </div>
@@ -36,7 +36,7 @@
     @can('registrar-usuario')
         <div class="text-center mt-4">
             <a class="btn btn-primary btn-lg text-dark" href="{{ route('registrar_usuario.index') }}">
-                Registrar un usuario
+                Registrar a un usuario
             </a>
         </div>
     @endcan

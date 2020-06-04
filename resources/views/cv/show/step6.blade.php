@@ -48,7 +48,7 @@
         </div>
         @if ($curriculum->user_id == auth()->user()->id)
             <div class="text-center">
-                <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                <a class="btn btn-info btn-lg" href="{{route('curricula.edit6',$curriculum->id)}}">Editar CV</a>
             </div>
         @endif
     </div>    

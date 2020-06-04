@@ -27,7 +27,7 @@
 
         </select><br><br>
         <div class="text-center">
-            <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url'))}}"> Cancelar </a>
+            <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
             &nbsp;
             <button class="btn btn-success btn-lg" name="formNum" value="3" type="submit"> {{ $btnTxt }} </button>
         </div>

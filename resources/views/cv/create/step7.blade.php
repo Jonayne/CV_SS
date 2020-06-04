@@ -29,7 +29,7 @@
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
-                            <a class="btn btn-info" href="/storage/supporting_documents/{{$sd->documento}}">Documento</a>
+                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
                         </span>
                         <br>
 
@@ -82,7 +82,7 @@
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
-                            <a class="btn btn-info" href="/storage/supporting_documents/{{$sd->documento}}">Documento</a>
+                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
                         </span>
                         <br>
 

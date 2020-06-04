@@ -22,7 +22,7 @@
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
-                            <a class="btn btn-info" href="/storage/supporting_documents/{{$sd->documento}}">Documento</a>
+                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
                         </span>
                         <br>
 
@@ -55,7 +55,7 @@
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
-                            <a class="btn btn-info" href="/storage/supporting_documents/{{$sd->documento}}">Documento</a>
+                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
                         </span>
                         <br>
 
@@ -79,7 +79,7 @@
         </div>
             @if ($curriculum->user_id == auth()->user()->id)
                 <div class="text-center">
-                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit7',$curriculum->id)}}">Editar CV</a>
                 </div>
             @endif
     </div>

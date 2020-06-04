@@ -388,22 +388,12 @@ class CurriculumController extends Controller {
                                   ->with('status_color', 'danger');
         }
 
-        $actual_curriculum = Curriculum::where('user_id', '=', $user_id)->get();
-
-        // Guardaremos el curriculum en la sesión antes de guardarlo en la BD.
-        if(empty($request->session()->get('curriculum'))) {
-            $curriculum = $actual_curriculum->first();
-            $request->session()->put('curriculum', $curriculum);
-        }else {
-            $curriculum = $request->session()->get('curriculum');
-        }
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         // No podemos usar back() porque si hay un error en la validación, se sobreescribe la URL 
         // anterior. La mejor forma que encontré de solucionar esto fue establecer la URL a la que se 
         // regresará por defecto según la pestaña que tengamos abierta.
         $request->session()->put('previous_url', 'curricula.edit');
-
-        $curriculum = $request->session()->get('curriculum');
 
         return view('cv.edit.step1', compact('curriculum'));
     }
@@ -428,7 +418,7 @@ class CurriculumController extends Controller {
 
         $request->session()->put('previous_url', 'curricula.edit2');
 
-        $curriculum = $request->session()->get('curriculum');
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         return view('cv.edit.step2', compact('curriculum'));
     }
@@ -450,7 +440,7 @@ class CurriculumController extends Controller {
                                   ->with('status_color', 'danger');
         }
 
-        $curriculum = $request->session()->get('curriculum');        
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);      
 
         $request->session()->put('previous_url', 'curricula.edit3');
 
@@ -483,7 +473,7 @@ class CurriculumController extends Controller {
                                   ->with('status_color', 'danger');
         }
 
-        $curriculum = $request->session()->get('curriculum');
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         $request->session()->put('previous_url', 'curricula.edit4');
 
@@ -509,7 +499,7 @@ class CurriculumController extends Controller {
                                   ->with('status_color', 'danger');
         }
 
-        $curriculum = $request->session()->get('curriculum');
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         $request->session()->put('previous_url', 'curricula.edit5');
 
@@ -538,7 +528,7 @@ class CurriculumController extends Controller {
         
         $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
 
-        $curriculum = $request->session()->get('curriculum');
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         $request->session()->put('previous_url', 'curricula.edit6');
 
@@ -568,7 +558,7 @@ class CurriculumController extends Controller {
         $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
                                   where('es_documento_academico', '=', false)->get();
 
-        $curriculum = $request->session()->get('curriculum');
+        $curriculum = $this->getCurriculumOnSession($request, $user_id);
 
         $request->session()->put('previous_url', 'curricula.edit7');
 
@@ -646,7 +636,7 @@ class CurriculumController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id) {   
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -657,7 +647,7 @@ class CurriculumController extends Controller {
     }
 
     public function show2($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -669,7 +659,7 @@ class CurriculumController extends Controller {
     }
 
     public function show3($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -688,7 +678,7 @@ class CurriculumController extends Controller {
     }
 
     public function show4($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -699,7 +689,7 @@ class CurriculumController extends Controller {
     }
 
     public function show5($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -713,7 +703,7 @@ class CurriculumController extends Controller {
     }
 
     public function show6($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -728,7 +718,7 @@ class CurriculumController extends Controller {
     }
 
     public function show7($id) {
-        $curriculum = Curriculum::find($id);
+        $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
@@ -794,5 +784,20 @@ class CurriculumController extends Controller {
         }
 
         return false;
+    }
+
+    // Método auxiliar que obtiene el curriculum guardado en la sesión.
+    // Si no está, lo guarda.
+    private function getCurriculumOnSession($request, $user_id) {
+
+        if(empty($request->session()->get('curriculum'))) {
+            $actual_curriculum = Curriculum::where('user_id', '=', $user_id)->get();
+            $curriculum = $actual_curriculum->first();
+            $request->session()->put('curriculum', $curriculum);
+        }else {
+            $curriculum = $request->session()->get('curriculum');
+        }
+
+        return $curriculum;
     }
 }

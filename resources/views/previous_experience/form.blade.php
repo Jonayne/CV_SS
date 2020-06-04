@@ -14,7 +14,7 @@
         <textarea id="actividades_principales" class="form-control" name="actividades_principales">{{old('actividades_principales', $pe->actividades_principales)}}</textarea>
     </div>
     <div class="text-center">
-        <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url'))}}"> Cancelar </a>
+        <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
         &nbsp;
         <button class="btn btn-success btn-lg" name="formNum" value="6" type="submit"> {{ $btnTxt }} </button>
     </div>

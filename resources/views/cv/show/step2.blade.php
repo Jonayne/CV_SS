@@ -9,8 +9,8 @@
     <br>
     @include('partials.form_errors')
 
-    <fieldset disabled="disabled">
-        <div class="container bg-primary text-black py-2">
+    <div class="container bg-primary text-black py-3">
+        <fieldset disabled="disabled">
                 <div class="form-group">
                         <label for="estudios_grado_maximo_estudios">Grado máximo de estudios</label>
                         <input type="text" name="estudios_grado_maximo_estudios" id="estudios_grado_maximo_estudios" class="form-control" placeholder="Grado máximo de estudios" 
@@ -36,13 +36,13 @@
                         <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
                         value="{{$curriculum->cedula_profesional}}">
                 </div>
-                @if ($curriculum->user_id == auth()->user()->id)
+
+        </fieldset>
+        @if ($curriculum->user_id == auth()->user()->id)
                 <div class="text-center">
-                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit',$curriculum->id)}}">Editar CV</a>
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.edit2',$curriculum->id)}}">Editar CV</a>
                 </div>
-                @endif
-        </div>
-    
-    </fieldset>
+        @endif
+       </div>
 
 @endsection
