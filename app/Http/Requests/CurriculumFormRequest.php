@@ -63,7 +63,7 @@ class CurriculumFormRequest extends FormRequest {
                     "estudios_carrera" => "required|string|max:255",
                     "estudios_estatus" => "required|string|max:255",
                     "estudios_documento_obtenido" => "required|string|max:255",
-                    "cedula_profesional" => "sometimes|string|max:255"
+                    "cedula_profesional" => "sometimes|nullable|string|max:255"
                 ];
                 break;
             case 3:

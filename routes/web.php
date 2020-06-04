@@ -3,15 +3,20 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+// Deshabilitamos la ruta de register que viene por defecto, pues no se podrá usar el sistema
+// a menos que uno se encuentre loggeado.
 Auth::routes(['register' => false]);
 
 Route::get('/', 'HomeController@index')->name('home');
 
+// Rutas para la funcionalidad de "Buscar CV"
 Route::group(['namespace' => 'Search'], function () {
     Route::get('/buscar_profesor', 'SearchController@index')->name('buscar_profesor.index');
     Route::post('/buscar_profesor', 'SearchController@searchOnDB')->name('buscar_profesor.searchOnDB');
 });
 
+// Rutas para toda la funcionalidad en la parte del Curriculum, 
+// desde capturarlo, actualizarlo, descargarlo, etc...
 Route::group(['namespace' => 'Curriculum'], function () {
     // RUTAS PARA EL MÉTODO CREATE
     Route::get('/capturar_cv_datos_personales', 'CurriculumController@create1')->name('curricula.create');
@@ -67,6 +72,7 @@ Route::group(['namespace' => 'Curriculum'], function () {
         names('supporting_documents')->except(['index', 'show']);
 });
 
+// Rutas para la funcionalidad de "Registrar a un usuario"
 Route::group(['namespace' => 'Register'], function () {
     Route::get('/registrar_usuario', 'RegisterUserController@index')->name('registrar_usuario.index');
     Route::post('/registrar_usuario', 'RegisterUserController@registerUser')->name('registrar_usuario.registerUser');
