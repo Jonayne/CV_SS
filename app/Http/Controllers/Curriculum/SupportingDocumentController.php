@@ -11,16 +11,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
-class SupportingDocumentController extends Controller
-{
+class SupportingDocumentController extends Controller {
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {   
+    public function __construct() {   
         $this->middleware('auth');
 
     }
@@ -30,9 +28,8 @@ class SupportingDocumentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        if(Gate::denies('capturar-cv')){
+    public function create() {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -47,9 +44,8 @@ class SupportingDocumentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CurriculumFormRequest $request)
-    {
-        if(Gate::denies('capturar-cv')){
+    public function store(CurriculumFormRequest $request) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -57,8 +53,7 @@ class SupportingDocumentController extends Controller
         $user_id = Auth::user()->id;
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
 
-        if($request->file('documento') )
-        {
+        if($request->file('documento') ) {
             $hashName = $request->file('documento')->hashName();
             
             $path = $request->file('documento')->store('public/supporting_documents');
@@ -77,9 +72,8 @@ class SupportingDocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')){
+    public function edit($id) {
+        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -96,9 +90,8 @@ class SupportingDocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id, CurriculumFormRequest $request)
-    {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')){
+    public function update($id, CurriculumFormRequest $request) {
+        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -106,10 +99,9 @@ class SupportingDocumentController extends Controller
         $validation = $request->validated();
         $sd = SupportingDocument::findOrFail($id);
 
-        if($request->file('documento'))
-        {
+        if($request->file('documento')) {
             $oldHashName = $sd->documento;
-            if($oldHashName){
+            if($oldHashName) {
                 Storage::delete(['public/supporting_documents/'.$oldHashName]);
             }
 
@@ -131,9 +123,8 @@ class SupportingDocumentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, Request $request)
-    {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')){
+    public function destroy($id, Request $request) {
+        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -141,7 +132,7 @@ class SupportingDocumentController extends Controller
         $sd = SupportingDocument::findOrFail($id);
         
         $oldHashName = $sd->documento;
-        if($oldHashName){
+        if($oldHashName) {
             Storage::delete(['public/supporting_documents/'.$oldHashName]);
         }
         $sd->delete();
@@ -152,11 +143,11 @@ class SupportingDocumentController extends Controller
 
     // Función auxiliar para determinar si este usuario está permitido
     // para modificar el elemento bajo este id.
-    private function isOwner($id){
+    private function isOwner($id) {
         $user_id = Auth::user()->id;
         $subject_user_id = SupportingDocument::findOrFail($id)->user_id;
 
-        if($user_id == $subject_user_id){
+        if($user_id == $subject_user_id) {
             return true;
         }
 

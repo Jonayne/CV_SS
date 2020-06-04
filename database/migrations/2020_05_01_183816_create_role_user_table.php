@@ -4,15 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleUserTable extends Migration
-{
+class CreateRoleUserTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         // Esta tabla es necesaria porque la relación entre usuarios y roles
         // es muchos a muchos. Funciona como tabla intermedia, pivote.
         Schema::create('role_user', function (Blueprint $table) {
@@ -32,8 +30,7 @@ class CreateRoleUserTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('role_user');
     }
 }

@@ -4,15 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddForeignKeysToCurriculaTable extends Migration
-{
+class AddForeignKeysToCurriculaTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::table('curricula', function (Blueprint $table) {
             $table->foreignId('user_id')->
                     constrained()->
@@ -25,8 +23,7 @@ class AddForeignKeysToCurriculaTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::table('curricula', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
         });

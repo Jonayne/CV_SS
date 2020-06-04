@@ -6,8 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use Notifiable;
 
     /**
@@ -38,37 +37,37 @@ class User extends Authenticatable
     /** 
      * Un usuario puede tener varios roles.
      */ 
-    public function roles(){
+    public function roles() {
         return $this->belongsToMany('App\Role');
     }
 
     /**
      * Un usuario tiene solo un curriculum.
      */
-    public function curriculum(){
+    public function curriculum() {
         return $this->hasOne('App\Curriculum');
     }
 
    /**
      * Un usuario puede haber cursado varios cursos extracurriculares.
      */
-    public function extracurricularCourses(){
+    public function extracurricularCourses() {
         return $this->hasMany('App\ExtracurricularCourse');
     } 
     
 
-    public function subjects(){
+    public function subjects() {
         return $this->hasMany('App\Subject');
     } 
 
-    public function previousExperiences(){
+    public function previousExperiences() {
         return $this->hasMany('App\PreviousExperience');
     } 
 
     /**
      * Un usuario puede tener varios documentos probatorios.
      */
-    public function supportingDocuments(){
+    public function supportingDocuments() {
         return $this->hasMany('App\SupportingDocument');
     }
 
@@ -77,10 +76,10 @@ class User extends Authenticatable
      * 
      * @var array
      */
-    public function hasAnyRoles($roles){
+    public function hasAnyRoles($roles) {
 
         if($this->roles()->
-            whereIn('nombre_rol', $roles)->first()){
+            whereIn('nombre_rol', $roles)->first()) {
                 return true;
         }
         
@@ -92,10 +91,10 @@ class User extends Authenticatable
      * 
      * @var string
      */
-    public function hasRole($role){
+    public function hasRole($role) {
 
         if($this->roles()->
-            where('nombre_rol', $role)->first()){
+            where('nombre_rol', $role)->first()) {
                 return true;
         }
         

@@ -10,8 +10,7 @@ use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
-class RegisterUserController extends Controller
-{
+class RegisterUserController extends Controller {
     /**
      * Create a new controller instance.
      *

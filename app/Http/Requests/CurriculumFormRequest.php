@@ -4,16 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CurriculumFormRequest extends FormRequest
-{
+class CurriculumFormRequest extends FormRequest {
 
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return true;
     }
 
@@ -22,8 +20,7 @@ class CurriculumFormRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         switch($this->formNum) {
             case 1:
                 return [
@@ -108,8 +105,7 @@ class CurriculumFormRequest extends FormRequest
         
     }
 
-    public function attributes()
-    {
+    public function attributes() {
         return [
             "nombre" => "Nombre",
             "apellido_paterno" => "Apellido paterno",
@@ -142,8 +138,7 @@ class CurriculumFormRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    {
+    public function messages() {
         return [
             "fotografia.required_without_all" => "La fotografía es obligatoria",
             "fotografia.image" => "El formato de la fotografía es erroneo",

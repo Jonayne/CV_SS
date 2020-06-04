@@ -4,15 +4,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterUserRequest extends FormRequest
-{
+class RegisterUserRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return true;
     }
 
@@ -21,8 +19,7 @@ class RegisterUserRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             'nombre' => 'required|string|max:255',
             'ap_paterno' => 'required|string|max:255',
@@ -34,8 +31,7 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
-    public function attributes()
-    {
+    public function attributes() {
         return [
             "nombre" => "nombre",
             "ap_paterno" => "apellido paterno",
@@ -43,8 +39,7 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
-    public function messages()
-    {
+    public function messages() {
         return [
             "sede.required_if" => "La sede es obligatoria cuando el rol asignado es \"Encargado(a) del Área Control Escolar\" ",
         ];

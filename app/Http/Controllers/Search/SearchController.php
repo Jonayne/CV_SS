@@ -8,22 +8,19 @@ use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
-class SearchController extends Controller
-{
+class SearchController extends Controller {
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth');
     }
 
-    public function index()
-    {   
-        if( Gate::denies('buscar-profesor')){
+    public function index() {   
+        if( Gate::denies('buscar-profesor')) {
                   return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                                 ->with('status_color', 'danger');
         }
@@ -31,20 +28,19 @@ class SearchController extends Controller
         return view('search/search');
     }
 
-    public function searchOnDB(SearchProfessorRequest $request)
-    {   
+    public function searchOnDB(SearchProfessorRequest $request) {   
         // Validamos los datos.
         $request->validated();
 
         $nombre = $request->name;
         $correo = $request->email;
 
-        if($nombre && !$correo){
+        if($nombre && !$correo) {
             //ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
             // solución es cambiar la codificaciones de la tabla a ci_spanish_algo...
             $users = User::where('nombre', 'ILIKE', '%'.$nombre.'%')->get();
         }
-        elseif($correo && !$nombre){
+        elseif($correo && !$nombre) {
             $users = User::where('email', 'ILIKE', '%'.$correo.'%')->get();
         }
         else{
@@ -54,7 +50,7 @@ class SearchController extends Controller
 
         // Sólo queremos buscar profesores, así que filtramos nuestra colección de usuarios resultantes
         //  a sólo los que tengan asignado el rol de profesor.
-        $professors = $users->reject(function($user){
+        $professors = $users->reject(function($user) {
             return !$user->hasRole('profesor');
         });
 
