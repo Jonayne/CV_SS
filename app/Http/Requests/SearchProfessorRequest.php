@@ -21,15 +21,16 @@ class SearchProfessorRequest extends FormRequest {
      */
     public function rules() {
         return [
-            'name' => 'required_without_all:email',
-            'email' => 'required_without_all:name'
+            'name' => 'required_without_all:email,rfc,curp|string|nullable',
+            'email' => 'required_without_all:name,rfc,curp|nullable',
+            'rfc' => 'required_without_all:name,email,curp|alpha_num|nullable',
+            'curp' => 'required_without_all:name,email,rfc|alpha_num|nullable',
         ];
     }
 
     public function messages() {
         return [
-            'name.required_without_all' => "El campo de nombre es obligatorio cuando no ha introducido el email.",
-            'email.required_without_all' => "El campo de email es obligatorio cuando no ha introducido el nombre."
+            'name.required_without_all' => "Introduzca al menos un campo.",
         ];
     }
 }

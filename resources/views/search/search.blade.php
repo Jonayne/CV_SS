@@ -4,7 +4,15 @@
 
 @section('content')
     <h1 class="text-secondary text-center">Búsqueda de profesor</h1>
-    @include('partials.form_errors')
+    @if ($errors->first())
+        <hr>
+        <div class="container text-center alert-danger">
+            <ul>
+                <li>{{ $errors->first() }}</li>
+            </ul>
+        </div>
+        <hr>
+    @endif
     
     <form method="POST" action="{{ route('buscar_profesor.searchOnDB') }}">
         @csrf 
@@ -17,8 +25,18 @@
                 <br>
 
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" value="{{ old('email')}}">
-                <br><br>
+                <input type="text" id="email" name="email" class="form-control" value="{{ old('email')}}">
+                <br>
+
+                <label for="rfc">RFC</label>
+                <input type="text" id="rfc" name="rfc" class="form-control" value="{{ old('rfc')}}">
+                <br>
+
+                <label for="curp">CURP</label>
+                <input type="text" id="curp" name="curp" class="form-control" value="{{ old('curp')}}">
+                <br>
+                
+                <br>
             </div>
             <div class="text-center">
                 <button class="btn btn-info btn-lg" type="submit"> Buscar </button>

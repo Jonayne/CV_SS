@@ -10886,3 +10886,9 @@ a.text-dark:focus {
   height: 100vh;
 }
 
+.required:after {
+  content: "*";
+  color: red;
+  padding-left: 3px;
+}
+

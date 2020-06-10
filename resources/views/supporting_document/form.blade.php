@@ -1,7 +1,7 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        <label for="nombre">Nombre del documento</label>
+        <label class="required" for="nombre">Nombre del documento</label>
         <input type="text" id="nombre" class="form-control" name="nombre" value="{{ old('nombre', $sd->nombre)}}">
         <br>
 
@@ -13,12 +13,12 @@
             <label for="documento">Reemplazar documento</label>
             <input type="file" id="documento" class="form-control-file" name="documento"> 
         @else
-            <label for="documento">Subir documento</label>  
+            <label class="required" for="documento">Subir documento</label>  
             <input type="file" id="documento" class="form-control-file" name="documento">  
         @endif
         <br>
 
-        <label for="es_documento_academico">Tipo de documento</label>
+        <label class="required" for="es_documento_academico">Tipo de documento</label>
         <select id="es_documento_academico" name="es_documento_academico" class="form-control">
             @if(!isset($sd->es_documento_academico))
                 <option value="" selected>Escoger...</option>

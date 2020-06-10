@@ -9,5 +9,5 @@
 function formatName($user) {
     return ucfirst($user->nombre) . " " .
            ucfirst($user->apellido_paterno) . " " .
-           ucfirst($user->apellido_materno) . ".";
+           ucfirst($user->apellido_materno);
 }

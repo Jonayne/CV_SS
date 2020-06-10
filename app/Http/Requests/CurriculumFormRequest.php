@@ -30,48 +30,48 @@ class CurriculumFormRequest extends FormRequest {
                     "apellido_materno" => "required|string|max:255",
                     "domicilio_calle" => "required|string|max:255",
                     "domicilio_num_ext" => "required|numeric",
-                    "domicilio_num_int" => "nullable|numeric",
+                    "domicilio_num_int" => "sometimes|nullable|numeric",
                     "domicilio_cp" => "required|bail|numeric|digits:5",
                     "domicilio_colonia" => "required|string|max:255",
                     "domicilio_delegacion" => "required|string|max:255",
-                    "tel_casa" => "sometimes|nullable|bail|digits_between:8,12|numeric",
-                    "tel_oficina" => "sometimes|nullable|bail|digits_between:8,12|numeric",
-                    "tel_recado" => "sometimes|nullable|bail|digits_between:8,12|numeric",
-                    "celular" => "sometimes|nullable|bail|digits_between:8,12|numeric",
+                    "tel_casa" => "required|bail|digits_between:8,12|numeric",
+                    "tel_oficina" => "required|bail|digits_between:8,12|numeric",
+                    "tel_recado" => "required|bail|digits_between:8,12|numeric",
+                    "celular" => "required|bail|digits_between:8,12|numeric",
                     "email_personal" => "required|email",
                     "email_cursos_linea" => "sometimes|nullable|email",
                     "twitter" => "sometimes|nullable",
                     "fecha_nacimiento" => "required|date_format:Y-m-d|before:today|after:1900-01-01",
-                    "disponibilidad_horario" => "sometimes|nullable|string|max:255",
-                    "dias_disponibles" => "sometimes|nullable|string|max:255",
+                    "disponibilidad_horario" => "required|string|max:255",
+                    "dias_disponibles" => "required|string|max:255",
                     "nacionalidad" => "required|string|max:255",
                     "rfc" => "bail|required|alpha_num|size:13",
                     "curp" => "bail|required|alpha_num|size:18",
-                    "num_ife" => "sometimes|nullable|bail|numeric|digits_between:10,13",
+                    "num_ife" => "required|bail|numeric|digits_between:10,13",
                     "num_proveedor_UNAM" => "sometimes|nullable",
                     "num_autorizacion_de_impresion" => "sometimes|nullable",
                     "tipo_contratacion" => "required",
                     "cursos_impartir_sdpc" => "sometimes|nullable",
                     "registro_secretaria_de_trabajo_y_prevision_social" => "sometimes|nullable",
-                    "ocupacion_actual" => "sometimes|nullable"
+                    "ocupacion_actual" => "bail|required|string"
                 ];
                 break;
             case 2:
                 return [
-                    "estudios_grado_maximo_estudios" => "required|string|max:255",
-                    "estudios_escuela" => "required|string|max:255",
-                    "estudios_carrera" => "required|string|max:255",
-                    "estudios_estatus" => "required|string|max:255",
-                    "estudios_documento_obtenido" => "required|string|max:255",
-                    "cedula_profesional" => "sometimes|nullable|string|max:255"
+                    "estudios_grado_maximo_estudios" => "bail|required|string|max:255",
+                    "estudios_escuela" => "bail|required|string|max:255",
+                    "estudios_carrera" => "bail|required|string|max:255",
+                    "estudios_estatus" => "bail|required|string|max:255",
+                    "estudios_documento_obtenido" => "bail|required|string|max:255",
+                    "cedula_profesional" => "bail|required|string|max:255"
                 ];
                 break;
             case 3:
                 return [
-                    "nombre" => "required|string|max:255",
+                    "nombre" => "bail|required|string|max:255",
                     "anio" => "bail|required|date_format:Y|before:today|after:1900",
-                    "documento_obtenido" => "required|string|max:255",
-                    "es_curso_tecnico" => "required"
+                    "documento_obtenido" => "bail|required|string|max:255",
+                    "es_curso_tecnico" => "bail|required"
                 ];
                 break;
             case 4:
@@ -88,9 +88,9 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case 6:
                 return [
-                    "periodo" => "required|string|max:255",
-                    "institucion" => "required|string|max:255",
-                    "cargo" => "required|string|max:255",
+                    "periodo" => "bail|required|string|max:255",
+                    "institucion" => "bail|required|string|max:255",
+                    "cargo" => "bail|required|string|max:255",
                     "actividades_principales" => "required|string|max:255"
                 ];
                 break;

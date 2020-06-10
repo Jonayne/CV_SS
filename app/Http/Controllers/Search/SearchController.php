@@ -7,6 +7,7 @@ use App\Http\Requests\SearchProfessorRequest;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller {
 
@@ -34,30 +35,53 @@ class SearchController extends Controller {
 
         $nombre = $request->name;
         $correo = $request->email;
+        $rfc = $request->rfc;
+        $curp = $request->curp;
 
-        if($nombre && !$correo) {
-            //ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
+        // Al ser los profesores los únicos con un curriculum, son los 
+        // únicos que entrarán en el filtro.
+        $users = DB::table('users')->
+                    leftJoin('curricula', 'users.id', '=', 'curricula.user_id');
+
+        if($nombre) {
+            // ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
             // solución es cambiar la codificaciones de la tabla a ci_spanish_algo...
-            $users = User::where('nombre', 'ILIKE', '%'.$nombre.'%')->get();
-        }
-        elseif($correo && !$nombre) {
-            $users = User::where('email', 'ILIKE', '%'.$correo.'%')->get();
-        }
-        else{
-            $users = User::where('nombre', 'ILIKE', '%'.'$nombre'.'%')->
-                    orWhere('email', 'LIKE', '%'.$correo.'%')->get();
+
+            // Aquí el closure nos ayuda a parentizar la consulta
+            // (pues el OR y AND tienen la misma precedencia y pueden generar ambigüedad sin paréntesis)
+            $users->where(function($query) use ($nombre) {
+                $query->orWhere('curricula.nombre', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('curricula.apellido_paterno', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('curricula.apellido_materno', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('users.nombre', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('users.apellido_paterno', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('users.apellido_materno', 'ILIKE', '%'.$nombre.'%');
+            });
+                
         }
 
-        // Sólo queremos buscar profesores, así que filtramos nuestra colección de usuarios resultantes
-        //  a sólo los que tengan asignado el rol de profesor.
-        $professors = $users->reject(function($user) {
-            return !$user->hasRole('profesor');
-        });
+        if($correo) {
+            $users->where(function($query) use ($correo) {
+                $query->orWhere('users.email', 'ILIKE', '%'.$correo.'%')->
+                        orWhere('curricula.email_personal', 'ILIKE', '%'.$correo.'%');
+            });
+        }
+
+        if($rfc) {
+            $users->where('rfc', 'ILIKE', '%'.$rfc.'%');
+        }
+
+        if($curp) {
+            $users->where('curp', 'ILIKE', '%'.$curp.'%');
+        }
+
+        $users->orderBy('curricula.id');
 
         return view('search/result')->
-                with('result', $professors)->
+                with('result', $users->get())->
                 with('nombre', $nombre)->
+                with('rfc', $rfc)->
+                with('curp', $curp)->
                 with('correo', $correo);
-
     }
 }
