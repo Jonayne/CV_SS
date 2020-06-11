@@ -29,50 +29,42 @@ class CurriculumController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function capture1(Request $request, $id=0) {
+    public function capture1(Request $request) {
         $user_id = Auth::user()->id;
 
         // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar esto.
         // También revisamos que el usuario no tenga capturado ya su cv.
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
         
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         $request->session()->put('previous_url', 'curricula.capture1');
 
         return view('cv.capture.step1', compact('curriculum'));
     }
 
-    public function capture2(Request $request, $id=0) {   
+    public function capture2(Request $request) {   
         $user_id = Auth::user()->id;
 
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
         
         $request->session()->put('previous_url', 'curricula.capture2');
 
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
         
         return view('cv.capture.step2', compact('curriculum'));
     }
     
-    public function capture3(Request $request, $id=0) {  
+    public function capture3(Request $request) {  
         $user_id = Auth::user()->id;
 
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'));
         }
 
@@ -83,11 +75,7 @@ class CurriculumController extends Controller {
                                                     
         $request->session()->put('previous_url', 'curricula.capture3');
 
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         return view('cv.capture.step3', 
                     compact('technical_extracurricular_courses', 
@@ -95,29 +83,25 @@ class CurriculumController extends Controller {
                             'curriculum'));
     }
 
-    public function capture4(Request $request, $id=0) {  
+    public function capture4(Request $request) {  
         $user_id = Auth::user()->id;
 
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
 
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         $request->session()->put('previous_url', 'curricula.capture4');
 
         return view('cv.capture.step4', compact('curriculum'));
     }
 
-    public function capture5(Request $request, $id=0) {  
+    public function capture5(Request $request) {  
         $user_id = Auth::user()->id;
 
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
@@ -126,20 +110,16 @@ class CurriculumController extends Controller {
 
         $subjects = Subject::where('user_id', '=', $user_id)->get();
 
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         return view('cv.capture.step5', 
                     compact('subjects', 'curriculum'));
     }
 
-    public function capture6(Request $request, $id=0) {  
+    public function capture6(Request $request) {  
         $user_id = Auth::user()->id;
 
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
@@ -150,20 +130,16 @@ class CurriculumController extends Controller {
 
         $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
 
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         return view('cv.capture.step6', 
                     compact('previous_exp', 'curriculum'));
     }
 
-    public function capture7(Request $request, $id=0) {  
+    public function capture7(Request $request) {  
         $user_id = Auth::user()->id;
         
-        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
@@ -177,11 +153,7 @@ class CurriculumController extends Controller {
         $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
                                   where('es_documento_academico', '=', false)->get();
         
-        if($id != 0) {
-            $curriculum = Curriculum::findOrFail($id);
-        } else {
-            $curriculum = $this->getOrCreateUserCurriculum($user_id);
-        }
+        $curriculum = $this->getOrCreateUserCurriculum($user_id);
 
         return view('cv.capture.step7', 
                     compact('sd_aca', 'sd_naca', 'curriculum'));
@@ -194,7 +166,7 @@ class CurriculumController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CurriculumFormRequest $request, $id) {
+    public function save(CurriculumFormRequest $request, $id) {
         if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
@@ -395,21 +367,5 @@ class CurriculumController extends Controller {
         }
 
         return $curriculum;
-    }
-
-    // Función auxiliar para determinar si este usuario está permitido
-    // para modificar el elemento bajo este id.
-    private function isOwner($id, $user_id) {
-        if($id != 0) {
-            $curri_user_id = Curriculum::findOrFail($id)->user_id;
-        } else {
-            return true;
-        }
-
-        if($user_id == $curri_user_id) {
-            return true;
-        }
-
-        return false;
     }
 }

@@ -203,7 +203,7 @@
                 </fieldset>
                 @if ($curriculum->user_id == auth()->user()->id)
                 <div class="text-center">
-                        <a class="btn btn-info btn-lg" href="{{route('curricula.capture1', $curriculum->id)}}">Editar CV</a>
+                        <a class="btn btn-info btn-lg" href="{{route('curricula.capture1')}}">Editar CV</a>
                 </div>
                 @endif
         </div>
