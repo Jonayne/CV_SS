@@ -6,6 +6,8 @@
 
         <h1 class="text-secondary text-center">Datos personales</h1>
         <hr>
+        @include('cv.capture.partials.cv_status')
+        <hr>
         @include('cv.capture.partials.nav')
         <br>
         @include('partials.form_errors')

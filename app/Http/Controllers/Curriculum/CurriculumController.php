@@ -39,7 +39,7 @@ class CurriculumController extends Controller {
                                           ->with('status_color', 'danger');
         }
         
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         $request->session()->put('previous_url', 'curricula.capture1');
 
@@ -56,7 +56,7 @@ class CurriculumController extends Controller {
         
         $request->session()->put('previous_url', 'curricula.capture2');
 
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
         
         return view('cv.capture.step2', compact('curriculum'));
     }
@@ -75,7 +75,7 @@ class CurriculumController extends Controller {
                                                     
         $request->session()->put('previous_url', 'curricula.capture3');
 
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         return view('cv.capture.step3', 
                     compact('technical_extracurricular_courses', 
@@ -91,7 +91,7 @@ class CurriculumController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         $request->session()->put('previous_url', 'curricula.capture4');
 
@@ -110,7 +110,7 @@ class CurriculumController extends Controller {
 
         $subjects = Subject::where('user_id', '=', $user_id)->get();
 
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         return view('cv.capture.step5', 
                     compact('subjects', 'curriculum'));
@@ -130,7 +130,7 @@ class CurriculumController extends Controller {
 
         $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
 
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         return view('cv.capture.step6', 
                     compact('previous_exp', 'curriculum'));
@@ -153,7 +153,7 @@ class CurriculumController extends Controller {
         $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
                                   where('es_documento_academico', '=', false)->get();
         
-        $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
         return view('cv.capture.step7', 
                     compact('sd_aca', 'sd_naca', 'curriculum'));
@@ -171,8 +171,6 @@ class CurriculumController extends Controller {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-
-        // validar que ya este completo o no... 
 
         $validatedData = $request->validated();
 
@@ -201,8 +199,117 @@ class CurriculumController extends Controller {
     }
 
     /**
-     * Muestran el curriculum bajo el id. 
-     * Cada show-i muestra el formulario i.
+     * MÉTODOS AUXILIARES
+     * */
+
+     // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
+    private function isUsersCurriculum($curriculum) {
+        if($curriculum) {
+            $user_id = Auth::user()->id;
+            if ($user_id != $curriculum->user_id) {
+                return false;
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    // Método auxiliar que verifica el estado actual de la captura del curriculum y lo cambia en la BD.
+    private function updateCVStatus($user_id, $request, $curriculum) {
+
+        $previous_status = $curriculum->status;
+
+        $completedList = $request->session()->get('completedList');
+        if(empty($completedList)) {
+            $completedList = ['form1' => false, 'form2' => false, 'form3' => false,
+                              'form4' => false, 'form5' => false,'form6' => false,
+                              'form7' => false];
+        }
+
+        // Esta es una forma muy poco elegante para validar que el formulario 1, 2 y 4
+        // están capturados... si esos campos ya están la base, significa que todas las
+        // validaciones de dicho formulario pasaron y por ende está capturado.
+        // Una alternativa podría ser tener en la base de datos un campo donde se lleve control
+        // de estas cosas, pero... aunque esto es menos elegante, funciona, y es simple.                                                                                                
+        if($curriculum->fotografia) {
+            $completedList['form1'] = true;
+        }
+
+        if($curriculum->estudios_carrera) {
+            $completedList['form2'] = true;
+        }
+
+        // Para los formularios 3, 5, 6 y 7, como son entidades "independientes" al CV, hay que revisar que hayan
+        // registros de cada una y así sabremos si esa parte del formuarlio ya está validada.
+        $extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->get();
+        if(!count($extracurricular_courses) > 0) {
+            $completedList['form3'] = false;
+        } else {
+            $completedList['form3'] = true;
+        }
+
+        if($curriculum->certificaciones_obtenidas) {
+            $completedList['form4'] = true;
+        } 
+
+        $subjects = Subject::where('user_id', '=', $user_id)->get();
+        if(!count($subjects) > 0) {
+            $completedList['form5'] = false;
+        } else {
+            $completedList['form5'] = true;
+        }
+
+        $pe = PreviousExperience::where('user_id', '=', $user_id)->get();
+        if(!count($pe) > 0) {
+            $completedList['form6'] = false;
+        } else {
+            $completedList['form6'] = true;
+        }
+
+        $sd = SupportingDocument::where('user_id', '=', $user_id)->get();
+        if(!count($sd) > 0) {
+            $completedList['form7'] = false;
+        } else {
+            $completedList['form7'] = true;
+        }
+
+        // Verificamos si todas los formularios ya están (o no) capturados
+        if(in_array(false, $completedList)) {
+            $new_status = ['status' => 'en_proceso'];
+        } else {
+            $new_status = ['status' => 'completado'];
+        }
+        
+        if($previous_status !== $new_status['status']) {
+            $curriculum->update($new_status);
+        }
+
+        $request->session()->put('completedList', $completedList);
+
+        return $curriculum;
+    }
+
+    // Método auxiliar que devuelve el curriculum del usuario indicado, si no existe, lo crea y guarda.
+    // También manda a actualizar el status de éste.
+    private function getOrCreateUserCurriculum($user_id, $request) {
+        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
+        if(count($curriculum) == 0) {
+            $curriculum = new Curriculum();
+            $curriculum->user_id = $user_id;
+            $curriculum->status = 'en_proceso';
+            $curriculum->save();
+
+            return $curriculum;
+        }
+        
+        $curriculum = $this->updateCVStatus($user_id, $request, $curriculum->first());
+
+        return $curriculum;
+    }
+
+    /**
+     * Muestra el i-ésimo formulario del curriculum bajo este id. 
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -305,67 +412,5 @@ class CurriculumController extends Controller {
                                   where('es_documento_academico', '=', false)->get();
 
         return view('cv.show.step7', compact('curriculum', 'sd_aca', 'sd_naca')); 
-    }
-
-    /**
-     * MÉTODOS AUXILIARES
-     * */
-
-     // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
-    private function isUsersCurriculum($curriculum) {
-        if($curriculum) {
-            $user_id = Auth::user()->id;
-            if ($user_id != $curriculum->user_id) {
-                return false;
-            }
-
-            return true;
-        }
-        return false;
-    }
-
-    // Método auxiliar que sirve para que al editar un CV, se valide que los
-    // 'formularios' en los que se guardan listas no queden vacíos, y si es el caso,
-    // no los deje avanzar a menos que agreguen un elemento.
-    // (esto en cursos extracurriculares, lista de temas, documentos probatorios, etc...)
-    private function listsEmpty($except = '') {
-        $user_id = Auth::user()->id;
-
-        $pe = PreviousExperience::where('user_id', '=', $user_id)->get();
-        if($except != 'pe' && !count($pe) > 0) {
-            return '/editar_cv_experiencia_previa';
-        }
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-        if($except != 'subjects' && !count($subjects) > 0) {
-            return '/editar_cv_lista_de_temas';
-        }
-
-        $extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->get();
-        if($except != 'extracurricular_courses' && !count($extracurricular_courses) > 0) {
-            return '/editar_cv_cursos_extracurriculares';
-        }
-
-        $sd = SupportingDocument::where('user_id', '=', $user_id)->get();
-        if($except != 'sd' && !count($sd) > 0) {
-            return '/editar_cv_documentos_probatorios';
-        }
-
-        return false;
-    }
-
-    // Método auxiliar que devuelve el curriculum del usuario indicado, si no existe, lo crea y guarda.
-    private function getOrCreateUserCurriculum($user_id) {
-        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
-        if(count($curriculum) == 0) {
-            $curriculum = new Curriculum();
-            $curriculum->user_id = $user_id;
-            $curriculum->status = 'en_proceso';
-            $curriculum->save();
-        }else {
-            $curriculum = $curriculum->first();
-        }
-
-        return $curriculum;
     }
 }
