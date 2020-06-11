@@ -18,29 +18,14 @@ Route::group(['namespace' => 'Search'], function () {
 // Rutas para toda la funcionalidad en la parte del Curriculum, 
 // desde capturarlo, actualizarlo, descargarlo, etc...
 Route::group(['namespace' => 'Curriculum'], function () {
-    // RUTAS PARA EL MÉTODO CREATE
-    Route::get('/capturar_cv_datos_personales', 'CurriculumController@create1')->name('curricula.create');
-    Route::post('/capturar_cv_datos_personales', 'CurriculumController@Postcreate1');
-    Route::get('/capturar_cv_datos_academicos', 'CurriculumController@create2')->name('curricula.create2');
-    Route::post('/capturar_cv_datos_academicos', 'CurriculumController@Postcreate2');
-    Route::get('/capturar_cv_cursos_extracurriculares', 'CurriculumController@create3')->name('curricula.create3');
-    Route::get('/capturar_cv_certificaciones_obtenidas', 'CurriculumController@create4')->name('curricula.create4');
-    Route::post('/capturar_cv_certificaciones_obtenidas', 'CurriculumController@Postcreate4');
-    Route::get('/capturar_cv_lista_de_temas', 'CurriculumController@create5')->name('curricula.create5');
-    Route::get('/capturar_cv_experiencia_previa', 'CurriculumController@create6')->name('curricula.create6');
-    Route::get('/capturar_cv_documentos_probatorios', 'CurriculumController@create7')->name('curricula.create7');
-
-    // RUTAS PARA EL MÉTODO EDIT
-    Route::get('/editar_cv_datos_personales', 'CurriculumController@edit1')->name('curricula.edit');
-    Route::post('/editar_cv_datos_personales', 'CurriculumController@Postedit1');
-    Route::get('/editar_cv_datos_academicos', 'CurriculumController@edit2')->name('curricula.edit2');
-    Route::post('/editar_cv_datos_academicos', 'CurriculumController@Postedit2');
-    Route::get('/editar_cv_cursos_extracurriculares', 'CurriculumController@edit3')->name('curricula.edit3');
-    Route::get('/editar_cv_certificaciones_obtenidas', 'CurriculumController@edit4')->name('curricula.edit4');
-    Route::post('/editar_cv_certificaciones_obtenidas', 'CurriculumController@Postedit4');
-    Route::get('/editar_cv_lista_de_temas', 'CurriculumController@edit5')->name('curricula.edit5');
-    Route::get('/editar_cv_experiencia_previa', 'CurriculumController@edit6')->name('curricula.edit6');
-    Route::get('/editar_cv_documentos_probatorios', 'CurriculumController@edit7')->name('curricula.edit7');
+    // RUTAS PARA CAPTURAR EL CV (crearlo o editarlo)
+    Route::get('/capturar_cv_datos_personales/{id}', 'CurriculumController@capture1')->name('curricula.capture1');
+    Route::get('/capturar_cv_datos_academicos/{id}', 'CurriculumController@capture2')->name('curricula.capture2');
+    Route::get('/capturar_cv_cursos_extracurriculares/{id}', 'CurriculumController@capture3')->name('curricula.capture3');
+    Route::get('/capturar_cv_certificaciones_obtenidas/{id}', 'CurriculumController@capture4')->name('curricula.capture4');
+    Route::get('/capturar_cv_lista_de_temas/{id}', 'CurriculumController@capture5')->name('curricula.capture5');
+    Route::get('/capturar_cv_experiencia_previa/{id}', 'CurriculumController@capture6')->name('curricula.capture6');
+    Route::get('/capturar_cv_documentos_probatorios/{id}', 'CurriculumController@capture7')->name('curricula.capture7');
 
     // RUTAS PARA EL MÉTODO SHOW.
     Route::get('/mostrar_cv_datos_personales/{id}', 'CurriculumController@show')->name('curricula.show');
@@ -51,9 +36,8 @@ Route::group(['namespace' => 'Curriculum'], function () {
     Route::get('/mostrar_cv_experiencia_previa/{id}', 'CurriculumController@show6')->name('curricula.show6');
     Route::get('/mostrar_cv_documentos_probatorios/{id}', 'CurriculumController@show7')->name('curricula.show7');
 
-    // Se siguen generando las rutas para los métodos destroy, update y store.
-    Route::resource('curriculum', 'CurriculumController')->
-        names('curricula')->except(['create', 'index', 'show', 'edit']);
+    // RUTA PARA ACTUALIZAR EL CV EN LA BASE
+    Route::patch('/curriculum/{curriculum}', 'CurriculumController@update')->name('curricula.update');
 
     // Rutas para controlar los registros de "Cursos extracurriculares".
     Route::resource('extracurricular_course', 'ExtracurricularCourseController')->

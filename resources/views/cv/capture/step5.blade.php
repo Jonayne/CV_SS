@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Lista de temas a impartir')
+@section('title', 'Captura de CV - Paso 5')
 
 @section('content')
     <h1 class="text-secondary text-center">Lista de temas a impartir</h1>
     <hr>
-    @include('cv.edit.partials.nav')
+    @include('cv.capture.partials.nav')
     <br>
     @include('partials.form_errors')
     <div class="container bg-primary text-black py-3">
@@ -33,7 +33,7 @@
                             </span>
                             <br><br>
                             <div class="btn-group">
-                                <a class="btn btn-outline-info btn-sm" href="{{route('subjects.edit', $subject)}}">
+                                <a class="btn btn-outline-info btn-sm" name="formNum" value="5" href="{{route('subjects.edit', $subject)}}">
                                     Editar
                                 </a>
                                 &nbsp;
@@ -50,16 +50,20 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg"  href="{{route('subjects.create')}}">
+            <a class="btn btn-success btn-lg"  name="formNum" value="5" href="{{route('subjects.create')}}">
                 Agregar tema
             </a>
         </div>
         <hr>
         <div class="text-center">
             <div class="btn-group">
-                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3 mr-5">Salir</a>
+                    <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg mt-3">Siguiente</a>
             </div>
         </div>
+
     </div>
+    <br>
+
 
 @endsection

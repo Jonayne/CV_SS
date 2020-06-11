@@ -25,136 +25,55 @@ class CurriculumController extends Controller {
     }
 
     /**
-     * Muestra el formulario i según el método create-i. 
-     * Los métodos Postcreate-i validan los datos del formulario i y redirigen a la siguiente
-     * pestaña. (Algunos formularios no llevan un form pues desde el inicio salen de la BD
-     * y ahí mismo se agregan/actualizan, por eso algunos create no tienen su método 
-     * Postcreate correspondiente)
+     * Muestra el formulario i según el método capture-i. 
      *
      * @return \Illuminate\Http\Response
      */
-    public function create1(Request $request) {
+    public function capture1(Request $request, $id=0) {
         $user_id = Auth::user()->id;
+
         // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar esto.
         // También revisamos que el usuario no tenga capturado ya su cv.
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
+        
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
         }
 
-        // esta lista sirve para tener control en como se van desbloqueando las pestañas en el formulario.
-        if(empty($request->session()->get('disabledList'))) {
-            $disabledList =  [  'create2_disabled' => 'disabled', 'create3_disabled' => 'disabled', 
-                                'create4_disabled' => 'disabled', 'create5_disabled' => 'disabled', 
-                                'create6_disabled' => 'disabled', 'create7_disabled' => 'disabled'
-                             ];
-            $request->session()->put('disabledList', $disabledList);
-        }else {
-            $disabledList = $request->session()->get('disabledList');
-        }
+        $request->session()->put('previous_url', 'curricula.capture1');
 
-        $request->session()->put('previous_url', 'curricula.create1');
-        return view('cv.create.step1');
+        return view('cv.capture.step1', compact('curriculum'));
     }
 
-    public function Postcreate1(CurriculumFormRequest $request) {
-        $validatedData = $request->validated();
-
-        // Guardamos la imagen en nuestro sistema de archivos, en la BD se guardará el hash de ésta.
-        if($request->file('fotografia') ) {
-            $hashName = $request->file('fotografia')->hashName();
-
-            // Si ya había una fotografía y la estamos actualizando...
-            if($request->session()->get('curriculum')) {
-                $oldHashName = $request->session()->get('curriculum')->fotografia;
-                if($oldHashName) {
-                    // Borramos la foto anterior antes de poner la nueva.
-                    Storage::delete(['public/images/'.$oldHashName]);
-                }
-            }
-            
-            $path = $request->file('fotografia')->store('public/images');
-            $validatedData['fotografia'] = $hashName;
-        }
-
-        if(empty($request->session()->get('curriculum'))) {
-            $curriculum = new \App\Curriculum();
-        }else {
-            $curriculum = $request->session()->get('curriculum');
-        }
-        
-        $curriculum->fill($validatedData);
-        $request->session()->put('curriculum', $curriculum);
-        
-        $disabledList = $request->session()->get('disabledList');
-        $disabledList['create2_disabled'] = '';
-        $request->session()->put('disabledList', $disabledList);
-
-        return redirect('/capturar_cv_datos_academicos');
-    }
-
-    public function create2(Request $request) {   
+    public function capture2(Request $request, $id=0) {   
         $user_id = Auth::user()->id;
 
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
+        
+        $request->session()->put('previous_url', 'curricula.capture2');
 
-        // revisamos si este formulario ya está desbloqueado (es decir, ya completamos el anterior)
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create2_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_datos_personales')->with('status', 'No ha terminado de rellenar este formulario')
-                                                            ->with('status_color', 'danger');
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
         }
         
-        $request->session()->put('previous_url', 'curricula.create2');
-
-        return view('cv.create.step2');
-    }
-
-    public function Postcreate2(CurriculumFormRequest $request) {
-        $validatedData = $request->validated();
-
-        if(empty($request->session()->get('curriculum'))) {
-            $curriculum = new \App\Curriculum();
-        }else {
-            $curriculum = $request->session()->get('curriculum');
-        }
-
-        $curriculum->fill($validatedData);
-        $request->session()->put('curriculum', $curriculum);
-
-        $disabledList = $request->session()->get('disabledList');
-        $disabledList['create3_disabled'] = '';
-        $request->session()->put('disabledList', $disabledList);
-
-        return redirect('/capturar_cv_cursos_extracurriculares');
+        return view('cv.capture.step2', compact('curriculum'));
     }
     
-    public function create3(Request $request) {  
+    public function capture3(Request $request, $id=0) {  
         $user_id = Auth::user()->id;
 
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'));
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create3_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_datos_academicos')->with('status', 'No ha terminado de rellenar este formulario')
-                                                            ->with('status_color', 'danger');
         }
 
         $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
@@ -162,160 +81,94 @@ class CurriculumController extends Controller {
         $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
                                                     where('es_curso_tecnico', '=', false)->get();
                                                     
-        $request->session()->put('previous_url', 'curricula.create3');
+        $request->session()->put('previous_url', 'curricula.capture3');
 
-        return view('cv.create.step3', 
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        }
+
+        return view('cv.capture.step3', 
                     compact('technical_extracurricular_courses', 
-                            'extracurricular_teaching_courses'));
+                            'extracurricular_teaching_courses',
+                            'curriculum'));
     }
 
-    public function create4(Request $request) {  
+    public function capture4(Request $request, $id=0) {  
         $user_id = Auth::user()->id;
 
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
+
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
         }
 
-        $extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->get();
+        $request->session()->put('previous_url', 'curricula.capture4');
 
-        if(!count($extracurricular_courses) > 0) {
-            return redirect('/capturar_cv_cursos_extracurriculares')->with('status', 'Agregue al menos un curso extracurricular.')
-                                                                    ->with('status_color', 'danger');;
-        
-        }else{
-            $disabledList = $request->session()->get('disabledList');
-            $disabledList['create4_disabled'] = '';
-            $request->session()->put('disabledList', $disabledList);
-        }
-
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create4_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_cursos_extracurriculares')->with('status', 'No ha terminado de rellenar este formulario')
-                                                                    ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.create4');
-
-        return view('cv.create.step4');
+        return view('cv.capture.step4', compact('curriculum'));
     }
 
-    public function Postcreate4(CurriculumFormRequest $request) {
-        $validatedData = $request->validated();
-
-        if(empty($request->session()->get('curriculum'))) {
-            $curriculum = new \App\Curriculum();
-        }else {
-            $curriculum = $request->session()->get('curriculum');
-        }
-
-        $disabledList = $request->session()->get('disabledList');
-        $disabledList['create5_disabled'] = '';
-        $request->session()->put('disabledList', $disabledList);
-
-        $curriculum->fill($validatedData);
-        $request->session()->put('curriculum', $curriculum);
-
-        return redirect('/capturar_cv_lista_de_temas');
-    }
-
-    public function create5(Request $request) {  
+    public function capture5(Request $request, $id=0) {  
         $user_id = Auth::user()->id;
 
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
 
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create5_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_certificaciones_obtenidas')->with('status', 'No ha terminado de rellenar este formulario')
-                                                                     ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.create5');
+        $request->session()->put('previous_url', 'curricula.capture5');
 
         $subjects = Subject::where('user_id', '=', $user_id)->get();
 
-        return view('cv.create.step5', 
-                    compact('subjects'));
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        }
+
+        return view('cv.capture.step5', 
+                    compact('subjects', 'curriculum'));
     }
 
-    public function create6(Request $request) {  
+    public function capture6(Request $request, $id=0) {  
         $user_id = Auth::user()->id;
 
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
                                           ->with('status_color', 'danger');
         }
 
         $subjects = Subject::where('user_id', '=', $user_id)->get();
 
-        if(!count($subjects) > 0) {
-            return redirect('/capturar_cv_lista_de_temas')->with('status', 'Agregue al menos un tema a impartir')
-                                                          ->with('status_color', 'danger');
-        }else{
-            $disabledList = $request->session()->get('disabledList');
-            $disabledList['create6_disabled'] = '';
-            $request->session()->put('disabledList', $disabledList);
-        }
-
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create6_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_lista_de_temas')->with('status', 'No ha terminado de rellenar este formulario')
-                                                          ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.create6');
+        $request->session()->put('previous_url', 'curricula.capture6');
 
         $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
 
-        return view('cv.create.step6', 
-                    compact('previous_exp'));
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
+        }
+
+        return view('cv.capture.step6', 
+                    compact('previous_exp', 'curriculum'));
     }
 
-    public function create7(Request $request) {  
+    public function capture7(Request $request, $id=0) {  
         $user_id = Auth::user()->id;
         
-        if(Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id, $user_id) || Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) > 0) {
-            return redirect(route('home'))->with('status', 'Usted ya ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
 
-        $pe = PreviousExperience::where('user_id', '=', $user_id)->get();
-
-        if(!count($pe) > 0) {
-            return redirect('/capturar_cv_experiencia_previa')->with('status', 'Registre al menos una experiencia profesional previa')
-                                                              ->with('status_color', 'danger');
-        }else{
-            $disabledList = $request->session()->get('disabledList');
-            $disabledList['create7_disabled'] = '';
-            $request->session()->put('disabledList', $disabledList);
-        }
-
-        if(empty($request->session()->get('disabledList')) || 
-            ($request->session()->get('disabledList'))['create7_disabled'] === 'disabled')  {
-            return redirect('/capturar_cv_experiencia_previa')->with('status', 'No ha terminado de rellenar este formulario')
-                                                              ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.create7');
+        $request->session()->put('previous_url', 'curricula.capture7');
 
         // documento probatorio académico
         $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
@@ -323,247 +176,15 @@ class CurriculumController extends Controller {
         // documento probatorio no académico
         $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
                                   where('es_documento_academico', '=', false)->get();
-
-        return view('cv.create.step7', 
-                    compact('sd_aca', 'sd_naca'));
-    }
-
-    /**
-     * Guarda en la BD el curriculum que se estuvo capturando.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = Auth::user()->id;
-
-        $sd = SupportingDocument::where('user_id', '=', $user_id)->get();
-
-        if(!count($sd) > 0) {
-            return redirect('/capturar_cv_documentos_probatorios')->with('status', 'Agregue los documentos probatorios solicitados.')
-                                                                  ->with('status_color', 'danger');
-        }
-
-        $curriculum = $request->session()->get('curriculum');
-        $curriculum->user_id = $user_id;
-        $curriculum->save();
-
-        return redirect(route('home'))->with('status', 'Su curriculum ha sido capturado con éxito.')
-                                      ->with('status_color', 'success');
-    }
-
-    /**
-     * TERMINAN MÉTODOS CREATE----------------------------------------------------------------------
-     * */
-
-
-    /**
-     * Muestra el curricculum de este usuario y permite su edición. Cada edit-i 
-     * muestra el curriculum i.
-     * 
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function edit1(Request $request) {
-        $user_id = Auth::user()->id;
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        // Revisamos que el usuario ya haya capturado su CV antes de entrar aquí.
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-        // Revisamos que los formularios de tipo lista (como cursos extracurriculares, docs. probatorios, etc)
-        // al ser modificados no hayan quedado vacíos, si es así, se lo notificamos al usuario.
-        $link = $this->listsEmpty();
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        // No podemos usar back() porque si hay un error en la validación, se sobreescribe la URL 
-        // anterior. La mejor forma que encontré de solucionar esto fue establecer la URL a la que se 
-        // regresará por defecto según la pestaña que tengamos abierta.
-        $request->session()->put('previous_url', 'curricula.edit');
-
-        return view('cv.edit.step1', compact('curriculum'));
-    }
-
-    public function edit2(Request $request) {   
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-
-        $link = $this->listsEmpty();
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.edit2');
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        return view('cv.edit.step2', compact('curriculum'));
-    }
-    
-    public function edit3(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-        $link = $this->listsEmpty('extracurricular_courses');
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);      
-
-        $request->session()->put('previous_url', 'curricula.edit3');
-
-        $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                                                    where('es_curso_tecnico', '=', true)->get();
-        $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                                                    where('es_curso_tecnico', '=', false)->get();
         
-        return view('cv.edit.step3', 
-                    compact('curriculum', 
-                            'technical_extracurricular_courses', 
-                            'extracurricular_teaching_courses'));
-    }
-
-    public function edit4(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
+        if($id != 0) {
+            $curriculum = Curriculum::findOrFail($id);
+        } else {
+            $curriculum = $this->getOrCreateUserCurriculum($user_id);
         }
 
-        $link = $this->listsEmpty();
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        $request->session()->put('previous_url', 'curricula.edit4');
-
-        return view('cv.edit.step4', 
-                    compact('curriculum'));
-    }
-
-    public function edit5(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-
-        $link = $this->listsEmpty('subjects');
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        $request->session()->put('previous_url', 'curricula.edit5');
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-
-        return view('cv.edit.step5', 
-                    compact('curriculum', 'subjects'));
-    }
-
-    public function edit6(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-        $link = $this->listsEmpty('pe');
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-        
-        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        $request->session()->put('previous_url', 'curricula.edit6');
-
-        return view('cv.edit.step6', 
-                    compact('curriculum', 'previous_exp'));
-    }
-
-    public function edit7(Request $request) {  
-        $user_id = Auth::user()->id;
-        
-        if(Gate::denies('editar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        elseif(count(Curriculum::where('user_id', '=', $user_id)->get()) == 0) {
-            return redirect(route('home'))->with('status', 'Aún no ha capturado su curriculum.')
-                                          ->with('status_color', 'danger');
-        }
-        $link = $this->listsEmpty('sd');
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
-
-        $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', true)->get();
-        $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', false)->get();
-
-        $curriculum = $this->getCurriculumOnSession($request, $user_id);
-
-        $request->session()->put('previous_url', 'curricula.edit7');
-
-        return view('cv.edit.step7', 
-                    compact('curriculum', 'sd_aca', 'sd_naca'));
+        return view('cv.capture.step7', 
+                    compact('sd_aca', 'sd_naca', 'curriculum'));
     }
 
     /**
@@ -574,58 +195,37 @@ class CurriculumController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update(CurriculumFormRequest $request, $id) {
-        if(Gate::denies('editar-cv')) {
+        if(Gate::denies('capturar-cv')) {
             return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-        
-        $link = $this->listsEmpty();
-        if($link) {
-            return redirect($link)->with('status', 'Esta sección no debe quedar vacía')
-                                  ->with('status_color', 'danger');
-        }
+
+        // validar que ya este completo o no... 
 
         $validatedData = $request->validated();
-        // Si cambiamos la imagen de perfil es necesario este caso, pues tenemos que borrar la imagen
-        // antigua y poner la nueva, de otra manera gastaríamos espacio en el sistema de archivos.
-        if($request->input('formNum') == 1) {
-            if($request->file('fotografia') ) {
-                $hashName = $request->file('fotografia')->hashName();
 
-                if($request->session()->get('curriculum'))
-                {
-                    $oldHashName = $request->session()->get('curriculum')->fotografia;
-                    if($oldHashName) {
-                        Storage::delete(['public/images/'.$oldHashName]);
-                    }
-                }
-                
-                $path = $request->file('fotografia')->store('public/images');
-                $validatedData['fotografia'] = $hashName;
+        $curriculum = Curriculum::findOrFail($id);
+
+        // Guardamos la imagen en nuestro sistema de archivos, en la BD se guardará el hash de ésta.
+        if($request->file('fotografia') ) {
+            $hashName = $request->file('fotografia')->hashName();
+
+            $oldHashName = $curriculum->fotografia;
+            // Si ya había una fotografía y la estamos actualizando...
+            if($oldHashName) {
+                // Borramos la foto anterior antes de poner la nueva.
+                Storage::delete(['public/images/'.$oldHashName]);
             }
+            
+            $request->file('fotografia')->store('public/images');
+            $validatedData['fotografia'] = $hashName;
         }
-
-        $cv = Curriculum::findOrFail($id);
-        $cv->update($validatedData);
-        $request->session()->put('curriculum', $cv);
+        
+        $curriculum->update($validatedData);
 
         return redirect(route($request->session()->get('previous_url')))
-                                 ->with('status', 'Información actualizada con éxito.')
+                                 ->with('status', 'Información guardada con éxito.')
                                  ->with('status_color', 'success');
-    }
-
-    /**
-     * TERMINAN MÉTODOS EDIT----------------------------------------------------------------------
-     * */
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id) {
-        //
     }
 
     /**
@@ -736,10 +336,6 @@ class CurriculumController extends Controller {
     }
 
     /**
-     * TERMINAN MÉTODOS SHOW ----------------------------------------------------------------------
-     * */
-
-    /**
      * MÉTODOS AUXILIARES
      * */
 
@@ -786,18 +382,34 @@ class CurriculumController extends Controller {
         return false;
     }
 
-    // Método auxiliar que obtiene el curriculum guardado en la sesión.
-    // Si no está, lo guarda.
-    private function getCurriculumOnSession($request, $user_id) {
-
-        if(empty($request->session()->get('curriculum'))) {
-            $actual_curriculum = Curriculum::where('user_id', '=', $user_id)->get();
-            $curriculum = $actual_curriculum->first();
-            $request->session()->put('curriculum', $curriculum);
+    // Método auxiliar que devuelve el curriculum del usuario indicado, si no existe, lo crea y guarda.
+    private function getOrCreateUserCurriculum($user_id) {
+        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
+        if(count($curriculum) == 0) {
+            $curriculum = new Curriculum();
+            $curriculum->user_id = $user_id;
+            $curriculum->status = 'en_proceso';
+            $curriculum->save();
         }else {
-            $curriculum = $request->session()->get('curriculum');
+            $curriculum = $curriculum->first();
         }
 
         return $curriculum;
+    }
+
+    // Función auxiliar para determinar si este usuario está permitido
+    // para modificar el elemento bajo este id.
+    private function isOwner($id, $user_id) {
+        if($id != 0) {
+            $curri_user_id = Curriculum::findOrFail($id)->user_id;
+        } else {
+            return true;
+        }
+
+        if($user_id == $curri_user_id) {
+            return true;
+        }
+
+        return false;
     }
 }

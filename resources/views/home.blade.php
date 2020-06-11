@@ -11,12 +11,20 @@
         {{-- Revisamos si ya capturó su CV, si es así, la agregamos a la vista. --}}
         <div class="text-center mt-4">
             @if(auth()->user()->curriculum)
-            <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', auth()->user()->curriculum->id) }}">
-                Ir a mi Curriculum
-            </a>
+                @if (auth()->user()->curriculum->status == 'en_proceso')
+                    <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Aún no termina de capturar su CV </h2>
+                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1', auth()->user()->curriculum) }}">
+                        Seguir capturando mi CV
+                    </a>
+                @else
+                    <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV está capturado </h2>
+                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', auth()->user()->curriculum) }}">
+                        Ir a mi Curriculum
+                    </a>
+                @endif
             @else
-                <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV aún no ha sido capturado </h2>
-                <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.create') }}">
+                <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV aún no ha sido registrado </h2>
+                <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1', 0) }}">
                     Capturar Curriculum
                 </a>
             @endif

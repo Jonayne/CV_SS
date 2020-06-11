@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Experiencia profesional previa')
+@section('title', 'Captura de CV - Paso 6')
 
 @section('content')
     <h1 class="text-secondary text-center">Experiencia profesional previa</h1>
     <hr>
-    @include('cv.edit.partials.nav')
+    @include('cv.capture.partials.nav')
     <br>
     @include('partials.form_errors')
 
@@ -42,7 +42,7 @@
                         <br>
 
                         <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" href="{{route('previous_experiences.edit', $pe)}}">
+                            <a class="btn btn-outline-info btn-sm" name="formNum" value="6" href="{{route('previous_experiences.edit', $pe)}}">
                                 Editar
                             </a>
                             &nbsp;
@@ -59,7 +59,7 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg" href="{{route('previous_experiences.create')}}">
+            <a class="btn btn-success btn-lg" name="formNum" value="6" href="{{route('previous_experiences.create')}}">
                 Registrar experiencia profesional
             </a>
             <br>
@@ -67,7 +67,8 @@
         <hr>
         <div class="text-center">
             <div class="btn-group">
-                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3 mr-5">Salir</a>
+                    <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg mt-3">Siguiente</a>
             </div>
         </div>
     </div>    

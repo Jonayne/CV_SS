@@ -30,10 +30,6 @@ class AuthServiceProvider extends ServiceProvider {
             return $user->hasRole('profesor');
         });
 
-        Gate::define('editar-cv', function($user) {
-            return $user->hasRole('profesor');
-        });
-
         Gate::define('mostrar-cvs', function($user) {
             return $user->hasAnyRoles(['admin', 'ce']);
         });

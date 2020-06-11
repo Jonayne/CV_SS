@@ -5,7 +5,7 @@
 @section('content')
     <h1 class="text-secondary text-center">Cursos extracurriculares</h1>
     <hr>
-    @include('cv.create.partials.nav')
+    @include('cv.capture.partials.nav')
     <br>
     @include('partials.form_errors')
     <div class="container bg-primary text-black py-3">
@@ -91,6 +91,13 @@
                 Agregar curso
             </a>
         </div>
-        <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg">Siguiente</a>
+        <hr>
+        <div class="text-center">
+            <div class="btn-group">
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3 mr-5">Salir</a>
+                    <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg mt-3">Siguiente</a>
+            </div>
+        </div>
+        
     </div>
 @endsection

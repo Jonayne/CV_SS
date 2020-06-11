@@ -1,11 +1,11 @@
 @extends('layout')
 
-@section('title', 'Documentos probatorios')
+@section('title', 'Captura de CV - Paso 7')
 
 @section('content')
     <h1 class="text-secondary text-center">Documentos probatorios</h1>
     <hr>
-    @include('cv.edit.partials.nav')
+    @include('cv.capture.partials.nav')
     <br>
     @include('partials.form_errors')
 
@@ -45,7 +45,7 @@
                         <br><br>
 
                         <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" href="{{route('supporting_documents.edit', $sd)}}">
+                            <a class="btn btn-outline-info btn-sm" name="formNum" value="7" href="{{route('supporting_documents.edit', $sd)}}">
                                 Editar
                             </a>
                             &nbsp;
@@ -114,7 +114,7 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg" href="{{route('supporting_documents.create')}}">
+            <a class="btn btn-success btn-lg" name="formNum" value="7" href="{{route('supporting_documents.create')}}">
                 Subir documento probatorio
             </a>
             <br>
