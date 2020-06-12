@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 1')
+@section('title', 'Datos personales')
 
 @section('content')
 

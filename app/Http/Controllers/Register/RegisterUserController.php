@@ -22,7 +22,7 @@ class RegisterUserController extends Controller {
 
     public function index() {   
         if( Gate::denies('registrar-usuario')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
@@ -39,10 +39,10 @@ class RegisterUserController extends Controller {
                                      ->with('status_color', 'danger');
         } 
         if($validatedData['role'] === "control_escolar" && Gate::denies('registrar-encargado-ce')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                             ->with('status_color', 'danger');
         } elseif($validatedData['role'] === "profesor" && Gate::denies('registrar-profesor')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                             ->with('status_color', 'danger');
         }
 

@@ -29,7 +29,7 @@ class ExtracurricularCourseController extends Controller {
      */
     public function create() {   
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
         
@@ -45,7 +45,7 @@ class ExtracurricularCourseController extends Controller {
      */
     public function store(CurriculumFormRequest $request) {   
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
@@ -62,7 +62,7 @@ class ExtracurricularCourseController extends Controller {
      */
     public function edit($id) {   
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
@@ -77,7 +77,7 @@ class ExtracurricularCourseController extends Controller {
      */
     public function update($id, CurriculumFormRequest $request) {      
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
@@ -96,7 +96,7 @@ class ExtracurricularCourseController extends Controller {
      */
     public function destroy($id, Request $request) {   
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
         

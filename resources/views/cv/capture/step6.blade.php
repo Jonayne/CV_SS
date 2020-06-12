@@ -1,9 +1,11 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 6')
+@section('title', 'Experiencia profesional previa')
 
 @section('content')
     <h1 class="text-secondary text-center">Experiencia profesional previa</h1>
+    <hr>
+    @include('cv.capture.partials.cv_status')
     <hr>
     @include('cv.capture.partials.nav')
     <br>

@@ -41,6 +41,9 @@ class CurriculumController extends Controller {
         
         $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
+        // esta variable nos servirá para saber a donde redireccionar (tener la página anterior)
+        // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
+        // ya nunca nos regresa donde debería.
         $request->session()->put('previous_url', 'curricula.capture1');
 
         return view('cv.capture.step1', compact('curriculum'));
@@ -168,7 +171,7 @@ class CurriculumController extends Controller {
      */
     public function save(CurriculumFormRequest $request, $id) {
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
@@ -220,37 +223,46 @@ class CurriculumController extends Controller {
 
         $previous_status = $curriculum->status;
 
+        // Esta lista nos ayuda a tener control sobre los formularios que ya han sido validados, y su porcentaje.
         $completedList = $request->session()->get('completedList');
+        
         if(empty($completedList)) {
             $completedList = ['form1' => false, 'form2' => false, 'form3' => false,
                               'form4' => false, 'form5' => false,'form6' => false,
-                              'form7' => false];
+                              'form7' => false, 'percentage' => 0];
         }
 
-        // Esta es una forma muy poco elegante para validar que el formulario 1, 2 y 4
+        $completedList['percentage'] = 0;
+
+        // Esta es una forma muy poco elegante para validar que los formulario 1, 2 y 4
         // están capturados... si esos campos ya están la base, significa que todas las
         // validaciones de dicho formulario pasaron y por ende está capturado.
         // Una alternativa podría ser tener en la base de datos un campo donde se lleve control
         // de estas cosas, pero... aunque esto es menos elegante, funciona, y es simple.                                                                                                
         if($curriculum->fotografia) {
             $completedList['form1'] = true;
+            $completedList['percentage'] += 1/7; 
         }
 
         if($curriculum->estudios_carrera) {
             $completedList['form2'] = true;
+            $completedList['percentage'] += 1/7; 
         }
 
         // Para los formularios 3, 5, 6 y 7, como son entidades "independientes" al CV, hay que revisar que hayan
         // registros de cada una y así sabremos si esa parte del formuarlio ya está validada.
         $extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->get();
+
         if(!count($extracurricular_courses) > 0) {
             $completedList['form3'] = false;
         } else {
             $completedList['form3'] = true;
+            $completedList['percentage'] += 1/7; 
         }
 
         if($curriculum->certificaciones_obtenidas) {
             $completedList['form4'] = true;
+            $completedList['percentage'] += 1/7; 
         } 
 
         $subjects = Subject::where('user_id', '=', $user_id)->get();
@@ -258,6 +270,7 @@ class CurriculumController extends Controller {
             $completedList['form5'] = false;
         } else {
             $completedList['form5'] = true;
+            $completedList['percentage'] += 1/7; 
         }
 
         $pe = PreviousExperience::where('user_id', '=', $user_id)->get();
@@ -265,6 +278,7 @@ class CurriculumController extends Controller {
             $completedList['form6'] = false;
         } else {
             $completedList['form6'] = true;
+            $completedList['percentage'] += 1/7; 
         }
 
         $sd = SupportingDocument::where('user_id', '=', $user_id)->get();
@@ -272,7 +286,10 @@ class CurriculumController extends Controller {
             $completedList['form7'] = false;
         } else {
             $completedList['form7'] = true;
+            $completedList['percentage'] += 1/7; 
         }
+
+        $completedList['percentage'] *= 100; 
 
         // Verificamos si todas los formularios ya están (o no) capturados
         if(in_array(false, $completedList)) {

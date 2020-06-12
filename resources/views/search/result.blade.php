@@ -26,13 +26,21 @@
         <ul class="list-group">
             @forelse ($result as $user)
                 @if ($user->id)
-                    <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show', $user->id)}}">
-                        Nombre completo: <strong>{{formatName($user)}}</strong><br>
-                        Email personal: <strong>{{$user->email}}</strong><br>
-                        CURP: <strong>{{$user->curp}}</strong><br>
-                        RFC: <strong>{{$user->rfc}}</strong><br>
-                        Estado del curriculum: <span class="text-info"><strong> CAPTURADO </strong></span>
-                    </a>
+                        @if (($user->status) == 'en_proceso')
+                            <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
+                                Nombre registrado: <strong>{{formatName($user)}}</strong><br>
+                                Email registrado: <strong>{{$user->email}}</strong><br>
+                                Estado del curriculum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
+                            </a>
+                        @else
+                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show', $user->id)}}">
+                                Nombre completo: <strong>{{formatName($user)}}</strong><br>
+                                Email personal: <strong>{{$user->email}}</strong><br>
+                                CURP: <strong>{{$user->curp}}</strong><br>
+                                RFC: <strong>{{$user->rfc}}</strong><br>
+                                Estado del curriculum: <span class="text-info"><strong> CAPTURADO </strong></span>
+                            </a>
+                        @endif                 
                 @else
                     <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
                         Email registrado: <strong>{{$user->email}}</strong><br>
@@ -43,13 +51,13 @@
                     <hr>
             @empty
                 <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger text-center">
-                    No se encontró ninguna coincidencia para su búsqueda. 
+                    No se encontraron coincidencias para su búsqueda. 
                 </li>
             @endforelse
             <hr>
         </ul>
         <div class="text-center">
-            <a href="{{ route('buscar_profesor.index') }}" class="btn btn-primary btn-lg">
+            <a href="{{ route('buscar_profesor.index') }}" class="btn btn-secondary btn-lg">
                 Regresar y hacer otra búsqueda
             </a>
         </div>        

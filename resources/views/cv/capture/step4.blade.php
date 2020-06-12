@@ -1,9 +1,11 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 4')
+@section('title', 'Certificaciones obtenidas')
 
 @section('content')
     <h1 class="text-secondary text-center">Certificaciones obtenidas</h1>
+    <hr>
+    @include('cv.capture.partials.cv_status')
     <hr>
     @include('cv.capture.partials.nav')
     <br>

@@ -1,9 +1,11 @@
 @extends('layout')
 
-@section('title', 'Captura de CV - Paso 2')
+@section('title', 'Datos académicos')
 
 @section('content')
     <h1 class="text-secondary text-center">Grado académico y carrera</h1>
+    <hr>
+    @include('cv.capture.partials.cv_status')
     <hr>
     @include('cv.capture.partials.nav')
     <br>

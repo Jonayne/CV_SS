@@ -22,7 +22,7 @@ class SearchController extends Controller {
 
     public function index() {   
         if( Gate::denies('buscar-profesor')) {
-                  return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción.')
+                  return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                                 ->with('status_color', 'danger');
         }
 
@@ -40,8 +40,11 @@ class SearchController extends Controller {
 
         // Al ser los profesores los únicos con un curriculum, son los 
         // únicos que entrarán en el filtro.
-        $users = DB::table('users')->
-                    leftJoin('curricula', 'users.id', '=', 'curricula.user_id');
+        $users = DB::table('curricula')->
+                    leftJoin('users', 'curricula.user_id', '=', 'users.id')
+                    ->select('curricula.id', 'curricula.nombre', 'curricula.apellido_paterno', 'curricula.apellido_materno', 
+                        'users.nombre', 'users.apellido_paterno', 'users.apellido_materno', 'curp',
+                        'rfc', 'users.email', 'curricula.email_personal', 'status');
 
         if($nombre) {
             // ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
@@ -75,7 +78,7 @@ class SearchController extends Controller {
             $users->where('curp', 'ILIKE', '%'.$curp.'%');
         }
 
-        $users->orderBy('curricula.id');
+        $users->orderBy('curricula.id')->orderByDesc('status');
 
         return view('search/result')->
                 with('result', $users->get())->
