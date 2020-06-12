@@ -41,7 +41,7 @@ class CurriculumController extends Controller {
         
         $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
 
-        // esta variable nos servirá para saber a donde redireccionar (tener la página anterior)
+        // esta variable nos servirá para saber a donde redireccionar (tener la página anterior).
         // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
         // ya nunca nos regresa donde debería.
         $request->session()->put('previous_url', 'curricula.capture1');
@@ -179,7 +179,8 @@ class CurriculumController extends Controller {
 
         $curriculum = Curriculum::findOrFail($id);
 
-        // Guardamos la imagen en nuestro sistema de archivos, en la BD se guardará el hash de ésta.
+        // Para la fotografía.
+        // La guardamos en nuestro sistema de archivos. En nuestra BD tendremos su hash.
         if($request->file('fotografia') ) {
             $hashName = $request->file('fotografia')->hashName();
 

@@ -3,7 +3,11 @@
 @section('title', 'Lista de temas a impartir')
 
 @section('content')
-    <h1 class="text-secondary text-center">Lista de temas a impartir</h1>
+    <h1 class="text-secondary text-center">Lista de temas a impartir&nbsp;
+        <svg class="bi bi-list-ul" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+        </svg>
+    </h1>
     <hr>
     @include('cv.capture.partials.cv_status')
     <hr>
@@ -59,8 +63,7 @@
         <hr>
         <div class="text-center">
             <div class="btn-group">
-                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3 mr-5">Salir</a>
-                    <a type="submit" href="/capturar_cv_certificaciones_obtenidas" class="btn btn-primary btn-lg mt-3">Siguiente</a>
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
             </div>
         </div>
 

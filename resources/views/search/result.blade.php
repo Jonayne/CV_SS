@@ -52,6 +52,9 @@
             @empty
                 <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger text-center">
                     No se encontraron coincidencias para su búsqueda. 
+
+                    <br>Verifique que los filtros de su búsqueda sean correctos. Si es el caso, es probable que el profesor aún no haya registrado su curriculum.
+                    
                 </li>
             @endforelse
             <hr>

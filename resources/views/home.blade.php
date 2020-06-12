@@ -3,7 +3,7 @@
 @section('title', 'Inicio')
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container text-black py-2">
     <h1 class="text-secondary text-center"><strong>Bienvenido(a), <p class="font-italic">{{ formatName(auth()->user()) }}<p></strong></h1>
     
     {{-- Si tiene permisos para capturar un CV. --}}
@@ -12,20 +12,20 @@
         <div class="text-center mt-4">
             @if(auth()->user()->curriculum)
                 @if (auth()->user()->curriculum->status == 'en_proceso')
-                    <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Aún no termina de capturar su CV </h2>
+                    <h2 class="alert alert-secondary font-italic mt-5"> Su curriculum sigue en proceso de captura </h2>
                     <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
-                        Seguir capturando mi CV
+                        Seguir capturando mi curriculum
                     </a>
                 @else
-                    <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV está capturado </h2>
+                    <h2 class="alert alert-success font-italic mt-5"> Su CV está capturado </h2>
                     <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', auth()->user()->curriculum) }}">
                         Ir a mi Curriculum
                     </a>
                 @endif
             @else
-                <h2 class="text-secondary text-weigh-bold font-italic mt-5"> Su CV aún no ha sido registrado </h2>
+                <h2 class="alert alert-danger font-italic mt-5"> Su CV aún no ha sido registrado </h2>
                 <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
-                    Capturar Curriculum
+                    Registrar curriculum
                 </a>
             @endif
         </div>

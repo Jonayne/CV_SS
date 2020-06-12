@@ -5,7 +5,7 @@
                 <a href="{{route('curricula.capture1')}}" 
                 class="nav-link {{ Route::is('curricula.capture1') ? 'active' : ''}}">
                     <b>Datos personales</b>&nbsp;
-                    @if (session()->get('completedList')['form1'])
+                    @if (session()->get('completedList') && session()->get('completedList')['form1'])
                         <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                             <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -22,7 +22,7 @@
                 <a href="{{route('curricula.capture2')}}" 
                 class="nav-link {{ Route::is('curricula.capture2') ? 'active' : ''}}">
                 <b>Grados académico y carrera</b>&nbsp;
-                @if (session()->get('completedList')['form2'])
+                @if (session()->get('completedList') && session()->get('completedList')['form2'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -39,7 +39,7 @@
                 <a href="{{route('curricula.capture3')}}" 
                 class="nav-link {{ Route::is('curricula.capture3') ? 'active' : ''}}">
                 <b>Cursos extracurriculares</b>&nbsp;
-                @if (session()->get('completedList')['form3'])
+                @if (session()->get('completedList') && session()->get('completedList')['form3'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -56,7 +56,7 @@
                 <a href="{{route('curricula.capture4')}}" 
                 class="nav-link {{ Route::is('curricula.capture4') ? 'active' : ''}}">
                 <b>Certificaciones obtenidas</b>&nbsp;
-                @if (session()->get('completedList')['form4'])
+                @if (session()->get('completedList') && session()->get('completedList')['form4'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -73,7 +73,7 @@
                 <a href="{{route('curricula.capture5')}}" 
                 class="nav-link {{ Route::is('curricula.capture5') ? 'active' : ''}}">
                 <b>Lista de temas a impartir</b>&nbsp;
-                @if (session()->get('completedList')['form5'])
+                @if (session()->get('completedList') && session()->get('completedList')['form5'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -90,7 +90,7 @@
                 <a href="{{route('curricula.capture6')}}" 
                 class="nav-link {{ Route::is('curricula.capture6') ? 'active' : ''}}">
                 <b>Experiencia profesional previa</b>&nbsp;
-                @if (session()->get('completedList')['form6'])
+                @if (session()->get('completedList') && session()->get('completedList')['form6'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
@@ -107,7 +107,7 @@
                 <a href="{{route('curricula.capture7')}}"  
                 class="nav-link {{ Route::is('curricula.capture7') ? 'active' : ''}}">
                 <b>Documentos probatorios</b>&nbsp;
-                @if (session()->get('completedList')['form7'])
+                @if (session()->get('completedList') && session()->get('completedList')['form7'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                         <path fill-rule="evenodd" d="M1.5 13A1.5 1.5 0 0 0 3 14.5h10a1.5 1.5 0 0 0 1.5-1.5V8a.5.5 0 0 0-1 0v5a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h8a.5.5 0 0 0 0-1H3A1.5 1.5 0 0 0 1.5 3v10z"/>
