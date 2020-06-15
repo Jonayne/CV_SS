@@ -59,7 +59,7 @@ class RegisterUserController extends Controller {
 
         $new_user->roles()->attach($rol);
 
-        return redirect(route('home'))->with('status', 'Usuario registrado exitosamente.')
+        return redirect()->route('home')->with('status', 'Usuario registrado exitosamente.')
                                             ->with('status_color', 'success');
 
     }

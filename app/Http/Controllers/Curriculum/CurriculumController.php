@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 class CurriculumController extends Controller {
     /**
@@ -35,7 +36,7 @@ class CurriculumController extends Controller {
         // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar esto.
         // También revisamos que el usuario no tenga capturado ya su cv.
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
         
@@ -53,7 +54,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
 
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
         
@@ -68,7 +69,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
 
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'));
+            return redirect()->route('home');
         }
 
         $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
@@ -90,7 +91,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
 
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
 
@@ -105,7 +106,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
 
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
 
@@ -123,7 +124,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
 
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
 
@@ -143,7 +144,7 @@ class CurriculumController extends Controller {
         $user_id = Auth::user()->id;
         
         if(Gate::denies('capturar-cv')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
 
@@ -200,6 +201,172 @@ class CurriculumController extends Controller {
         return redirect(route($request->session()->get('previous_url')))
                                  ->with('status', 'Información guardada con éxito.')
                                  ->with('status_color', 'success');
+    }
+
+        /**
+     * Muestra el i-ésimo formulario del curriculum bajo este id. 
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id) {   
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->route('home')->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        return view('cv.show.step1', compact('curriculum'));    
+    }
+
+    public function show2($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        return view('cv.show.step2', compact('curriculum')); 
+    
+    }
+
+    public function show3($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        $user_id = $curriculum->user_id;
+
+        $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
+                where('es_curso_tecnico', '=', true)->get();
+        $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
+                where('es_curso_tecnico', '=', false)->get();
+                
+        return view('cv.show.step3', compact('curriculum', 'technical_extracurricular_courses'
+                                            , 'extracurricular_teaching_courses')); 
+    }
+
+    public function show4($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        return view('cv.show.step4', compact('curriculum')); 
+    }
+
+    public function show5($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        $user_id = $curriculum->user_id;
+
+        $subjects = Subject::where('user_id', '=', $user_id)->get();
+
+        return view('cv.show.step5', compact('curriculum', 'subjects')); 
+    }
+
+    public function show6($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        $user_id = $curriculum->user_id;
+
+        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
+
+        return view('cv.show.step6', compact('curriculum', 'previous_exp')); 
+    }
+
+    public function show7($id) {
+        $curriculum = Curriculum::findOrFail($id);
+
+        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
+                                          ->with('status_color', 'danger');
+        }
+        if ($curriculum->status == 'en_proceso') {
+            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
+                                          ->with('status_color', 'danger');
+        }
+
+        $user_id = $curriculum->user_id;
+
+        $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
+                                  where('es_documento_academico', '=', true)->get();
+        $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
+                                  where('es_documento_academico', '=', false)->get();
+
+        return view('cv.show.step7', compact('curriculum', 'sd_aca', 'sd_naca')); 
+    }
+
+    /**
+     * Descarga el currículum bajo este id, con los parámetros requeridos en
+     * la petición.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadCV(CurriculumFormRequest $request, $id) {
+        $validatedData = $request->validated();
+
+        $curriculum = Curriculum::findOrFail($id);
+
+        // Para esto usamos principalmente dos bibliotecas externas. PHPOffice/PHPWord y dompdf/dompdf.
+        // Primero, con PHPOffice generamos el documento a partir de templates prehechos, simplemente metemos
+        // las variables capturadas del curriculum. Luego, decidimos el formato
+        // y ahí entrará dompdf por si es necesario descargarlo a PDF.
+
+        $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
+
+        $templateProcessor->setValues($curriculum->toArray());
+
+        $filename = $curriculum->nombre."_".
+                    $curriculum->apellido_paterno."_".
+                    $curriculum->apellido_materno."_". "CV" . '.' . $validatedData['formato_descarga'];
+
+        $templateProcessor->saveAs($filename);
+
+        return response()->download($filename)->deleteFileAfterSend(true);
     }
 
     /**
@@ -326,109 +493,4 @@ class CurriculumController extends Controller {
         return $curriculum;
     }
 
-    /**
-     * Muestra el i-ésimo formulario del curriculum bajo este id. 
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {   
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        return view('cv.show.step1', compact('curriculum'));    
-    }
-
-    public function show2($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        return view('cv.show.step2', compact('curriculum')); 
-    
-    }
-
-    public function show3($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        
-        $user_id = $curriculum->user_id;
-
-        $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                where('es_curso_tecnico', '=', true)->get();
-        $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                where('es_curso_tecnico', '=', false)->get();
-                
-        return view('cv.show.step3', compact('curriculum', 'technical_extracurricular_courses'
-                                            , 'extracurricular_teaching_courses')); 
-    }
-
-    public function show4($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        return view('cv.show.step4', compact('curriculum')); 
-    }
-
-    public function show5($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        $user_id = $curriculum->user_id;
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-
-        return view('cv.show.step5', compact('curriculum', 'subjects')); 
-    }
-
-    public function show6($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
-
-        return view('cv.show.step6', compact('curriculum', 'previous_exp')); 
-    }
-
-    public function show7($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('mostrar-cvs')) {
-            return redirect(route('home'))->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', true)->get();
-        $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', false)->get();
-
-        return view('cv.show.step7', compact('curriculum', 'sd_aca', 'sd_naca')); 
-    }
 }

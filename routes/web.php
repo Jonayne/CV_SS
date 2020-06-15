@@ -28,13 +28,16 @@ Route::group(['namespace' => 'Curriculum'], function () {
     Route::get('/capturar_cv_documentos_probatorios', 'CurriculumController@capture7')->name('curricula.capture7');
 
     // RUTAS PARA EL MÉTODO SHOW.
-    Route::get('/mostrar_cv_datos_personales/{id}', 'CurriculumController@show')->name('curricula.show');
+    Route::get('/mostrar_cv_datos_personales/{id}', 'CurriculumController@show')->name('curricula.show1');
     Route::get('/mostrar_cv_datos_academicos/{id}', 'CurriculumController@show2')->name('curricula.show2');
     Route::get('/mostrar_cv_cursos_extracurriculares/{id}', 'CurriculumController@show3')->name('curricula.show3');
     Route::get('/mostrar_cv_certificaciones_obtenidas/{id}', 'CurriculumController@show4')->name('curricula.show4');
     Route::get('/mostrar_cv_lista_de_temas/{id}', 'CurriculumController@show5')->name('curricula.show5');
     Route::get('/mostrar_cv_experiencia_previa/{id}', 'CurriculumController@show6')->name('curricula.show6');
     Route::get('/mostrar_cv_documentos_probatorios/{id}', 'CurriculumController@show7')->name('curricula.show7');
+
+    // Ruta para descargar el curriculum.
+    Route::post('/descargar_curriculum/{id}', 'CurriculumController@downloadCV')->name('curricula.downloadCV');
 
     // RUTA PARA ACTUALIZAR EL CV EN LA BASE
     Route::patch('/curriculum/{curriculum}', 'CurriculumController@save')->name('curricula.update');

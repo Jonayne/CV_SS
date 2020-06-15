@@ -30,21 +30,21 @@
                             <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
                                 Nombre registrado: <strong>{{formatName($user)}}</strong><br>
                                 Email registrado: <strong>{{$user->email}}</strong><br>
-                                Estado del curriculum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
+                                Estado del currículum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
                             </a>
                         @else
-                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show', $user->id)}}">
+                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show1', $user->id)}}">
                                 Nombre completo: <strong>{{formatName($user)}}</strong><br>
                                 Email personal: <strong>{{$user->email}}</strong><br>
                                 CURP: <strong>{{$user->curp}}</strong><br>
                                 RFC: <strong>{{$user->rfc}}</strong><br>
-                                Estado del curriculum: <span class="text-info"><strong> CAPTURADO </strong></span>
+                                Estado del currículum: <span class="text-info"><strong> CAPTURADO </strong></span>
                             </a>
                         @endif                 
                 @else
                     <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
                         Email registrado: <strong>{{$user->email}}</strong><br>
-                        Estado del curriculum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
+                        Estado del currículum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
                     </a>
                 @endif
                     
@@ -53,7 +53,8 @@
                 <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger text-center">
                     No se encontraron coincidencias para su búsqueda. 
 
-                    <br>Verifique que los filtros de su búsqueda sean correctos. Si es el caso, es probable que el profesor aún no haya registrado su curriculum.
+                    <br>Verifique que los filtros de su búsqueda sean correctos. 
+                    Si es el caso, es probable que el profesor aún no haya registrado su currículum.
                     
                 </li>
             @endforelse

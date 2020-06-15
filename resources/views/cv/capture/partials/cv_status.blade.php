@@ -1,7 +1,7 @@
 <div class="container py-1">
     @if (($curriculum->status) == 'en_proceso')
         <div class="alert alert-info text-center">
-            <h5><strong> Curriculum incompleto </strong></h5>
+            <h5><strong> Currículum incompleto </strong></h5>
             @if (session()->get('completedList') && session()->get('completedList')['percentage'] > 0)
                 <div class="progress" style="height: 40px">
                         <div class="progress-bar bg-secondary progress-bar-striped progress-bar-animated" 
@@ -13,7 +13,7 @@
         </div>
     @else
         <div class="alert alert-info text-center">
-            <h5><strong> Curriculum completo </strong></h5>
+            <h5><strong> Currículum completo </strong></h5>
             @if (session()->get('completedList'))
                 <div class="progress" style="height: 40px">
                         <div class="progress-bar bg-secondary progress-bar-striped progress-bar-animated" 

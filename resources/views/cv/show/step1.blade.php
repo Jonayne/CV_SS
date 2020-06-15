@@ -14,6 +14,9 @@
         @include('cv.show.partials.nav')
         <br>
         @include('partials.form_errors')
+        @can('descargar-cv')
+                @include('cv.show.partials.download_cv')
+        @endcan
         <div class="container bg-primary text-black py-3">
                 <fieldset disabled="disabled">
                         <div class="form-group">

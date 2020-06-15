@@ -101,12 +101,22 @@ class CurriculumFormRequest extends FormRequest {
                     "documento" => "required_without_all:edit|max:100000|mimes:doc,docx,dot,pdf,odt,odi,jpeg,bpm,jpg,png,jpe"
                 ];
                 break;
+            case "download":
+                return [
+                    "categoria_de_pago" => "sometimes|nullable|string|max:255",
+                    "formato_descarga" => "required",
+                    "formato_curriculum" => "required"
+                ];
+                break;
         }
         
     }
 
     public function attributes() {
         return [
+            "categoria_de_pago" => 'Categoría de pago',
+            "formato_descarga" => 'Formato de descarga',
+            "formato_curriculum" => 'Formato del curriculum',
             "nombre" => "Nombre",
             "apellido_paterno" => "Apellido paterno",
             "apellido_materno" => "Apellido materno",

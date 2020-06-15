@@ -12,20 +12,20 @@
         <div class="text-center mt-4">
             @if(auth()->user()->curriculum)
                 @if (auth()->user()->curriculum->status == 'en_proceso')
-                    <h2 class="alert alert-secondary font-italic mt-5"> Su curriculum sigue en proceso de captura </h2>
+                    <h2 class="alert alert-secondary font-italic mt-5"> Su currículum sigue en proceso de captura </h2>
                     <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
-                        Seguir capturando mi curriculum
+                        Seguir capturando mi currículum
                     </a>
                 @else
-                    <h2 class="alert alert-success font-italic mt-5"> Su CV está capturado </h2>
-                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', auth()->user()->curriculum) }}">
-                        Ir a mi Curriculum
+                    <h2 class="alert alert-success font-italic mt-5"> Su currículum está capturado </h2>
+                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show1', auth()->user()->curriculum) }}">
+                        Ir a mi currículum
                     </a>
                 @endif
             @else
-                <h2 class="alert alert-danger font-italic mt-5"> Su CV aún no ha sido registrado </h2>
+                <h2 class="alert alert-danger font-italic mt-5"> Su currículum no se ha sido registrado </h2>
                 <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
-                    Registrar curriculum
+                    Capturar currículum
                 </a>
             @endif
         </div>
@@ -33,16 +33,16 @@
     
     {{-- Si tiene permisos para buscar un CV. --}}
     @can('buscar-profesor')
-        <div class="text-center mt-4">
+        <div class="text-center mt-5">
             <a class="btn btn-primary btn-lg text-dark" href="{{ route('buscar_profesor.index') }}">
-                Buscar CV
+                Buscar Currículum
             </a>
         </div>
     @endcan
 
     {{-- Si puede registrar a un usuario     --}}
     @can('registrar-usuario')
-        <div class="text-center mt-4">
+        <div class="text-center mt-5">
             <a class="btn btn-primary btn-lg text-dark" href="{{ route('registrar_usuario.index') }}">
                 Registrar a un usuario
             </a>
