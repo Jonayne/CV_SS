@@ -1,8 +1,8 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        <label class="required" for="nombre">Nombre del documento</label>
-        <input type="text" id="nombre" class="form-control" name="nombre" value="{{ old('nombre', $sd->nombre)}}">
+        <label class="required" for="nombre_doc">Nombre del documento</label>
+        <input type="text" id="nombre_doc" class="form-control" name="nombre_doc" value="{{ old('nombre_doc', $sd->nombre_doc)}}">
         <br>
 
         @if ($sd->documento)

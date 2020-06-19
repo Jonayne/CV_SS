@@ -9,9 +9,12 @@ use App\Http\Requests\CurriculumFormRequest;
 use App\PreviousExperience;
 use App\Subject;
 use App\SupportingDocument;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 
@@ -342,6 +345,10 @@ class CurriculumController extends Controller {
     /**
      * Descarga el currículum bajo este id, con los parámetros requeridos en
      * la petición.
+     * Usamos principalmente dos bibliotecas externas. PHPOffice/PHPWord y dompdf/dompdf.
+     * Primero, con PHPOffice generamos el documento a partir de templates en docx, y luego pasamos
+     * las variables capturadas del curriculum. Ya teniendo el docx rellenado, decidimos qué hacer según
+     * el formato de descarga.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -351,27 +358,156 @@ class CurriculumController extends Controller {
 
         $curriculum = Curriculum::findOrFail($id);
 
-        // Para esto usamos principalmente dos bibliotecas externas. PHPOffice/PHPWord y dompdf/dompdf.
-        // Primero, con PHPOffice generamos el documento a partir de templates prehechos, simplemente metemos
-        // las variables capturadas del curriculum. Luego, decidimos el formato
-        // y ahí entrará dompdf por si es necesario descargarlo a PDF.
-
         $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
 
-        $templateProcessor->setValues($curriculum->toArray());
+        $curriculum_array = $curriculum->toArray();
 
-        $filename = $curriculum->nombre."_".
-                    $curriculum->apellido_paterno."_".
-                    $curriculum->apellido_materno."_". "CV" . '.' . $validatedData['formato_descarga'];
+        // Cambiamos el formato de la fecha en la que se actualizó el CV.
+        $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
 
-        $templateProcessor->saveAs($filename);
+        $curriculum_array['updated_at'] = $updated_at;
+        $curriculum_array['categoria_de_pago'] = $validatedData['categoria_de_pago'];
+        
+        // Rellenamos lo que corresponde a cursos extracurriculares, docs probatorios, etc...
+        $this->putExtracurricularCoursesValues($curriculum_array['user_id'], $templateProcessor);
+        $this->putSubjectsValues($curriculum_array['user_id'], $templateProcessor);
+        $this->putPreviousExperienciesValues($curriculum_array['user_id'], $templateProcessor);
 
-        return response()->download($filename)->deleteFileAfterSend(true);
+        // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
+        $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
+        Arr::forget($curriculum_array, 'fotografia');
+        
+        $templateProcessor->setImageValue('fotografia', array( 
+            'path' => $photo_url,
+            'width' => 77,
+            'height' => 108,
+            'ratio' => false));
+        
+        // Pasamos los valores del curriculum al documento (y que se sustituyan 1 vez).
+        $templateProcessor->setValues($curriculum_array, 1);
+        
+        $name = $curriculum->nombre."_".
+                $curriculum->apellido_paterno."_".
+                $curriculum->apellido_materno."_". "CV";
+
+        $filenameDocx = $name . '.docx';
+        
+        $templateProcessor->saveAs($filenameDocx);
+
+        // pendiente... mejro pasar de docx a html y luego a pdf
+        if($validatedData['formato_descarga'] == "pdf") {
+            // hmm...
+            error_reporting(E_ALL ^ E_DEPRECATED);
+
+            \PhpOffice\PhpWord\Settings::setPdfRendererPath('../vendor/dompdf/dompdf');
+            \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+
+            //Cargamos el archivo temporal... 
+            $phpWord = \PhpOffice\PhpWord\IOFactory::load($filenameDocx); 
+
+            //Lo guardamos.
+            $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
+            $xmlWriter->save($name.'.pdf');
+
+            // Borramos el docx.
+            File::delete($filenameDocx);
+
+        }
+
+        return response()->download($name.'.'.$validatedData['formato_descarga'])->
+                           deleteFileAfterSend(true);
+    }
+    
+    // Sustituye en el template de word las experiencias previas guardadas.
+    private function putPreviousExperienciesValues($user_id, $templateProcessor) {
+        
+        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
+        
+        /* Por ej. si tenemos
+        {clone_block}
+        Periodo: ${periodo}
+        {/clone_block}
+
+        Con el método de abajo, dependiendo el tamaño del resultado de nuestra query,
+        se crearán varias copias en el template docx, quedando así:
+        Periodo: ${periodo#i} con i=1, ... , count($previous_exp) 
+        */
+        $templateProcessor->cloneBlock('experiencia_previa_bloque', 
+                                        count($previous_exp), true, true);
+                            
+        /* Esto se hizo a mano porque el método cloneBlock, con el que también se deberían
+         poder hacer los reemplazos no funciona bien :( en la versión 0.17.0
+         (Esta es la llamada que debería funcionar en vez del código anexado abajo)
+         $templateProcessor->cloneBlock('experiencia_previa_bloque', 0, true, false, $previous_exp->toArray())
+        */
+        $i = 1;
+        foreach ($previous_exp as $pe) {
+            $templateProcessor->setValue('periodo#'.$i, $pe->periodo);
+            $templateProcessor->setValue('institucion#'.$i, $pe->institucion);
+            $templateProcessor->setValue('cargo#'.$i, $pe->cargo);
+            $templateProcessor->setValue('actividades_principales#'.$i, $pe->actividades_principales);
+            $i += 1;
+        }
+
     }
 
-    /**
-     * MÉTODOS AUXILIARES
-     * */
+    // Método auxiliar para pasar a una sola cadena todos los cursos extracurriculares.
+    private function putExtracurricularCoursesValues($user_id, $templateProcessor) {
+
+        $te_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
+                                            where('es_curso_tecnico', '=', true)->get();
+
+        $tc_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
+                                                    where('es_curso_tecnico', '=', false)->get();
+
+        $templateProcessor->cloneBlock('curso_extracurricular_tecnico_bloque', 
+                                        count($te_courses), true, true);
+
+        $templateProcessor->cloneBlock('curso_extracurricular_docente_bloque', 
+                                        count($tc_courses), true, true);
+
+        $i = 1;
+        foreach ($te_courses as $course) {
+            // el 1 al final indica que sólo se sustituya la primer incidencia.
+            // están diferenciados por un id dentro de este bloque, pero no el otro.
+            $templateProcessor->setValue('nombre#'.$i, $course->nombre, 1);
+            $templateProcessor->setValue('anio#'.$i, $course->anio, 1);
+            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido, 1);
+            $i += 1;
+        }
+
+        $i = 1;
+        foreach ($tc_courses as $course) {
+            $templateProcessor->setValue('nombre#'.$i, $course->nombre, 1);
+            $templateProcessor->setValue('anio#'.$i, $course->anio, 1);
+            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido, 1);
+            $i += 1;
+        }
+
+    }
+
+    // Método auxiliar para pasar a una sola cadena la lista de temas a impartir.
+    private function putSubjectsValues($user_id, $templateProcessor) {
+        
+        $subjects = Subject::where('user_id', '=', $user_id)->get();
+        
+        $templateProcessor->cloneBlock('temas_bloque', 
+                                        count($subjects), true, true);
+
+        $i = 1;
+        foreach ($subjects as $subject) {
+            $templateProcessor->setValue('periodo#'.$i, $subject->version);
+            $templateProcessor->setValue('institucion#'.$i, $subject->nivel);
+            $templateProcessor->setValue('cargo#'.$i, $subject->sistema_operativo);
+            $i += 1;
+        }
+
+    }
+
+    // Método auxiliar para pasar a una sola cadena todos los cursos extracurriculares.
+    private function getDSAsString() {
+        // ?? Docs probatorios pendientes
+    }
 
      // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
     private function isUsersCurriculum($curriculum) {
