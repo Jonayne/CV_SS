@@ -26,7 +26,7 @@
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">
-                             {{$sd->nombre_doc}}
+                             {{$sd->nombre}}
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
@@ -59,7 +59,7 @@
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">
-                             {{$sd->nombre_doc}}
+                             {{$sd->nombre}}
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
@@ -87,7 +87,7 @@
         </div>
             @if ($curriculum->user_id == auth()->user()->id)
                 <div class="text-center">
-                        <a class="btn btn-info btn-lg" href="{{route('curricula.capture7')}}">Editar CV</a>
+                    <a class="btn btn-info btn-lg" href="{{route('curricula.capture', 7)}}">Editar CV</a>
                 </div>
             @endif
     </div>

@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Curriculum;
 
 use App\Http\Controllers\Controller;
-use App\ExtracurricularCourse;
+use App\Certification;
 use App\Http\Requests\CurriculumFormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class ExtracurricularCourseController extends Controller {
-
+class CertificationController extends Controller {
     /**
      * Create a new controller instance.
      *
@@ -21,20 +20,20 @@ class ExtracurricularCourseController extends Controller {
         $this->middleware('auth');
 
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {   
+    public function create() {
         if(Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
         
-        return view('extracurricular_course.create', 
-                        ['course' => new ExtracurricularCourse()]);
+        return view('certification.create', 
+                        ['certification' => new Certification()]);
     }
 
     /**
@@ -42,51 +41,56 @@ class ExtracurricularCourseController extends Controller {
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     */
-    public function store(CurriculumFormRequest $request) {   
+     */ 
+    public function store(CurriculumFormRequest $request) {
         if(Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-
+        
         $user_id = Auth::user()->id;
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
-        ExtracurricularCourse::create($validation);
+        Certification::create($validation);
         
-        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
-                                        ->with('status', 'El curso extracurricular fue guardado con éxito.')
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->with('status', 'La certificación fue guardada con éxito.')
                                                      ->with('status_color', 'success');
     }
 
     /**
      * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function edit($id) {   
+    public function edit($id) {
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
-        $course = ExtracurricularCourse::findOrFail($id);
+        $certification = Certification::findOrFail($id);
 
-        return view('extracurricular_course.edit', compact('course'));
+        return view('certification.edit', compact('certification'));
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function update($id, CurriculumFormRequest $request) {      
+    public function update($id, CurriculumFormRequest $request) {
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
-        $course = ExtracurricularCourse::findOrFail($id);
-        $course->update($request->validated());
+        $cert = Certification::findOrFail($id);
+        $cert->update($request->validated());
 
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
-                                        ->with('status', 'El curso extracurricular fue actualizado con éxito.')
+                                            ->with('status', 'La certificación fue actualizada con éxito.')
                                                      ->with('status_color', 'success');
     }
 
@@ -96,17 +100,17 @@ class ExtracurricularCourseController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, Request $request) {   
+    public function destroy($id, Request $request) {
         if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
         
-        $course = ExtracurricularCourse::findOrFail($id);
-        $course->delete();
+        $cert = Certification::findOrFail($id);
+        $cert->delete();
 
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
-                                            ->with('status', 'El curso extracurricular fue eliminado con éxito.')
+                                    ->with('status', 'La certificación fue eliminada con éxito.')
                                                      ->with('status_color', 'success');
     }
 
@@ -114,13 +118,12 @@ class ExtracurricularCourseController extends Controller {
     // para modificar el elemento bajo este id.
     private function isOwner($id) {
         $user_id = Auth::user()->id;
-        $course_user_id = ExtracurricularCourse::findOrFail($id)->user_id;
+        $certification_user_id = Certification::findOrFail($id)->user_id;
 
-        if($user_id == $course_user_id) {
+        if($user_id == $certification_user_id) {
             return true;
         }
 
         return false;
     }
-
 }

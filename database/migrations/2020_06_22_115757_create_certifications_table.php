@@ -4,18 +4,20 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSupportingDocumentsTable extends Migration {
+class CreateCertificationsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
-        Schema::create('supporting_documents', function (Blueprint $table) {
+    public function up()
+    {
+        Schema::create('certifications', function (Blueprint $table) {
             $table->id();
+            $table->string('modalidad');
             $table->string('nombre');
-            $table->string('documento');
-            $table->boolean('es_documento_academico');
+            $table->string('institucion_emisora');
             $table->timestamps();
         });
     }
@@ -25,7 +27,8 @@ class CreateSupportingDocumentsTable extends Migration {
      *
      * @return void
      */
-    public function down() {
-        Schema::dropIfExists('supporting_documents');
+    public function down()
+    {
+        Schema::dropIfExists('certifications');
     }
 }

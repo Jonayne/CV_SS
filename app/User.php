@@ -9,11 +9,6 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable {
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $guarded = [];
 
     /**
@@ -54,7 +49,6 @@ class User extends Authenticatable {
     public function extracurricularCourses() {
         return $this->hasMany('App\ExtracurricularCourse');
     } 
-    
 
     public function subjects() {
         return $this->hasMany('App\Subject');
@@ -62,7 +56,11 @@ class User extends Authenticatable {
 
     public function previousExperiences() {
         return $this->hasMany('App\PreviousExperience');
-    } 
+    }
+
+    public function certifications() {
+        return $this->hasMany('App\Certification');
+    }
 
     /**
      * Un usuario puede tener varios documentos probatorios.
@@ -87,7 +85,7 @@ class User extends Authenticatable {
     }
 
     /**
-     * Nos dice si este usuario tiene este rol.
+     * Nos dice si este usuario tiene asignado este rol.
      * 
      * @var string
      */

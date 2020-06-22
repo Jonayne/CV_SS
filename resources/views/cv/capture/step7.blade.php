@@ -29,40 +29,42 @@
                 <li><b>Comprobantes de cursos de formación docente</b></li>
             </ul>
             <ul class="list-group list-group-flush">
-                @forelse ($sd_aca as $sd)
-                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
-                        <b>Nombre de documento:</b>
-                        <span class="text-info font-weight-bold">
-                             {{$sd->nombre_doc}}
-                        </span>
-                        <br>
-                        <span class="text-info font-weight-bold">
-                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
-                        </span>
-                        <br>
+                @forelse ($element as $sd)
+                    @if($sd->es_documento_academico)
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                            <b>Nombre de documento:</b>
+                            <span class="text-info font-weight-bold">
+                                {{$sd->nombre}}
+                            </span>
+                            <br>
+                            <span class="text-info font-weight-bold">
+                                <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
+                            </span>
+                            <br>
 
-                        <b>Tipo de documento: </b>
-                        <span class="text-info font-weight-bold">
-                            
-                            @if ($sd->es_documento_academico)
-                                Académico
-                            @else
-                                Personal
-                            @endif
-                        </span>
-                        <br><br>
+                            <b>Tipo de documento: </b>
+                            <span class="text-info font-weight-bold">
+                                
+                                @if ($sd->es_documento_academico)
+                                    Académico
+                                @else
+                                    Personal
+                                @endif
+                            </span>
+                            <br><br>
 
-                        <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" name="formNum" value="7" href="{{route('supporting_documents.edit', $sd)}}">
-                                Editar
-                            </a>
-                            &nbsp;
-                            <form method="POST" action="{{route('supporting_documents.destroy', $sd)}}">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
-                            </form>  
-                        </div> 
-                    </li>
+                            <div class="btn-group">
+                                <a class="btn btn-outline-info btn-sm" name="formNum" value="7" href="{{route('supporting_documents.edit', $sd)}}">
+                                    Editar
+                                </a>
+                                &nbsp;
+                                <form method="POST" action="{{route('supporting_documents.destroy', $sd)}}">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
+                                </form>  
+                            </div> 
+                        </li>
+                    @endif
                 @empty
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
                         No ha subido documentos probatorios académicos
@@ -82,39 +84,41 @@
                 <li><b> (Personal de la UNAM) Último talón de pago</b></li>
             </ul>
             <ul class="list-group list-group-flush">
-                @forelse ($sd_naca as $sd)
-                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
-                        <b>Nombre de documento:</b>
-                        <span class="text-info font-weight-bold">
-                             {{$sd->nombre_doc}}
-                        </span>
-                        <br>
-                        <span class="text-info font-weight-bold">
-                            <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
-                        </span>
-                        <br>
+                @forelse ($element as $sd)
+                    @if(!$sd->es_documento_academico)
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                            <b>Nombre de documento:</b>
+                            <span class="text-info font-weight-bold">
+                                {{$sd->nombre}}
+                            </span>
+                            <br>
+                            <span class="text-info font-weight-bold">
+                                <a class="btn btn-link text-secondary text-weigh-bold" href="/storage/supporting_documents/{{$sd->documento}}">Ir al Documento</a>
+                            </span>
+                            <br>
 
-                        <b>Tipo de documento: </b>
-                        <span class="text-info font-weight-bold">
-                            
-                            @if ($sd->es_documento_academico)
-                                Académico
-                            @else
-                                Personal
-                            @endif
-                        </span>
-                        <br><br>
-                        <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" name="formNum" value="7" href="{{route('supporting_documents.edit', $sd)}}">
-                                Editar
-                            </a>
-                            &nbsp;
-                            <form method="POST" action="{{route('supporting_documents.destroy', $sd)}}">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
-                            </form>  
-                        </div>   
-                    </li>
+                            <b>Tipo de documento: </b>
+                            <span class="text-info font-weight-bold">
+                                
+                                @if ($sd->es_documento_academico)
+                                    Académico
+                                @else
+                                    Personal
+                                @endif
+                            </span>
+                            <br><br>
+                            <div class="btn-group">
+                                <a class="btn btn-outline-info btn-sm" name="formNum" value="7" href="{{route('supporting_documents.edit', $sd)}}">
+                                    Editar
+                                </a>
+                                &nbsp;
+                                <form method="POST" action="{{route('supporting_documents.destroy', $sd)}}">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
+                                </form>  
+                            </div>   
+                        </li>
+                    @endif
                 @empty
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
                         No ha subido documentos probatorios personales

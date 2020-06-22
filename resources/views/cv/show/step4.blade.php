@@ -17,15 +17,42 @@
                 @include('cv.show.partials.download_cv')
     @endcan
     <div class="container bg-primary text-black py-3">
-        <fieldset disabled="disabled">
-        
-            <h3 class="text-black"> Certificaciones que ha obtenido </h3>
-            <textarea class="form-control" id="certificaciones_obtenidas" name="certificaciones_obtenidas">{{$curriculum->certificaciones_obtenidas}}</textarea>
-            <br><br>
-        </fieldset>
+        <div class="text-center">
+            <br>
+            <ul class="list-group list-group-flush">
+                @forelse ($certifications as $cert)
+                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                        <br>
+                        
+                        <b>Modalidad:</b>
+                        <span class="text-info font-weight-bold">
+                             {{ $cert->modalidad }}
+                        </span>
+                        <br>
+
+                        <b>Nombre de la certificación:</b> 
+                        <span class="text-info font-weight-bold">
+                            {{ $cert->nombre }}
+                        </span>
+                        <br>
+
+                        <b>Institución emisora:</b>
+                        <span class="text-info font-weight-bold">
+                             {{ $cert->institucion_emisora }}
+                        </span>
+                        <br>
+                    </li>
+                @empty
+                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
+                        No se han registrado certificaciones aún
+                    </li>
+                @endforelse
+            </ul>
+            <br>
+        </div>
         @if ($curriculum->user_id == auth()->user()->id)
             <div class="text-center">
-                <a class="btn btn-info btn-lg" href="{{route('curricula.capture4')}}">Editar CV</a>
+                <a class="btn btn-info btn-lg" href="{{route('curricula.capture', 4)}}">Editar CV</a>
             </div>
         @endif
     </div>

@@ -53,8 +53,9 @@ class SubjectController extends Controller {
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
         Subject::create($validation);
         
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El tema fue guardado con éxito.')
-                                                     ->with('status_color', 'success');
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->
+                                        with('status', 'El tema fue guardado con éxito.')
+                                        ->with('status_color', 'success');
     }
 
     /**
@@ -90,8 +91,9 @@ class SubjectController extends Controller {
         $course = Subject::findOrFail($id);
         $course->update($request->validated());
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El tema fue actualizado con éxito.')
-                                                     ->with('status_color', 'success');
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                                        ->with('status', 'El tema fue actualizado con éxito.')
+                                        ->with('status_color', 'success');
     }
 
     /**
@@ -109,8 +111,9 @@ class SubjectController extends Controller {
         $course = Subject::findOrFail($id);
         $course->delete();
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El tema fue eliminado con éxito.')
-                                                     ->with('status_color', 'success');
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                                ->with('status', 'El tema fue eliminado con éxito.')
+                                    ->with('status_color', 'success');
     }
 
     // Función auxiliar para determinar si este usuario está permitido

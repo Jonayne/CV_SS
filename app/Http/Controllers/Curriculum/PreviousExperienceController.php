@@ -53,7 +53,8 @@ class PreviousExperienceController extends Controller {
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
         PreviousExperience::create($validation);
         
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'La experiencia profesional previa fue guardada con éxito.')
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                                                ->with('status', 'La experiencia profesional previa fue guardada con éxito.')
                                                      ->with('status_color', 'success');
     }
 
@@ -90,7 +91,8 @@ class PreviousExperienceController extends Controller {
         $course = PreviousExperience::findOrFail($id);
         $course->update($request->validated());
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'La experiencia profesional previa fue actualizada con éxito.')
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                                    ->with('status', 'La experiencia profesional previa fue actualizada con éxito.')
                                                      ->with('status_color', 'success');
     }
 
@@ -109,7 +111,8 @@ class PreviousExperienceController extends Controller {
         $course = PreviousExperience::findOrFail($id);
         $course->delete();
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'La experiencia profesional previa fue eliminada con éxito.')
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                                            ->with('status', 'La experiencia profesional previa fue eliminada con éxito.')
                                                      ->with('status_color', 'success');
     }
 

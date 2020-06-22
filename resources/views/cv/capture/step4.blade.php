@@ -16,20 +16,61 @@
     <br>
     @include('partials.form_errors')
 
-    <form action="{{route('curricula.update', $curriculum)}}" method="POST">
-        @csrf @method('PATCH')
-        <div class="container bg-primary text-black py-3">
-            <label class="required" for="certificaciones_obtenidas">Escriba en el área de texto las certificaciones que ha obtenido:</label>
-            <textarea class="form-control" id="certificaciones_obtenidas" name="certificaciones_obtenidas">{{ old('certificaciones_obtenidas', $curriculum->certificaciones_obtenidas) }}</textarea>
-            <br><br>
-            <div class="text-center">
-                <div class="btn-group">
-                        <a href={{route('home')}} class="btn btn-outline-danger btn-lg mx-5">Salir</a>
-                        <button type="submit" name="formNum" value="4" class="btn btn-info btn-lg mx-5">Guardar cambios</button>        
-                </div>
+    <div class="container bg-primary text-black py-3">
+        <div class="text-center">
+            <br>
+            <ul class="list-group list-group-flush">
+                @forelse ($element as $cert)
+                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                        <br>
+                        
+                        <b>Modalidad:</b>
+                        <span class="text-info font-weight-bold">
+                                {{ $cert->modalidad }}
+                        </span>
+                        <br>
+
+                        <b>Nombre de la certificación:</b> 
+                        <span class="text-info font-weight-bold">
+                            {{ $cert->nombre }}
+                        </span>
+                        <br>
+
+                        <b>Institución emisora:</b>
+                        <span class="text-info font-weight-bold">
+                                {{ $cert->institucion_emisora }}
+                        </span>
+                        <br><br>
+
+                        <div class="btn-group">
+                            <a class="btn btn-outline-info btn-sm mr-2" name="formNum" value="4" href="{{route('certifications.edit', $cert)}}">
+                                Editar
+                            </a>
+
+                            <form method="POST" action="{{route('certifications.destroy', $cert)}}">
+                                @csrf @method('DELETE')
+                                <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
+                            </form>  
+                        </div>
+                    </li>
+                @empty
+                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
+                        No ha registrado certificaciones aún
+                    </li>
+                @endforelse
+            </ul>
+            <hr>
+            <a class="btn btn-success btn-lg" name="formNum" value="4" href="{{route('certifications.create')}}">
+                Registrar certificación
+            </a>
+            <br>
+        </div>
+        <hr>
+        <div class="text-center">
+            <div class="btn-group">
+                    <a href={{route('home')}} class="btn btn-outline-danger btn-lg mt-3">Salir</a>
             </div>
         </div>
-    
-    </form>
+    </div>
     
 @endsection

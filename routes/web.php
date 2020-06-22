@@ -18,23 +18,11 @@ Route::group(['namespace' => 'Search'], function () {
 // Rutas para toda la funcionalidad en la parte del Curriculum, 
 // desde capturarlo, actualizarlo, descargarlo, etc...
 Route::group(['namespace' => 'Curriculum'], function () {
-    // RUTAS PARA CAPTURAR EL CV (crearlo o editarlo)
-    Route::get('/capturar_cv_datos_personales', 'CurriculumController@capture1')->name('curricula.capture1');
-    Route::get('/capturar_cv_datos_academicos', 'CurriculumController@capture2')->name('curricula.capture2');
-    Route::get('/capturar_cv_cursos_extracurriculares', 'CurriculumController@capture3')->name('curricula.capture3');
-    Route::get('/capturar_cv_certificaciones_obtenidas', 'CurriculumController@capture4')->name('curricula.capture4');
-    Route::get('/capturar_cv_lista_de_temas', 'CurriculumController@capture5')->name('curricula.capture5');
-    Route::get('/capturar_cv_experiencia_previa', 'CurriculumController@capture6')->name('curricula.capture6');
-    Route::get('/capturar_cv_documentos_probatorios', 'CurriculumController@capture7')->name('curricula.capture7');
+    // Ruta para capturar el cv (crearlo o editarlo).
+    Route::get('/capturar_curriculum/{formNum}', 'CurriculumController@capture')->name('curricula.capture');
 
-    // RUTAS PARA EL MÉTODO SHOW.
-    Route::get('/mostrar_cv_datos_personales/{id}', 'CurriculumController@show')->name('curricula.show1');
-    Route::get('/mostrar_cv_datos_academicos/{id}', 'CurriculumController@show2')->name('curricula.show2');
-    Route::get('/mostrar_cv_cursos_extracurriculares/{id}', 'CurriculumController@show3')->name('curricula.show3');
-    Route::get('/mostrar_cv_certificaciones_obtenidas/{id}', 'CurriculumController@show4')->name('curricula.show4');
-    Route::get('/mostrar_cv_lista_de_temas/{id}', 'CurriculumController@show5')->name('curricula.show5');
-    Route::get('/mostrar_cv_experiencia_previa/{id}', 'CurriculumController@show6')->name('curricula.show6');
-    Route::get('/mostrar_cv_documentos_probatorios/{id}', 'CurriculumController@show7')->name('curricula.show7');
+    // Ruta para el método show.
+    Route::get('/mostrar_curriculum/{id}/{formNum}', 'CurriculumController@show')->name('curricula.show');
 
     // Ruta para descargar el curriculum.
     Route::post('/descargar_curriculum/{id}', 'CurriculumController@downloadCV')->name('curricula.downloadCV');
@@ -45,6 +33,10 @@ Route::group(['namespace' => 'Curriculum'], function () {
     // Rutas para controlar los registros de "Cursos extracurriculares".
     Route::resource('extracurricular_course', 'ExtracurricularCourseController')->
         names('extracurricular_courses')->except(['index', 'show']);
+    
+    // Rutas para controlar los registros de "Certificaciones obtenidas".
+    Route::resource('certification', 'CertificationController')->
+        names('certifications')->except(['index', 'show']);
 
     // Rutas para controlar los registros de "Lista de temas a impartir".
     Route::resource('subject', 'SubjectController')->

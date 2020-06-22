@@ -2,8 +2,8 @@
     <nav class="navbar navbar-light navbar-expand-lg bg-primary shadow-sm">
         <ul class="nav nav-pills nav-fill justify-content-center">
             <li class="nav-item">
-                <a href="{{route('curricula.capture1')}}" 
-                class="nav-link {{ Route::is('curricula.capture1') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 1)}}" 
+                class="nav-link {{ $formNum == 1 ? 'active' : ''}}">
                     <b>Datos personales</b>&nbsp;
                     @if (session()->get('completedList') && session()->get('completedList')['form1'])
                         <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -19,8 +19,8 @@
                     @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture2')}}" 
-                class="nav-link {{ Route::is('curricula.capture2') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 2)}}" 
+                class="nav-link {{ $formNum == 2 ? 'active' : ''}}">
                 <b>Grados académico y carrera</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form2'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -36,8 +36,8 @@
                 @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture3')}}" 
-                class="nav-link {{ Route::is('curricula.capture3') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 3)}}" 
+                class="nav-link {{ $formNum == 3 ? 'active' : ''}}">
                 <b>Cursos extracurriculares</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form3'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -53,8 +53,8 @@
                 @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture4')}}" 
-                class="nav-link {{ Route::is('curricula.capture4') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 4)}}" 
+                class="nav-link {{ $formNum == 4 ? 'active' : ''}}">
                 <b>Certificaciones obtenidas</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form4'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -70,8 +70,8 @@
                 @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture5')}}" 
-                class="nav-link {{ Route::is('curricula.capture5') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 5)}}" 
+                class="nav-link {{ $formNum == 5 ? 'active' : ''}}">
                 <b>Lista de temas a impartir</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form5'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -87,8 +87,8 @@
                 @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture6')}}" 
-                class="nav-link {{ Route::is('curricula.capture6') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 6)}}" 
+                class="nav-link {{ $formNum == 6 ? 'active' : ''}}">
                 <b>Experiencia profesional previa</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form6'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">
@@ -104,8 +104,8 @@
                 @endif
                 </a></li>
             <li class="nav-item">
-                <a href="{{route('curricula.capture7')}}"  
-                class="nav-link {{ Route::is('curricula.capture7') ? 'active' : ''}}">
+                <a href="{{route('curricula.capture', 7)}}"  
+                class="nav-link {{ $formNum == 7 ? 'active' : ''}}">
                 <b>Documentos probatorios</b>&nbsp;
                 @if (session()->get('completedList') && session()->get('completedList')['form7'])
                     <svg class="bi bi-check2-square" width="1em" height="1em" viewBox="0 0 16 16" fill="green" xmlns="http://www.w3.org/2000/svg">

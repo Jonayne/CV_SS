@@ -76,7 +76,9 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case 4:
                 return [
-                    "certificaciones_obtenidas" => "required|string|min:10|max:1000"
+                    "modalidad" => "required|string|max:255",
+                    "nombre" => "required|string|max:255",
+                    "institucion_emisora" => "required|string|max:255"
                 ];
                 break;
             case 5:
@@ -96,7 +98,7 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case 7:
                 return [
-                    "nombre_doc" => "required|string|max:255",
+                    "nombre" => "required|string|max:255",
                     "es_documento_academico" => "required",
                     "documento" => "required_without_all:edit|max:100000|mimes:doc,docx,dot,pdf,odt,odi,jpeg,bpm,jpg,png,jpe"
                 ];
@@ -114,7 +116,6 @@ class CurriculumFormRequest extends FormRequest {
 
     public function attributes() {
         return [
-            "nombre_doc" => 'Nombre del documento',
             "categoria_de_pago" => 'Categoría de pago',
             "formato_descarga" => 'Formato de descarga',
             "formato_curriculum" => 'Formato del curriculum',

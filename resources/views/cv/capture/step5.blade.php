@@ -18,7 +18,7 @@
         <div class="text-center">
             <br>
             <ul class="list-group list-group-flush">
-                @forelse ($subjects as $subject)
+                @forelse ($element as $subject)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                             {{-- <span class="font-weight-bold">
                                 Nombre: {{ $subject->nombre }}

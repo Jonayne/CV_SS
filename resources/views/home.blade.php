@@ -13,18 +13,18 @@
             @if(auth()->user()->curriculum)
                 @if (auth()->user()->curriculum->status == 'en_proceso')
                     <h2 class="alert alert-secondary font-italic mt-5"> Su currículum sigue en proceso de captura </h2>
-                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
+                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture', 1) }}">
                         Seguir capturando mi currículum
                     </a>
                 @else
-                    <h2 class="alert alert-success font-italic mt-5"> Su currículum está capturado </h2>
-                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show1', auth()->user()->curriculum) }}">
+                    <h2 class="alert alert-success font-italic mt-5"> Su currículum ha sido capturado </h2>
+                    <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', array(auth()->user()->curriculum, 1)) }}">
                         Ir a mi currículum
                     </a>
                 @endif
             @else
-                <h2 class="alert alert-danger font-italic mt-5"> Su currículum no se ha sido registrado </h2>
-                <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture1') }}">
+                <h2 class="alert alert-danger font-italic mt-5"> Su currículum no ha sido registrado </h2>
+                <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture', 1) }}">
                     Capturar currículum
                 </a>
             @endif
@@ -40,7 +40,7 @@
         </div>
     @endcan
 
-    {{-- Si puede registrar a un usuario     --}}
+    {{-- Si puede registrar a un usuario --}}
     @can('registrar-usuario')
         <div class="text-center mt-5">
             <a class="btn btn-primary btn-lg text-dark" href="{{ route('registrar_usuario.index') }}">

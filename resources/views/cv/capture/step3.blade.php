@@ -21,8 +21,47 @@
             <br>
             <h3>Cursos técnicos</h3>
             <ul class="list-group list-group-flush">
-                @forelse ($technical_extracurricular_courses as $course)
-                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                @forelse ($element as $course)
+                    @if($course->es_curso_tecnico)
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
+                                <b>Nombre:</b>
+                                <span class="text-info font-weight-bold">
+                                    {{ $course->nombre }}
+                                </span>
+                                <br>
+                                <b>Año:</b>
+                                <span class="text-info font-weight-bold">
+                                    {{ $course->anio }}
+                                </span>
+                                <br>
+                                <b>Documento obtenido:</b>
+                                <span class="text-info font-weight-bold">
+                                    {{ $course->documento_obtenido }}
+                                </span><br><br>
+                                <div class="btn-group">
+                                    <a class="btn btn-outline-info btn-sm" href="{{route('extracurricular_courses.edit', $course)}}">
+                                        Editar
+                                    </a>
+                                    &nbsp;
+                                    <form method="POST" action="{{route('extracurricular_courses.destroy', $course)}}">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
+                                    </form>  
+                                </div>
+                        </li>
+                    @endif
+                @empty
+                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
+                        Aún no hay cursos técnicos registrados
+                    </li>
+                @endforelse
+            </ul>
+            <hr>
+            <h3>Cursos de formación docente</h3>
+            <ul class="list-group list-group-flush">
+                @forelse ($element as $course)
+                    @if(!$course->es_curso_tecnico)
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                             <b>Nombre:</b>
                             <span class="text-info font-weight-bold">
                                 {{ $course->nombre }}
@@ -36,7 +75,8 @@
                             <b>Documento obtenido:</b>
                             <span class="text-info font-weight-bold">
                                 {{ $course->documento_obtenido }}
-                            </span><br><br>
+                            </span>
+                            <br><br>
                             <div class="btn-group">
                                 <a class="btn btn-outline-info btn-sm" href="{{route('extracurricular_courses.edit', $course)}}">
                                     Editar
@@ -47,46 +87,8 @@
                                     <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
                                 </form>  
                             </div>
-                    </li>
-                @empty
-                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
-                        Aún no hay cursos técnicos registrados
-                    </li>
-                @endforelse
-            </ul>
-            <hr>
-            <h3>Cursos de formación docente</h3>
-            <ul class="list-group list-group-flush">
-
-                @forelse ($extracurricular_teaching_courses as $course)
-                    
-                    <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
-                        <b>Nombre:</b>
-                        <span class="text-info font-weight-bold">
-                             {{ $course->nombre }}
-                        </span>
-                        <br>
-                        <b>Año:</b>
-                        <span class="text-info font-weight-bold">
-                             {{ $course->anio }}
-                        </span>
-                        <br>
-                        <b>Documento obtenido:</b>
-                        <span class="text-info font-weight-bold">
-                             {{ $course->documento_obtenido }}
-                        </span>
-                        <br><br>
-                        <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" href="{{route('extracurricular_courses.edit', $course)}}">
-                                Editar
-                            </a>
-                            &nbsp;
-                            <form method="POST" action="{{route('extracurricular_courses.destroy', $course)}}">
-                                @csrf @method('DELETE')
-                                <button class="btn btn-outline-danger btn-sm"> Eliminar </button>
-                            </form>  
-                        </div>
-                    </li>
+                        </li>
+                    @endif
                 @empty
 
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">

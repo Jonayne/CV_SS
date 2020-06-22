@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Curriculum;
 
+use App\Certification;
 use App\Http\Controllers\Controller;
 use App\Curriculum;
 use App\ExtracurricularCourse;
@@ -9,6 +10,7 @@ use App\Http\Requests\CurriculumFormRequest;
 use App\PreviousExperience;
 use App\Subject;
 use App\SupportingDocument;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
@@ -29,12 +31,12 @@ class CurriculumController extends Controller {
     }
 
     /**
-     * Muestra el formulario i según el método capture-i. 
+     * xdd
      *
      * @return \Illuminate\Http\Response
      */
-    public function capture1(Request $request) {
-        $user_id = Auth::user()->id;
+    public function capture(Request $request, $formNum) {
+        $user = Auth::user();
 
         // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar esto.
         // También revisamos que el usuario no tenga capturado ya su cv.
@@ -43,127 +45,11 @@ class CurriculumController extends Controller {
                                           ->with('status_color', 'danger');
         }
         
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
+        $curriculum = $this->getOrCreateUserCurriculum($user, $request);
+        $element = $this->getFormElementCapture($request, $formNum, $user);
 
-        // esta variable nos servirá para saber a donde redireccionar (tener la página anterior).
-        // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
-        // ya nunca nos regresa donde debería.
-        $request->session()->put('previous_url', 'curricula.capture1');
-
-        return view('cv.capture.step1', compact('curriculum'));
-    }
-
-    public function capture2(Request $request) {   
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        
-        $request->session()->put('previous_url', 'curricula.capture2');
-
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-        
-        return view('cv.capture.step2', compact('curriculum'));
-    }
-    
-    public function capture3(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home');
-        }
-
-        $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                                                    where('es_curso_tecnico', '=', true)->get();
-        $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                                                    where('es_curso_tecnico', '=', false)->get();
-                                                    
-        $request->session()->put('previous_url', 'curricula.capture3');
-
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-
-        return view('cv.capture.step3', 
-                    compact('technical_extracurricular_courses', 
-                            'extracurricular_teaching_courses',
-                            'curriculum'));
-    }
-
-    public function capture4(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-
-        $request->session()->put('previous_url', 'curricula.capture4');
-
-        return view('cv.capture.step4', compact('curriculum'));
-    }
-
-    public function capture5(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.capture5');
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-
-        return view('cv.capture.step5', 
-                    compact('subjects', 'curriculum'));
-    }
-
-    public function capture6(Request $request) {  
-        $user_id = Auth::user()->id;
-
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-
-        $request->session()->put('previous_url', 'curricula.capture6');
-
-        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
-
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-
-        return view('cv.capture.step6', 
-                    compact('previous_exp', 'curriculum'));
-    }
-
-    public function capture7(Request $request) {  
-        $user_id = Auth::user()->id;
-        
-        if(Gate::denies('capturar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-
-        $request->session()->put('previous_url', 'curricula.capture7');
-
-        // documento probatorio académico
-        $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', true)->get();
-        // documento probatorio no académico
-        $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', false)->get();
-        
-        $curriculum = $this->getOrCreateUserCurriculum($user_id, $request);
-
-        return view('cv.capture.step7', 
-                    compact('sd_aca', 'sd_naca', 'curriculum'));
+        return view('cv.capture.step'.$formNum, 
+                            compact('curriculum', 'element', 'formNum'));
     }
 
     /**
@@ -201,7 +87,7 @@ class CurriculumController extends Controller {
         
         $curriculum->update($validatedData);
 
-        return redirect(route($request->session()->get('previous_url')))
+        return redirect(route('curricula.capture', $request->session()->get('previous_url')))
                                  ->with('status', 'Información guardada con éxito.')
                                  ->with('status_color', 'success');
     }
@@ -213,7 +99,7 @@ class CurriculumController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) {   
+    public function show($id, $formNum) {   
         $curriculum = Curriculum::findOrFail($id);
 
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
@@ -225,122 +111,12 @@ class CurriculumController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        return view('cv.show.step1', compact('curriculum'));    
+        $element = $this->getFormElementShow($formNum, $curriculum->user_id);
+
+        return view('cv.show.step'.$formNum, 
+                        compact('curriculum', 'element', 'formNum'));    
     }
 
-    public function show2($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        return view('cv.show.step2', compact('curriculum')); 
-    
-    }
-
-    public function show3($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $technical_extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                where('es_curso_tecnico', '=', true)->get();
-        $extracurricular_teaching_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
-                where('es_curso_tecnico', '=', false)->get();
-                
-        return view('cv.show.step3', compact('curriculum', 'technical_extracurricular_courses'
-                                            , 'extracurricular_teaching_courses')); 
-    }
-
-    public function show4($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        return view('cv.show.step4', compact('curriculum')); 
-    }
-
-    public function show5($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-
-        return view('cv.show.step5', compact('curriculum', 'subjects')); 
-    }
-
-    public function show6($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
-
-        return view('cv.show.step6', compact('curriculum', 'previous_exp')); 
-    }
-
-    public function show7($id) {
-        $curriculum = Curriculum::findOrFail($id);
-
-        if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
-            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
-                                          ->with('status_color', 'danger');
-        }
-        if ($curriculum->status == 'en_proceso') {
-            return redirect()->back()->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
-                                          ->with('status_color', 'danger');
-        }
-
-        $user_id = $curriculum->user_id;
-
-        $sd_aca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', true)->get();
-        $sd_naca = SupportingDocument::where('user_id', '=', $user_id)->
-                                  where('es_documento_academico', '=', false)->get();
-
-        return view('cv.show.step7', compact('curriculum', 'sd_aca', 'sd_naca')); 
-    }
 
     /**
      * Descarga el currículum bajo este id, con los parámetros requeridos en
@@ -396,10 +172,9 @@ class CurriculumController extends Controller {
 
         // pendiente... mejro pasar de docx a html y luego a pdf
         if($validatedData['formato_descarga'] == "pdf") {
-            // hmm...
-            error_reporting(E_ALL ^ E_DEPRECATED);
 
-            \PhpOffice\PhpWord\Settings::setPdfRendererPath('../vendor/dompdf/dompdf');
+            $domPDFPath = base_path('vendor/dompdf/dompdf');
+            \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPDFPath);
             \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
 
             //Cargamos el archivo temporal... 
@@ -523,11 +298,10 @@ class CurriculumController extends Controller {
     }
 
     // Método auxiliar que verifica el estado actual de la captura del curriculum y lo cambia en la BD.
-    private function updateCVStatus($user_id, $request, $curriculum) {
+    private function updateCVStatus($user, $request, $curriculum) {
 
-        $previous_status = $curriculum->status;
-
-        // Esta lista nos ayuda a tener control sobre los formularios que ya han sido validados, y su porcentaje.
+        // Esta lista nos ayuda a tener control sobre los formularios que ya 
+        // han sido validados, y el porcentaje (para la barra de progreso).
         $completedList = $request->session()->get('completedList');
         
         if(empty($completedList)) {
@@ -536,74 +310,41 @@ class CurriculumController extends Controller {
                               'form7' => false, 'percentage' => 0];
         }
 
-        $completedList['percentage'] = 0;
-
-        // Esta es una forma muy poco elegante para validar que los formulario 1, 2 y 4
+        // Esta es una forma muy poco elegante para validar que los formulario 1 y 2 
         // están capturados... si esos campos ya están la base, significa que todas las
-        // validaciones de dicho formulario pasaron y por ende está capturado.
-        // Una alternativa podría ser tener en la base de datos un campo donde se lleve control
-        // de estas cosas, pero... aunque esto es menos elegante, funciona, y es simple.                                                                                                
+        // validaciones de dicho formulario pasaron y por ende está capturado.                                                                                              
         if($curriculum->fotografia) {
             $completedList['form1'] = true;
-            $completedList['percentage'] += 1/7; 
         }
 
         if($curriculum->estudios_carrera) {
             $completedList['form2'] = true;
-            $completedList['percentage'] += 1/7; 
         }
 
-        // Para los formularios 3, 5, 6 y 7, como son entidades "independientes" al CV, hay que revisar que hayan
-        // registros de cada una y así sabremos si esa parte del formuarlio ya está validada.
-        $extracurricular_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->get();
+        // Para los demás, basta con revisar que la relación exista para este usuario.
+        $completedList['form3'] = $user->extracurricularCourses()->exists();
+                        
+        $completedList['form4'] = $user->certifications()->exists();
 
-        if(!count($extracurricular_courses) > 0) {
-            $completedList['form3'] = false;
-        } else {
-            $completedList['form3'] = true;
-            $completedList['percentage'] += 1/7; 
-        }
+        $completedList['form5'] = $user->subjects()->exists();
 
-        if($curriculum->certificaciones_obtenidas) {
-            $completedList['form4'] = true;
-            $completedList['percentage'] += 1/7; 
-        } 
-
-        $subjects = Subject::where('user_id', '=', $user_id)->get();
-        if(!count($subjects) > 0) {
-            $completedList['form5'] = false;
-        } else {
-            $completedList['form5'] = true;
-            $completedList['percentage'] += 1/7; 
-        }
-
-        $pe = PreviousExperience::where('user_id', '=', $user_id)->get();
-        if(!count($pe) > 0) {
-            $completedList['form6'] = false;
-        } else {
-            $completedList['form6'] = true;
-            $completedList['percentage'] += 1/7; 
-        }
-
-        $sd = SupportingDocument::where('user_id', '=', $user_id)->get();
-        if(!count($sd) > 0) {
-            $completedList['form7'] = false;
-        } else {
-            $completedList['form7'] = true;
-            $completedList['percentage'] += 1/7; 
-        }
-
-        $completedList['percentage'] *= 100; 
+        $completedList['form6'] = $user->previousExperiences()->exists();
+        
+        $completedList['form7'] = $user->supportingDocuments()->exists();
 
         // Verificamos si todas los formularios ya están (o no) capturados
         if(in_array(false, $completedList)) {
-            $new_status = ['status' => 'en_proceso'];
+            if($curriculum->status != 'en_proceso') {
+                $curriculum->update(['status' => 'en_proceso']);
+            }
+            // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios.
+            $completedList['percentage'] = ($this->count_array_values($completedList, true)*100) / 7;
         } else {
-            $new_status = ['status' => 'completado'];
-        }
-        
-        if($previous_status !== $new_status['status']) {
-            $curriculum->update($new_status);
+            if($curriculum->status != 'completado') {
+                $curriculum->update(['status' => 'completado']);
+            }
+
+            $completedList['percentage'] = 100;
         }
 
         $request->session()->put('completedList', $completedList);
@@ -613,20 +354,93 @@ class CurriculumController extends Controller {
 
     // Método auxiliar que devuelve el curriculum del usuario indicado, si no existe, lo crea y guarda.
     // También manda a actualizar el status de éste.
-    private function getOrCreateUserCurriculum($user_id, $request) {
-        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
-        if(count($curriculum) == 0) {
+    private function getOrCreateUserCurriculum($user, $request) {
+        if(!$user->curriculum()->exists()) {
             $curriculum = new Curriculum();
-            $curriculum->user_id = $user_id;
+            $curriculum->user_id = $user->id;
             $curriculum->status = 'en_proceso';
             $curriculum->save();
 
             return $curriculum;
         }
         
-        $curriculum = $this->updateCVStatus($user_id, $request, $curriculum->first());
+        $curriculum = $this->updateCVStatus($user, $request, $user->curriculum()->first());
 
         return $curriculum;
     }
 
+    // Método auxiliar para contar el número de incidencias de una variable
+    // en un array.
+    private function count_array_values($array, $val)  { 
+        $count = 0; 
+        
+        foreach ($array as $key => $value) { 
+            if ($value === $val) { 
+                $count++; 
+            } 
+        } 
+        
+        return $count; 
+    } 
+
+    // Para vista CAPTURE: Según el formulario actual, nos devuelve el elemento solicitado.
+    private function getFormElementCapture($request, $num, $user) {
+        switch ($num) {
+            case 1:
+                // esta variable nos servirá para saber a donde redireccionar (tener la página anterior).
+                // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
+                // ya nunca nos regresa donde debería.
+                $request->session()->put('previous_url', 1);
+                break;
+
+            case 2:
+                $request->session()->put('previous_url', 2);
+                break;
+
+            case 3:
+                $request->session()->put('previous_url', 3);
+                return $user->extracurricularCourses()->get();
+
+            case 4:
+                $request->session()->put('previous_url', 4);
+                return $user->certifications()->get();
+
+            case 5:
+                $request->session()->put('previous_url', 5);
+                return $user->subjects()->get();
+
+            case 6:
+                $request->session()->put('previous_url', 6);
+                return $user->previousExperiences()->get();
+
+            case 7:
+                $request->session()->put('previous_url', 7);
+                return $user->supportingDocuments()->get();
+        }
+
+        return "No-elemento";
+    }
+
+    // Para vista SHOW
+    private function getFormElementShow($num, $user_id) {
+        $user = User::findOrFail($user_id);
+        switch ($num) {
+            case 3:
+                return $user->extracurricularCourses()->get();
+
+            case 4:
+                return $user->certifications()->get();
+
+            case 5:
+                return $user->subjects()->get();
+
+            case 6:
+                return $user->previousExperiences()->get();
+
+            case 7:
+                return $user->supportingDocuments()->get();
+        }
+
+        return "No-elemento";
+    }
 }

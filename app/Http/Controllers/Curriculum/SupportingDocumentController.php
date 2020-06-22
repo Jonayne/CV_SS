@@ -62,7 +62,7 @@ class SupportingDocumentController extends Controller {
        
         SupportingDocument::create($validation);
         
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El documento probatorio fue guardado con éxito.')
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->with('status', 'El documento probatorio fue guardado con éxito.')
                                                      ->with('status_color', 'success');
     }
 
@@ -113,8 +113,9 @@ class SupportingDocumentController extends Controller {
         
         $sd->update($validation);
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El documento probatorio fue actualizado con éxito.')
-                                                     ->with('status_color', 'success');
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
+                         ->with('status', 'El documento probatorio fue actualizado con éxito.')
+                         ->with('status_color', 'success');
     }
 
     /**
@@ -137,8 +138,9 @@ class SupportingDocumentController extends Controller {
         }
         $sd->delete();
 
-        return redirect()->route($request->session()->get('previous_url'))->with('status', 'El documento probatorio fue eliminado con éxito.')
-                                                     ->with('status_color', 'success');
+        return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->
+                                        with('status', 'El documento probatorio fue eliminado con éxito.')
+                                        ->with('status_color', 'success');
     }
 
     // Función auxiliar para determinar si este usuario está permitido

@@ -1,8 +1,8 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        <label class="required" for="nombre_doc">Nombre del documento</label>
-        <input type="text" id="nombre_doc" class="form-control" name="nombre_doc" value="{{ old('nombre_doc', $sd->nombre_doc)}}">
+        <label class="required" for="nombre">Nombre del documento</label>
+        <input type="text" id="nombre" class="form-control" name="nombre" value="{{ old('nombre', $sd->nombre)}}">
         <br>
 
         @if ($sd->documento)
@@ -34,7 +34,7 @@
         </select>
         <br><br>
         <div class="text-center">
-            <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
+            <a class="btn btn-dark btn-lg" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
             &nbsp;
             <button class="btn btn-success btn-lg" name="formNum" value="7" type="submit"> {{ $btnTxt }} </button>
         </div>

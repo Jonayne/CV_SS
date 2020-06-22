@@ -13,7 +13,7 @@
         <input type="text" id="sistema_operativo" class="form-control" name="sistema_operativo" value="{{old('sistema_operativo', $subject->sistema_operativo)}}">
         <br><br>
         <div class="text-center">
-            <a class="btn btn-dark btn-lg" href="{{route(session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
+            <a class="btn btn-dark btn-lg" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
             &nbsp;
             <button class="btn btn-success btn-lg" name="formNum" value="5" type="submit"> {{ $btnTxt }} </button>
         </div>  
