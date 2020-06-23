@@ -19,7 +19,8 @@
 
     <div class="container bg-primary text-black py-3">
         <div class="text-center">
-
+            <h2 class="text-secondary">Sólo se aceptan documentos probatorios con formato de imagen</h2>
+            <hr>
             <h3>Documentos probatorios académicos</h3>
             <p> Por anexar, copias de:</p>
             <ul>

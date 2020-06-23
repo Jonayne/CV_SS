@@ -51,9 +51,9 @@ class CurriculumFormRequest extends FormRequest {
                     "num_proveedor_UNAM" => "sometimes|nullable",
                     "num_autorizacion_de_impresion" => "sometimes|nullable",
                     "tipo_contratacion" => "required",
-                    "cursos_impartir_sdpc" => "sometimes|nullable",
                     "registro_secretaria_de_trabajo_y_prevision_social" => "sometimes|nullable",
-                    "ocupacion_actual" => "bail|required|string"
+                    "ocupacion_actual" => "bail|required|string",
+                    "cursos_impartir_sdpc" => "required_if:proyecto_sep,on",
                 ];
                 break;
             case 2:
@@ -100,7 +100,7 @@ class CurriculumFormRequest extends FormRequest {
                 return [
                     "nombre" => "required|string|max:255",
                     "es_documento_academico" => "required",
-                    "documento" => "required_without_all:edit|max:100000|mimes:doc,docx,dot,pdf,odt,odi,jpeg,bpm,jpg,png,jpe"
+                    "documento" => "required_without_all:edit|max:100000|mimes:jpeg,bmp,jpg,png,jpe,gif,tif,tiff,webp,svg"
                 ];
                 break;
             case "download":
@@ -179,8 +179,9 @@ class CurriculumFormRequest extends FormRequest {
             "actividades_principales.required" => "Una descripción de sus actividades principales es obligatoria",
             "es_documento_academico.required" => "Escoja el tipo de documento",
             "documento.max" => "El máximo de tamaño de archivo son 10mb",
-            "documento.mimes" => "Documento con formato incompatible",
+            "documento.mimes" => "Documento con formato incompatible. Por favor, asegúrese de subir una imagen.",
             "documento.required_without_all" => "Subir el documento es obligatorio",
+            "cursos_impartir_sdpc.required_if" => "Seleccionar los cursos a impartir para el SDPC es obligatorio cuando indica que participa en el Proyecto SEP."
         ];
     }
 }

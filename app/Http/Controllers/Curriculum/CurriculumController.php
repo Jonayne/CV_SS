@@ -31,20 +31,21 @@ class CurriculumController extends Controller {
     }
 
     /**
-     * xdd
-     *
+     * Método que devueive la vista núm $formNum con los datos capturados hasta el momento.
+     * 
+     * @param \Illuminate\Http\Request  $request
+     * @param int $formNum
      * @return \Illuminate\Http\Response
      */
     public function capture(Request $request, $formNum) {
-        $user = Auth::user();
-
-        // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar esto.
-        // También revisamos que el usuario no tenga capturado ya su cv.
+        // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar
+        // esta acción.
         if(Gate::denies('capturar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        
+        $user = Auth::user();
+
         $curriculum = $this->getOrCreateUserCurriculum($user, $request);
         $element = $this->getFormElementCapture($request, $formNum, $user);
 
@@ -70,7 +71,7 @@ class CurriculumController extends Controller {
         $curriculum = Curriculum::findOrFail($id);
 
         // Para la fotografía.
-        // La guardamos en nuestro sistema de archivos. En nuestra BD tendremos su hash.
+        // La guardamos en nuestro sistema de archivos. En nuestra BD tendremos su hashname.
         if($request->file('fotografia') ) {
             $hashName = $request->file('fotografia')->hashName();
 
@@ -92,11 +93,11 @@ class CurriculumController extends Controller {
                                  ->with('status_color', 'success');
     }
 
-        /**
-     * Muestra el i-ésimo formulario del curriculum bajo este id. 
-     *
-     * @param  \Illuminate\Http\Request  $request
+    /**
+     * Muestra el $formNum formulario del curriculum bajo este id. 
+     * 
      * @param  int  $id
+     * @param  int  $formNum
      * @return \Illuminate\Http\Response
      */
     public function show($id, $formNum) {   

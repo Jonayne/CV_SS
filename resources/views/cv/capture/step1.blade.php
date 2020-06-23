@@ -78,12 +78,12 @@
                                         <div class="col-md-2">
                                                 <label class="required" for="domicilio_num_ext">Número exterior</label>
                                                 <input type="text" name="domicilio_num_ext" id="domicilio_num_ext" class="form-control" placeholder="Núm. exterior" 
-                                                value="{{ old('domicilio_num_ext', $curriculum->domicilio_num_ext)}}">
+                                                        value="{{ old('domicilio_num_ext', $curriculum->domicilio_num_ext)}}">
                                         </div>
                                         <div class="col-md-2">
                                                 <label for="domicilio_num_int">Número interior</label>
                                                 <input type="text" name="domicilio_num_int" id="domicilio_num_int" class="form-control" placeholder="Núm. interior" 
-                                                value="{{ old('domicilio_num_int',$curriculum->domicilio_num_int)}}">
+                                                        value="{{ old('domicilio_num_int',$curriculum->domicilio_num_int)}}">
                                         </div>
                                 </div>
                                 <br>
@@ -91,17 +91,17 @@
                                         <div class="col-md-4">
                                                 <label class="required" for="domicilio_colonia">Colonia</label>
                                                 <input type="text" name="domicilio_colonia" id="domicilio_colonia" class="form-control" placeholder="Colonia" 
-                                                value="{{ old('domicilio_colonia',$curriculum->domicilio_colonia)}}">
+                                                        value="{{ old('domicilio_colonia',$curriculum->domicilio_colonia)}}">
                                         </div>
                                         <div class="col-md-4">
                                                 <label class="required" for="domicilio_cp">Código Postal</label>
                                                 <input type="text" name="domicilio_cp" id="domicilio_cp" class="form-control" placeholder="C.P" 
-                                                value="{{ old('domicilio_cp',$curriculum->domicilio_cp)}}">
+                                                        value="{{ old('domicilio_cp',$curriculum->domicilio_cp)}}">
                                         </div>
                                         <div class="col-md-4">
                                                 <label class="required" for="domicilio_delegacion">Delegación o Municipio</label>
                                                 <input type="text" name="domicilio_delegacion" id="domicilio_delegacion" class="form-control" placeholder="Delegación/Municipio" 
-                                                value="{{ old('domicilio_delegacion',$curriculum->domicilio_delegacion)}}">
+                                                        value="{{ old('domicilio_delegacion',$curriculum->domicilio_delegacion)}}">
                                         </div>        
                                 </div>
                         </div>
@@ -116,22 +116,22 @@
                                         <div class="col-md-3">
                                                 <label class="required" for="tel_casa">Teléfono de casa</label>
                                                 <input type="text" name="tel_casa" id="tel_casa" class="form-control" placeholder="Tél. casa" 
-                                                value="{{ old('tel_casa',$curriculum->tel_casa)}}">
+                                                        value="{{ old('tel_casa',$curriculum->tel_casa)}}">
                                         </div>
                                         <div class="col-md-3">   
                                                 <label class="required" for="tel_oficina">Teléfono de oficina</label>
                                                 <input type="text" name="tel_oficina" id="tel_oficina" class="form-control" placeholder="Tél. oficina" 
-                                                value="{{ old('tel_oficina',$curriculum->tel_oficina)}}">
+                                                        value="{{ old('tel_oficina',$curriculum->tel_oficina)}}">
                                         </div>
                                         <div class="col-md-3">     
                                                 <label class="required" for="tel_recado">Teléfono de recados</label>
                                                 <input type="text" name="tel_recado" id="tel_recado" class="form-control" placeholder="Tél. recados" 
-                                                value="{{ old('tel_recado',$curriculum->tel_recado)}}">
+                                                        value="{{ old('tel_recado',$curriculum->tel_recado)}}">
                                         </div>
                                         <div class="col-md-3">     
                                                 <label class="required" for="celular">Teléfono celular</label>      
                                                 <input type="text" name="celular" id="celular" class="form-control" placeholder="Tél. celular" 
-                                                value="{{ old('celular',$curriculum->celular)}}">
+                                                        value="{{ old('celular',$curriculum->celular)}}">
                                         </div>
                                 </div>
                         </div>
@@ -145,17 +145,17 @@
                                 <div class="col-md-4">  
                                         <label class="required" for="email_personal">Email personal</label>
                                         <input type="email" name="email_personal" id="email_personal" class="form-control" placeholder="Email personal" 
-                                        value="{{ old('email_personal',$curriculum->email_personal ?? auth()->user()->email)}}">
+                                                value="{{ old('email_personal',$curriculum->email_personal ?? auth()->user()->email)}}">
                                 </div>
                                 <div class="col-md-4">  
                                         <label for="email_cursos_linea">Email para cursos en línea</label>
                                         <input type="email" name="email_cursos_linea" id="email_cursos_linea" class="form-control" placeholder="Email para cursos en línea" 
-                                        value="{{ old('email_cursos_linea',$curriculum->email_cursos_linea)}}">
+                                                value="{{ old('email_cursos_linea',$curriculum->email_cursos_linea)}}">
                                 </div>
                                 <div class="col-md-4">        
                                         <label for="twitter">Twitter</label>
                                         <input type="text" name="twitter" id="twitter" class="form-control" placeholder="Twitter" 
-                                        value="{{ old('twitter',$curriculum->twitter)}}">
+                                                value="{{ old('twitter',$curriculum->twitter)}}">
                                 </div>
                         </div>        
                         <hr>
@@ -168,19 +168,19 @@
                         <div class="form-group">
                                 <label class="required" for="fecha_nacimiento">Fecha de nacimiento</label>
                                 <input type="date" name="fecha_nacimiento"  id="fecha_nacimiento" class="form-control text-center" 
-                                value="{{ old('fecha_nacimiento',$curriculum->fecha_nacimiento)}}">
+                                        value="{{ old('fecha_nacimiento',$curriculum->fecha_nacimiento)}}">
                         </div>        
                         <hr>
                         <div class="form-group form-row">
                                 <div class="col-md-6">  
                                         <label class="required" for="disponibilidad_horario">Disponibilidad de horario</label>
                                         <input type="text" name="disponibilidad_horario" id="disponibilidad_horario" class="form-control" placeholder="Disponibilidad de horario" 
-                                        value="{{ old('disponibilidad_horario',$curriculum->disponibilidad_horario)}}">
+                                                value="{{ old('disponibilidad_horario',$curriculum->disponibilidad_horario)}}">
                                 </div>
                                 <div class="col-md-6">  
                                         <label class="required" for="dias_disponibles">Días disponibles</label>
                                         <input type="text" name="dias_disponibles" id="dias_disponibles" class="form-control" placeholder="Días disponibles" 
-                                        value="{{ old('dias_disponibles',$curriculum->dias_disponibles)}}">
+                                                value="{{ old('dias_disponibles',$curriculum->dias_disponibles)}}">
                                 </div>
                         </div>
                         <hr>
@@ -192,35 +192,35 @@
                         <div class="form-group">
                                 <label class="required" for="nacionalidad">Nacionalidad</label>
                                 <input type="text" name="nacionalidad" id="nacionalidad" class="form-control" placeholder="Nacionalidad" 
-                                value="{{ old('nacionalidad',$curriculum->nacionalidad)}}">
+                                        value="{{ old('nacionalidad',$curriculum->nacionalidad)}}">
                                 <br>
                                 <div class="form-row">
                                         <div class="col-md-6">
                                                 <label class="required" for="rfc">RFC con homoclave</label>     
                                                 <input type="text" name="rfc" id="rfc" class="form-control" placeholder="RFC" 
-                                                value="{{ old('rfc',$curriculum->rfc)}}">
+                                                        value="{{ old('rfc',$curriculum->rfc)}}">
                                         </div>
                                         <div class="col-md-6">   
                                                 <label class="required" for="curp">CURP</label>
                                                 <input type="text" name="curp" id="curp" class="form-control" placeholder="CURP" 
-                                                value="{{ old('curp',$curriculum->curp)}}">
+                                                        value="{{ old('curp',$curriculum->curp)}}">
                                         </div>
                                 </div>
                                 <br>
                                 <label class="required" for="num_ife">Número IFE</label>
                                 <input type="text" name="num_ife" id="num_ife" class="form-control" placeholder="Núm. IFE" 
-                                value="{{ old('num_ife',$curriculum->num_ife)}}">
+                                        value="{{ old('num_ife',$curriculum->num_ife)}}">
                                 <br>
                                 <div class="form-row">
                                         <div class="col-md-6">  
                                                 <label for="num_proveedor_UNAM">Número de proveedor de la UNAM (sólo si entrega factura)</label>
                                                 <input type="text" name="num_proveedor_UNAM" id="num_proveedor_UNAM" class="form-control" placeholder="Núm. de proveedor de la UNAM" 
-                                                value="{{ old('num_proveedor_UNAM',$curriculum->num_proveedor_UNAM)}}">
+                                                        value="{{ old('num_proveedor_UNAM',$curriculum->num_proveedor_UNAM)}}">
                                         </div>
                                         <div class="col-md-6">       
                                                 <label for="num_autorizacion_de_impresion">Número de autorización de impresión (SICOFI)</label>
                                                 <input type="text" name="num_autorizacion_de_impresion" id="num_autorizacion_de_impresion" class="form-control" placeholder="Núm. de autorización de impresión" 
-                                                value="{{ old('num_autorizacion_de_impresion',$curriculum->num_autorizacion_de_impresion)}}">
+                                                        value="{{ old('num_autorizacion_de_impresion',$curriculum->num_autorizacion_de_impresion)}}">
                                         </div>
                                 </div>
                                 <label class="required" for="tipo_contratacion">Tipo de contratación</label>
@@ -241,17 +241,25 @@
                                 
                                 <label class="required" for="ocupacion_actual">Ocupación actual</label>
                                 <input type="text" name="ocupacion_actual" id="ocupacion_actual" class="form-control" placeholder="Ocupación actual" 
-                                value="{{ old('ocupacion_actual',$curriculum->ocupacion_actual)}}">
+                                        value="{{ old('ocupacion_actual',$curriculum->ocupacion_actual)}}">
                                 
                                 <hr>
-                                
+                                <h3 class="text-secondary text-center font-weight-bold"> Sólo para participantes de proyecto SEP </h3>
+                                <div class="form-check text-center mb-3">
+                                        <label class="form-check-label">
+                                                <input type="checkbox" name="proyecto_sep" class="form-check-input" 
+                                                                {{old('proyecto_sep') ? 'checked' : ''}}>
+                                                Participo
+                                        </label>
+                                </div>
+
                                 <label for="registro_secretaria_de_trabajo_y_prevision_social">Registro ante la Secretaría del Trabajo y Previsión Social</label>
                                 <input type="text" name="registro_secretaria_de_trabajo_y_prevision_social" id="registro_secretaria_de_trabajo_y_prevision_social" class="form-control" placeholder="Registro ante la STPS" 
-                                value="{{ old('registro_secretaria_de_trabajo_y_prevision_social',$curriculum->registro_secretaria_de_trabajo_y_prevision_social)}}">
-                                
+                                        value="{{ old('registro_secretaria_de_trabajo_y_prevision_social',$curriculum->registro_secretaria_de_trabajo_y_prevision_social)}}">
+                                {{-- TO-DO: Hacer que sea un multi-select con los temas que me había dado Nidia. --}}
                                 <label class="required" for="cursos_impartir_sdpc">Cursos a Impartir para el SDPC (Nombre del curso SEP)</label>
                                 <input type="text" name="cursos_impartir_sdpc" id="cursos_impartir_sdpc" class="form-control" placeholder="Nombres de cursos a impartir para el SDPC" 
-                                value="{{ old('cursos_impartir_sdpc',$curriculum->cursos_impartir_sdpc)}}">
+                                        value="{{ old('cursos_impartir_sdpc',$curriculum->cursos_impartir_sdpc)}}">
                         </div>
                         <hr>
                         <div class="text-center">
