@@ -22,7 +22,7 @@
             <br>
             <h3>Cursos técnicos</h3>
             <ul class="list-group list-group-flush">
-                @forelse ($technical_extracurricular_courses as $course)
+                @forelse ($element['curso_tecnico'] as $course)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                             <b>Nombre:</b>
                             <span class="text-info font-weight-bold">
@@ -49,7 +49,7 @@
             <h3>Cursos de formación docente</h3>
             <ul class="list-group list-group-flush">
 
-                @forelse ($extracurricular_teaching_courses as $course)
+                @forelse ($element['curso_docente'] as $course)
                     
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre:</b>

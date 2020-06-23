@@ -20,10 +20,8 @@
         <div class="text-center">
             <br>
             <ul class="list-group list-group-flush">
-                @forelse ($certifications as $cert)
+                @forelse ($element as $cert)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
-                        <br>
-                        
                         <b>Modalidad:</b>
                         <span class="text-info font-weight-bold">
                              {{ $cert->modalidad }}

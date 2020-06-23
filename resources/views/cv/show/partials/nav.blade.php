@@ -2,7 +2,7 @@
     <nav class="navbar navbar-light navbar-expand-lg bg-primary shadow-sm">
         <ul class="nav nav-pills nav-fill justify-content-center">
             <li class="nav-item">
-                <a href="{{route('curricula.show', array($curriculum->id, $formNum))}}" 
+                <a href="{{route('curricula.show', array($curriculum->id, 1))}}" 
                     class="nav-link {{ $formNum == 1 ? 'active' : ''}}">
                     <b>Datos personales</b></a></li>
             <li class="nav-item">

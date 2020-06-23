@@ -22,7 +22,7 @@
 
             <h3>Documentos probatorios académicos</h3>
             <ul class="list-group list-group-flush">
-                @forelse ($sd_aca as $sd)
+                @forelse ($element['academicos'] as $sd)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">
@@ -55,7 +55,7 @@
 
             <h3> Documentos probatorios personales </h3>
             <ul class="list-group list-group-flush">
-                @forelse ($sd_naca as $sd)
+                @forelse ($element['personales'] as $sd)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">

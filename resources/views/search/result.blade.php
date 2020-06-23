@@ -33,7 +33,7 @@
                                 Estado del currículum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
                             </a>
                         @else
-                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show1', $user->id)}}">
+                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show', array($user->id, 1))}}">
                                 Nombre completo: <strong>{{formatName($user)}}</strong><br>
                                 Email personal: <strong>{{$user->email}}</strong><br>
                                 CURP: <strong>{{$user->curp}}</strong><br>

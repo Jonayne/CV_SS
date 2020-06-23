@@ -333,7 +333,7 @@ class CurriculumController extends Controller {
         $completedList['form7'] = $user->supportingDocuments()->exists();
 
         // Verificamos si todas los formularios ya están (o no) capturados
-        if(in_array(false, $completedList)) {
+        if(in_array(false, $completedList, true)) {
             if($curriculum->status != 'en_proceso') {
                 $curriculum->update(['status' => 'en_proceso']);
             }
@@ -399,7 +399,12 @@ class CurriculumController extends Controller {
 
             case 3:
                 $request->session()->put('previous_url', 3);
-                return $user->extracurricularCourses()->get();
+                $curso_tecnico = $user->extracurricularCourses()
+                                      ->where('es_curso_tecnico', '=', true)->get();
+                $curso_docente = $user->extracurricularCourses()
+                                      ->where('es_curso_tecnico', '=', false)->get();
+                return ['curso_tecnico' => $curso_tecnico, 
+                        'curso_docente' => $curso_docente];
 
             case 4:
                 $request->session()->put('previous_url', 4);
@@ -415,7 +420,12 @@ class CurriculumController extends Controller {
 
             case 7:
                 $request->session()->put('previous_url', 7);
-                return $user->supportingDocuments()->get();
+                $personales = $user->supportingDocuments()
+                                   ->where('es_documento_academico', '=', false)->get();
+                $academicos = $user->supportingDocuments()
+                                   ->where('es_documento_academico', '=', true)->get();
+                return ['personales' => $personales, 
+                        'academicos' => $academicos];
         }
 
         return "No-elemento";
@@ -426,7 +436,12 @@ class CurriculumController extends Controller {
         $user = User::findOrFail($user_id);
         switch ($num) {
             case 3:
-                return $user->extracurricularCourses()->get();
+                $curso_tecnico = $user->extracurricularCourses()
+                                      ->where('es_curso_tecnico', '=', true)->get();
+                $curso_docente = $user->extracurricularCourses()
+                                      ->where('es_curso_tecnico', '=', false)->get();
+                return ['curso_tecnico' => $curso_tecnico, 
+                        'curso_docente' => $curso_docente];
 
             case 4:
                 return $user->certifications()->get();
@@ -438,7 +453,12 @@ class CurriculumController extends Controller {
                 return $user->previousExperiences()->get();
 
             case 7:
-                return $user->supportingDocuments()->get();
+                $personales = $user->supportingDocuments()
+                                   ->where('es_documento_academico', '=', false)->get();
+                $academicos = $user->supportingDocuments()
+                                   ->where('es_documento_academico', '=', true)->get();
+                return ['personales' => $personales, 
+                        'academicos' => $academicos];
         }
 
         return "No-elemento";

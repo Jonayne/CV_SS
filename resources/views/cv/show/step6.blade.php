@@ -21,7 +21,7 @@
         <div class="text-center">
             <br>
             <ul class="list-group list-group-flush">
-                @forelse ($previous_exp as $pe)
+                @forelse ($element as $pe)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <br>
                         
