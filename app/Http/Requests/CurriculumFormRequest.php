@@ -54,6 +54,7 @@ class CurriculumFormRequest extends FormRequest {
                     "registro_secretaria_de_trabajo_y_prevision_social" => "sometimes|nullable",
                     "ocupacion_actual" => "bail|required|string",
                     "cursos_impartir_sdpc" => "required_if:proyecto_sep,on",
+                    "proyecto_sep" => "sometimes"
                 ];
                 break;
             case 2:
@@ -93,13 +94,13 @@ class CurriculumFormRequest extends FormRequest {
                     "periodo" => "bail|required|string|max:255",
                     "institucion" => "bail|required|string|max:255",
                     "cargo" => "bail|required|string|max:255",
-                    "actividades_principales" => "required|string|max:255"
+                    "actividades_principales" => "required|string|max:255",
+                    "curso_sep" => "required_if:sep,on"
                 ];
                 break;
             case 7:
                 return [
-                    "nombre" => "required|string|max:255",
-                    "es_documento_academico" => "required",
+                    "nombre" => "required",
                     "documento" => "required_without_all:edit|max:100000|mimes:jpeg,bmp,jpg,png,jpe,gif,tif,tiff,webp,svg"
                 ];
                 break;
@@ -181,7 +182,8 @@ class CurriculumFormRequest extends FormRequest {
             "documento.max" => "El máximo de tamaño de archivo son 10mb",
             "documento.mimes" => "Documento con formato incompatible. Por favor, asegúrese de subir una imagen.",
             "documento.required_without_all" => "Subir el documento es obligatorio",
-            "cursos_impartir_sdpc.required_if" => "Seleccionar los cursos a impartir para el SDPC es obligatorio cuando indica que participa en el Proyecto SEP."
+            "cursos_impartir_sdpc.required_if" => "Seleccionar los cursos a impartir para el SDPC es obligatorio cuando indica que participa en el Proyecto SEP.",
+            "curso_sep.required_if" => "Por favor, indique el nombre del curso SEP."
         ];
     }
 }

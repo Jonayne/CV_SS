@@ -223,19 +223,20 @@
                                                         value="{{ old('num_autorizacion_de_impresion',$curriculum->num_autorizacion_de_impresion)}}">
                                         </div>
                                 </div>
+                                <br>
                                 <label class="required" for="tipo_contratacion">Tipo de contratación</label>
                                 <select class="form-control" name="tipo_contratacion" id="tipo_contratacion">
-                                @if (( old('tipo_contratacion',$curriculum->tipo_contratacion)) == 'UNAM')
-                                        <option value="UNAM" selected>UNAM</option>
-                                        <option value="Externo">Externo</option>
-                                @elseif(( old('tipo_contratacion',$curriculum->tipo_contratacion)) == 'Externo')
-                                        <option value="UNAM">UNAM</option>
-                                        <option value="Externo" selected>Externo</option>
-                                @else
-                                        <option value="" selected>Escoger...</option>
-                                        <option value="UNAM">UNAM</option>
-                                        <option value="Externo">Externo</option>
-                                @endif
+                                        @if (( old('tipo_contratacion',$curriculum->tipo_contratacion)) == 'UNAM')
+                                                <option value="UNAM" selected>UNAM</option>
+                                                <option value="Externo">Externo</option>
+                                        @elseif(( old('tipo_contratacion',$curriculum->tipo_contratacion)) == 'Externo')
+                                                <option value="UNAM">UNAM</option>
+                                                <option value="Externo" selected>Externo</option>
+                                        @else
+                                                <option value="" selected>Escoger...</option>
+                                                <option value="UNAM">UNAM</option>
+                                                <option value="Externo">Externo</option>
+                                        @endif
                                 </select>
                                 <br>
                                 
@@ -247,19 +248,33 @@
                                 <h3 class="text-secondary text-center font-weight-bold"> Sólo para participantes de proyecto SEP </h3>
                                 <div class="form-check text-center mb-3">
                                         <label class="form-check-label">
-                                                <input type="checkbox" name="proyecto_sep" class="form-check-input" 
-                                                                {{old('proyecto_sep') ? 'checked' : ''}}>
-                                                Participo
+                                                <input type="checkbox" name="proyecto_sep" id="proyecto_sep" class="form-check-input"
+                                                     {{old('proyecto_sep', $curriculum->proyecto_sep) 
+                                                        || old('cursos_impartir_sdpc', $curriculum->cursos_impartir_sdpc)
+                                                        || old('registro_secretaria_de_trabajo_y_prevision_social', $curriculum->registro_secretaria_de_trabajo_y_prevision_social) ? 
+                                                                'checked=true' : ''}}>
+                                                Participo en Proyecto SEP
                                         </label>
                                 </div>
 
                                 <label for="registro_secretaria_de_trabajo_y_prevision_social">Registro ante la Secretaría del Trabajo y Previsión Social</label>
                                 <input type="text" name="registro_secretaria_de_trabajo_y_prevision_social" id="registro_secretaria_de_trabajo_y_prevision_social" class="form-control" placeholder="Registro ante la STPS" 
                                         value="{{ old('registro_secretaria_de_trabajo_y_prevision_social',$curriculum->registro_secretaria_de_trabajo_y_prevision_social)}}">
-                                {{-- TO-DO: Hacer que sea un multi-select con los temas que me había dado Nidia. --}}
-                                <label class="required" for="cursos_impartir_sdpc">Cursos a Impartir para el SDPC (Nombre del curso SEP)</label>
-                                <input type="text" name="cursos_impartir_sdpc" id="cursos_impartir_sdpc" class="form-control" placeholder="Nombres de cursos a impartir para el SDPC" 
-                                        value="{{ old('cursos_impartir_sdpc',$curriculum->cursos_impartir_sdpc)}}">
+                                
+                                <br>
+                                <label class="required" for="cursos_impartir_sdpc">Cursos a Impartir para el SDPC (Nombre del curso SEP)</label> 
+                                <select class="form-control" name="cursos_impartir_sdpc[]" id="cursos_impartir_sdpc" aria-describedby="nombre_cursos_help_block" multiple>
+                                        @foreach ($element as $curso)
+                                            <option value="{{$curso}}"
+                                                @if (old('cursos_impartir_sdpc', $curriculum->cursos_impartir_sdpc))
+                                                    {{ in_array($curso, old('cursos_impartir_sdpc', explode(',',$curriculum->cursos_impartir_sdpc))) ?
+                                                                 'selected' : '' }}
+                                                @endif
+                                            >{{$curso}}</option>
+                                        @endforeach
+                                </select>
+                                <small id="nombre_cursos_help_block" class="form-text text-muted">TIP: Para seleccionar varios cursos, 
+                                        presiona la tecla <b>control (CTRL)</b>. </small>
                         </div>
                         <hr>
                         <div class="text-center">

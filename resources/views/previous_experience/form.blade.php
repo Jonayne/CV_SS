@@ -12,11 +12,32 @@
         <br>
         <label class="required" for="actividades_principales">Actividades principales</label>
         <textarea id="actividades_principales" class="form-control" name="actividades_principales">{{old('actividades_principales', $pe->actividades_principales)}}</textarea>
+        
+        @if (isset($curriculum->proyecto_sep) && $curriculum->proyecto_sep)
+            <hr>
+            <h3 class="text-secondary text-center font-weight-bold"> Participantes de proyecto SEP </h3>
+            <h5 class="text-black text-center font-weight-italic"> Si la experiencia antes descrita cuenta como <b>Experiencia en capacitación</b> en algún curso de la SEP,<br> por favor active la siguiente casilla e indique el nombre del curso</h5><br>
+
+            <div class="form-check text-center mb-3">
+                <label class="form-check-label">
+                        <input type="checkbox" name="sep" id="sep" class="form-check-input"
+                             {{old('sep') 
+                                || $pe->curso_sep ? 
+                                        'checked=true' : ''}}>
+                        Esta experiencia cuenta como <b>Experiencia en capacitación</b>
+                </label>
+            </div>
+        
+            <label class="required" for="curso_sep">Nombre del curso SEP</label>
+            {{-- TODO: Hacer un select con la listota de cursos CEP --}}
+            <input type="text" id="curso_sep" name="curso_sep" class="form-control" value="{{old('curso_sep', $pe->curso_sep)}}">            
+        @endif
+
+        <hr>
     </div>
     <div class="text-center">
-        <a class="btn btn-dark btn-lg" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
-        &nbsp;
-        <button class="btn btn-success btn-lg" name="formNum" value="6" type="submit"> {{ $btnTxt }} </button>
+        <a class="btn btn-dark btn-lg mt-5 mr-2" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
+        <button class="btn btn-success btn-lg mt-5" name="formNum" value="6" type="submit"> {{ $btnTxt }} </button>
     </div>
 </div>
 

@@ -17,6 +17,7 @@ class CreatePreviousExperiencesTable extends Migration {
             $table->string('institucion');
             $table->string('cargo');
             $table->text('actividades_principales');
+            $table->string('curso_sep')->nullable();
             $table->timestamps();
         });
     }

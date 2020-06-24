@@ -1,9 +1,25 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        {{-- TO-DO: Hacer que sea un select --}}
-        <label class="required" for="nombre">Nombre del documento</label>
-        <input type="text" id="nombre" class="form-control" name="nombre" value="{{ old('nombre', $sd->nombre)}}">
+        
+        <label class="required" for="nombre">Documento</label>
+        <select class="form-control" name="nombre" id="nombre">
+            @if (!old('nombre', $sd->documento))
+                <option value="" selected>Seleccionar</option>
+                @foreach ($nombres_docs as $item)
+                    <option value="{{$item}}"> {{$item}} </option>
+                @endforeach
+            @else
+                @foreach ($nombres_docs as $item)
+                    <option value="{{$item}}" 
+                    @if (old('nombre', $sd->documento) == $item)
+                        selected
+                    @endif>
+                    {{$item}}</option>
+                @endforeach
+            @endif
+        </select>
+
         <br>
 
         @if ($sd->documento)
@@ -17,22 +33,7 @@
             <label class="required" for="documento">Subir documento</label>  
             <input type="file" id="documento" class="form-control-file" name="documento">  
         @endif
-        <br>
 
-        <label class="required" for="es_documento_academico">Tipo de documento</label>
-        <select id="es_documento_academico" name="es_documento_academico" class="form-control">
-            @if(!isset($sd->es_documento_academico))
-                <option value="" selected>Escoger...</option>
-                <option value="true">Documento probatorio académico</option>
-                <option value="false">Documento probatorio personal</option>
-            @elseif($sd->es_documento_academico)
-                <option value="true" selected>Documento probatorio académico</option>
-                <option value="false">Documento probatorio personal</option>
-            @else
-                <option value="true">Documento probatorio académico</option>
-                <option value="false" selected>Documento probatorio personal</option>
-            @endif
-        </select>
         <br><br>
         <div class="text-center">
             <a class="btn btn-dark btn-lg" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>

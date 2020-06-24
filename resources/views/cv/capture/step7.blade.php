@@ -24,10 +24,10 @@
             <h3>Documentos probatorios académicos</h3>
             <p> Por anexar, copias de:</p>
             <ul>
-                <li><b>Título</b></li>
-                <li><b>Cédula profesional o historial académico</b></li>
+                <li><b>Título y cédula profesional o historial académico</b></li>
                 <li><b>Comprobantes de cursos técnicos</b></li>
                 <li><b>Comprobantes de cursos de formación docente</b></li>
+                <li><b>(Proyecto SEP) Comprobante por impartir curso de la SEP</b></li>
             </ul>
             <ul class="list-group list-group-flush">
                 @forelse ($element['academicos'] as $sd)

@@ -70,6 +70,11 @@ class CurriculumController extends Controller {
 
         $curriculum = Curriculum::findOrFail($id);
 
+        // Si estamos capturando la lista de cursos SEP, la pasamos a una cadena y asi la guardamos.
+        if(array_key_exists('cursos_impartir_sdpc', $validatedData)) {
+            $validatedData['cursos_impartir_sdpc'] = implode(',', $validatedData['cursos_impartir_sdpc']);
+        }
+
         // Para la fotografía.
         // La guardamos en nuestro sistema de archivos. En nuestra BD tendremos su hashname.
         if($request->file('fotografia') ) {
@@ -388,11 +393,31 @@ class CurriculumController extends Controller {
     private function getFormElementCapture($request, $num, $user) {
         switch ($num) {
             case 1:
+                $lista_nombres_cursos = [
+                    "Automatización de Documentos para la Oficina",
+                    "Conoce tu Computadora",
+                    "Combinación de Herramientas para Elaborar Informes",
+                    "Elaboración de Diagramas para la Oficina",
+                    "Estadísticas con Excel",
+                    "Elaboración de Formatos de Oficina con Word",
+                    "Herramientas de TIC para Incrementar la Productividad",
+                    "Módulo Básico de Cómputo con Internet y Windows",
+                    "Módulo de Excel (Básico – Avanzado)",
+                    "Módulo de Herramientas Contables y Administrativas",
+                    "Módulo de Word (Básico – Avanzado)",
+                    "Procesamiento y Manejo de Información con Word y Excel",
+                    "Primeros Pasos en la Internet",
+                    "Seguridad en el Manejo de Equipos de Cómputo",
+                    "Taller de Actualización Profesional en TIC",
+                    "Trabajo Colaborativo en la Nube",
+                    "Taller de Elaboración de Reportes con Excel",
+                    "Taller de Presentaciones Electrónicas Efectivas"
+                ];
                 // esta variable nos servirá para saber a donde redireccionar (tener la página anterior).
                 // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
                 // ya nunca nos regresa donde debería.
                 $request->session()->put('previous_url', 1);
-                break;
+                return $lista_nombres_cursos;
 
             case 2:
                 $request->session()->put('previous_url', 2);
@@ -436,6 +461,27 @@ class CurriculumController extends Controller {
     private function getFormElementShow($num, $user_id) {
         $user = User::findOrFail($user_id);
         switch ($num) {
+            case 1:
+                return [
+                    "Automatización de Documentos para la Oficina",
+                    "Conoce tu Computadora",
+                    "Combinación de Herramientas para Elaborar Informes",
+                    "Elaboración de Diagramas para la Oficina",
+                    "Estadísticas con Excel",
+                    "Elaboración de Formatos de Oficina con Word",
+                    "Herramientas de TIC para Incrementar la Productividad",
+                    "Módulo Básico de Cómputo con Internet y Windows",
+                    "Módulo de Excel (Básico – Avanzado)",
+                    "Módulo de Herramientas Contables y Administrativas",
+                    "Módulo de Word (Básico – Avanzado)",
+                    "Procesamiento y Manejo de Información con Word y Excel",
+                    "Primeros Pasos en la Internet",
+                    "Seguridad en el Manejo de Equipos de Cómputo",
+                    "Taller de Actualización Profesional en TIC",
+                    "Trabajo Colaborativo en la Nube",
+                    "Taller de Elaboración de Reportes con Excel",
+                    "Taller de Presentaciones Electrónicas Efectivas"
+                ];
             case 3:
                 $curso_tecnico = $user->extracurricularCourses()
                                       ->where('es_curso_tecnico', '=', true)->get();

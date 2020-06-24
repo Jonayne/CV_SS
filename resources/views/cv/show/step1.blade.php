@@ -197,15 +197,27 @@
                                 <input type="text" name="ocupacion_actual" id="ocupacion_actual" class="form-control" placeholder="Ocupación actual" 
                                 value="{{$curriculum->ocupacion_actual}}">
                                 
-                                <hr>
                                 
-                                <label for="registro_secretaria_de_trabajo_y_prevision_social">Registro ante la Secretaría del Trabajo y Previsión Social</label>
-                                <input type="text" name="registro_secretaria_de_trabajo_y_prevision_social" id="registro_secretaria_de_trabajo_y_prevision_social" class="form-control" placeholder="Registro ante la STPS" 
-                                value="{{$curriculum->registro_secretaria_de_trabajo_y_prevision_social}}">
+                                @if ($curriculum->proyecto_sep)
+                                        <hr>
+                                        <h3 class="text-secondary text-center font-weight-bold"> Participa en proyecto SEP </h3>
+                                        <label for="registro_secretaria_de_trabajo_y_prevision_social">Registro ante la Secretaría del Trabajo y Previsión Social</label>
+                                        <input type="text" name="registro_secretaria_de_trabajo_y_prevision_social" id="registro_secretaria_de_trabajo_y_prevision_social" class="form-control" placeholder="Registro ante la STPS" 
+                                                value="{{$curriculum->registro_secretaria_de_trabajo_y_prevision_social}}">
+                                        <br>
+                                        <label class="required" for="cursos_impartir_sdpc">Cursos a Impartir para el SDPC (Nombre del curso SEP)</label> 
+                                        <select class="form-control" name="cursos_impartir_sdpc[]" id="cursos_impartir_sdpc" aria-describedby="nombre_cursos_help_block" multiple>
+                                                @foreach ($element as $curso)
+                                                <option value="{{$curso}}"
+                                                        @if ($curriculum->cursos_impartir_sdpc)
+                                                        {{ in_array($curso, explode(',',$curriculum->cursos_impartir_sdpc)) ?
+                                                                        'selected' : '' }}
+                                                        @endif
+                                                >{{$curso}}</option>
+                                                @endforeach
+                                        </select>
+                                @endif
                                 
-                                <label for="cursos_impartir_sdpc">Cursos a Impartir para el SDPC (Nombre del curso SEP)</label>
-                                <input type="text" name="cursos_impartir_sdpc" id="cursos_impartir_sdpc" class="form-control" placeholder="Nombres de cursos a impartir para el SDPC" 
-                                value="{{$curriculum->cursos_impartir_sdpc}}">
                         </div>
                         <hr>
                 </fieldset>

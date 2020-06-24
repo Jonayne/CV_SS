@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Curriculum;
 
+use App\Curriculum;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CurriculumFormRequest;
@@ -31,9 +32,13 @@ class PreviousExperienceController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-        
+        $user_id = Auth::user()->id;
+        $curriculum = Curriculum::select('proyecto_sep')->where('user_id', '=', $user_id)->
+                                    where('proyecto_sep', '=', true)->get()->first();
+
         return view('previous_experience.create', 
-                        ['pe' => new PreviousExperience()]);
+                        ['pe' => new PreviousExperience(),
+                        'curriculum' => $curriculum]);
     
     }
 
@@ -69,10 +74,12 @@ class PreviousExperienceController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-
+        // TO-DO Seguir con esto y ps dejarlo chido
+        $user_id = Auth::user()->id;
         $pe = PreviousExperience::findOrFail($id);
+        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
 
-        return view('previous_experience.edit', compact('pe'));
+        return view('previous_experience.edit', compact('pe', 'curriculum'));
     }
 
     /**

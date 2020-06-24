@@ -49,9 +49,9 @@ class CreateCurriculaTable extends Migration {
             $table->string('tel_casa')->nullable();
             $table->string('tel_oficina')->nullable();
             $table->string('tel_recado')->nullable();
-            $table->string('proyecto_SEP')->nullable();
+            $table->boolean('proyecto_sep')->nullable();
             $table->string('registro_secretaria_de_trabajo_y_prevision_social')->nullable();
-            $table->string('cursos_impartir_sdpc')->nullable();
+            $table->text('cursos_impartir_sdpc')->nullable();
             $table->string('cedula_profesional')->nullable();
             $table->string('status');
         });

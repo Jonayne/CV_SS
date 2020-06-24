@@ -44,7 +44,14 @@
                         <b>Actividades principales:</b>
                         <p class=" p-2 mb-2 text-info font-weight-bold text-center text-break">
                             {{ $pe->actividades_principales }} 
-                        </p>
+                        </p><br>
+
+                        @if ($pe->curso_sep)
+                            <b>Nombre curso SEP:</b>
+                            <span class="text-info font-weight-bold">
+                                {{ $pe->curso_sep }} 
+                            </span>
+                        @endif
                     </li>
                 @empty
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">

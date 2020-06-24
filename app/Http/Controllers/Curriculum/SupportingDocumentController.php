@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Storage;
 
 class SupportingDocumentController extends Controller {
 
+    protected $nombres_docs = ['Título', 'Cédula profesional', 'Historial académico',
+                                'Comprobante de curso técnico', 'Comprobante de curso de formación docente',
+                                '(Proyecto SEP) Comprobante por impartir curso de la SEP',
+                                'Constancia de situación fiscal', 'CURP', 'IFE', 
+                                '(Personal de la UNAM) Último talón de pago'];
     /**
      * Create a new controller instance.
      *
@@ -33,9 +38,12 @@ class SupportingDocumentController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
+
         
+
         return view('supporting_document.create', 
-                        ['sd' => new SupportingDocument()]);
+                        ['sd' => new SupportingDocument(), 
+                          'nombres_docs' => $this->nombres_docs]);
     }
 
     /**
@@ -52,6 +60,13 @@ class SupportingDocumentController extends Controller {
 
         $user_id = Auth::user()->id;
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
+
+        $es_documento_academico = in_array($validation['nombre'], ['Título', 'Cédula profesional', 
+                                                                   'Historial académico', 'Comprobante de curso técnico', 
+                                                                   'Comprobante de curso de formación docente', 
+                                                                   '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
+
+        $validation = Arr::add($validation, 'es_documento_academico', $es_documento_academico);
 
         if($request->file('documento') ) {
             $hashName = $request->file('documento')->hashName();
@@ -80,7 +95,9 @@ class SupportingDocumentController extends Controller {
 
         $sd = SupportingDocument::findOrFail($id);
 
-        return view('supporting_document.edit', compact('sd'));
+        $nombres_docs = $this->nombres_docs;
+        
+        return view('supporting_document.edit', compact('sd', 'nombres_docs'));
     }
 
     /**
@@ -110,7 +127,12 @@ class SupportingDocumentController extends Controller {
             $path = $request->file('documento')->store('public/supporting_documents');
             $validation['documento'] = $hashName;
         }
-        
+
+        $validation['es_documento_academico'] = in_array($validation['nombre'], ['Título', 'Cédula profesional', 
+                                                                   'Historial académico', 'Comprobante de curso técnico', 
+                                                                   'Comprobante de curso de formación docente', 
+                                                                   '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
+
         $sd->update($validation);
 
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
