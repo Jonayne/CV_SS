@@ -5,8 +5,8 @@
         <input type="text" id="modalidad" name="modalidad" class="form-control" value="{{ old('modalidad', $certification->modalidad)}}">
         <br>
 
-        <label class="required" for="nombre">Nombre de certificación</label>
-        <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre', $certification->nombre)}}">
+        <label class="required" for="nombre_cert">Nombre de certificación</label>
+        <input type="text" id="nombre_cert" name="nombre_cert" class="form-control" value="{{ old('nombre_cert', $certification->nombre_cert)}}">
         <br>
 
         <label class="required" for="institucion_emisora">Institución emisora</label>

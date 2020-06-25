@@ -39,7 +39,7 @@
                         <b>Cargo:</b>
                         <span class="text-info font-weight-bold">
                              {{ $pe->cargo }}
-                        </span><br>
+                        </span><br><br>
 
                         <b>Actividades principales:</b>
                         <p class=" p-2 mb-2 text-info font-weight-bold text-center text-break">
@@ -47,10 +47,11 @@
                         </p><br>
 
                         @if ($pe->curso_sep)
-                            <b>Nombre curso SEP:</b>
+                            <b>Nombre del curso SEP:</b>
                             <span class="text-info font-weight-bold">
                                 {{ $pe->curso_sep }} 
                             </span>
+                            <br>
                         @endif
                     </li>
                 @empty

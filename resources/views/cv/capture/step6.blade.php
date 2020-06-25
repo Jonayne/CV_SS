@@ -50,12 +50,13 @@
                         <br>
 
                         @if ($pe->curso_sep)
-                            <b>Nombre curso SEP:</b>
+                            <b>Nombre del curso SEP:</b>
                             <span class="text-info font-weight-bold">
                                 {{ $pe->curso_sep }} 
                             </span>
+                            <br><br>
                         @endif
-
+                        
                         <div class="btn-group">
                             <a class="btn btn-outline-info btn-sm" name="formNum" value="6" href="{{route('previous_experiences.edit', $pe)}}">
                                 Editar

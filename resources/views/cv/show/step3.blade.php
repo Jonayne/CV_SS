@@ -26,7 +26,7 @@
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                             <b>Nombre:</b>
                             <span class="text-info font-weight-bold">
-                                {{ $course->nombre }}
+                                {{ $course->nombre_curso }}
                             </span>
                             <br>
                             <b>Año:</b>
@@ -54,7 +54,7 @@
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre:</b>
                         <span class="text-info font-weight-bold">
-                             {{ $course->nombre }}
+                             {{ $course->nombre_curso }}
                         </span>
                         <br>
                         <b>Año:</b>

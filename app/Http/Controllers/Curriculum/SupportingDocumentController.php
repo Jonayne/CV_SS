@@ -61,7 +61,7 @@ class SupportingDocumentController extends Controller {
         $user_id = Auth::user()->id;
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
 
-        $es_documento_academico = in_array($validation['nombre'], ['Título', 'Cédula profesional', 
+        $es_documento_academico = in_array($validation['nombre_doc'], ['Título', 'Cédula profesional', 
                                                                    'Historial académico', 'Comprobante de curso técnico', 
                                                                    'Comprobante de curso de formación docente', 
                                                                    '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
@@ -128,7 +128,7 @@ class SupportingDocumentController extends Controller {
             $validation['documento'] = $hashName;
         }
 
-        $validation['es_documento_academico'] = in_array($validation['nombre'], ['Título', 'Cédula profesional', 
+        $validation['es_documento_academico'] = in_array($validation['nombre_doc'], ['Título', 'Cédula profesional', 
                                                                    'Historial académico', 'Comprobante de curso técnico', 
                                                                    'Comprobante de curso de formación docente', 
                                                                    '(Proyecto SEP) Comprobante por impartir curso de la SEP']);

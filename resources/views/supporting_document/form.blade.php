@@ -1,10 +1,9 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        
-        <label class="required" for="nombre">Documento</label>
-        <select class="form-control" name="nombre" id="nombre">
-            @if (!old('nombre', $sd->documento))
+        <label class="required" for="nombre_doc">Documento</label>
+        <select class="form-control" name="nombre_doc" id="nombre_doc">
+            @if (!old('nombre_doc', $sd->nombre_doc))
                 <option value="" selected>Seleccionar</option>
                 @foreach ($nombres_docs as $item)
                     <option value="{{$item}}"> {{$item}} </option>
@@ -12,7 +11,7 @@
             @else
                 @foreach ($nombres_docs as $item)
                     <option value="{{$item}}" 
-                    @if (old('nombre', $sd->documento) == $item)
+                    @if (old('nombre_doc', $sd->nombre_doc) == $item)
                         selected
                     @endif>
                     {{$item}}</option>

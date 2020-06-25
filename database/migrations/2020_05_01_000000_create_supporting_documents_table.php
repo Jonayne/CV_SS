@@ -13,7 +13,7 @@ class CreateSupportingDocumentsTable extends Migration {
     public function up() {
         Schema::create('supporting_documents', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre_doc');
             $table->string('documento');
             $table->boolean('es_documento_academico');
             $table->timestamps();

@@ -64,12 +64,12 @@ class CurriculumFormRequest extends FormRequest {
                     "estudios_carrera" => "bail|required|string|max:255",
                     "estudios_estatus" => "bail|required|string|max:255",
                     "estudios_documento_obtenido" => "bail|required|string|max:255",
-                    "cedula_profesional" => "bail|required|string|max:255"
+                    "cedula_profesional" => "bail|sometimes|nullable|string|max:255"
                 ];
                 break;
             case 3:
                 return [
-                    "nombre" => "bail|required|string|max:255",
+                    "nombre_curso" => "bail|required|string|max:255",
                     "anio" => "bail|required|date_format:Y|before:today|after:1900",
                     "documento_obtenido" => "bail|required|string|max:255",
                     "es_curso_tecnico" => "bail|required"
@@ -78,7 +78,7 @@ class CurriculumFormRequest extends FormRequest {
             case 4:
                 return [
                     "modalidad" => "required|string|max:255",
-                    "nombre" => "required|string|max:255",
+                    "nombre_cert" => "required|string|max:255",
                     "institucion_emisora" => "required|string|max:255"
                 ];
                 break;
@@ -100,7 +100,7 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case 7:
                 return [
-                    "nombre" => "required",
+                    "nombre_doc" => "required",
                     "documento" => "required_without_all:edit|max:100000|mimes:jpeg,bmp,jpg,png,jpe,gif,tif,tiff,webp,svg"
                 ];
                 break;
@@ -117,6 +117,9 @@ class CurriculumFormRequest extends FormRequest {
 
     public function attributes() {
         return [
+            "nombre_doc" => 'nombre del documento',
+            "nombre_cert" => 'nombre de la certificación',
+            "nombre_curso" => 'nombre del curso extracurricular',
             "categoria_de_pago" => 'Categoría de pago',
             "formato_descarga" => 'Formato de descarga',
             "formato_curriculum" => 'Formato del curriculum',

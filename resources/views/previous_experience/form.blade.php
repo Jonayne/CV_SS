@@ -16,7 +16,7 @@
         @if (isset($curriculum->proyecto_sep) && $curriculum->proyecto_sep)
             <hr>
             <h3 class="text-secondary text-center font-weight-bold"> Participantes de proyecto SEP </h3>
-            <h5 class="text-black text-center font-weight-italic"> Si la experiencia antes descrita cuenta como <b>Experiencia en capacitación</b> en algún curso de la SEP,<br> por favor active la siguiente casilla e indique el nombre del curso</h5><br>
+            <h5 class="text-black text-center font-weight-italic"> Si esta experiencia cuenta como <b>Experiencia en capacitación</b> en algún curso de la SEP,<br> por favor active la siguiente casilla e indique el nombre del curso</h5><br>
 
             <div class="form-check text-center mb-3">
                 <label class="form-check-label">
@@ -29,8 +29,22 @@
             </div>
         
             <label class="required" for="curso_sep">Nombre del curso SEP</label>
-            {{-- TODO: Hacer un select con la listota de cursos CEP --}}
-            <input type="text" id="curso_sep" name="curso_sep" class="form-control" value="{{old('curso_sep', $pe->curso_sep)}}">            
+            <select class="form-control" name="curso_sep" id="curso_sep">
+                @if (!old('curso_sep', $pe->curso_sep))
+                    <option value="" selected>Seleccionar</option>
+                    @foreach ($nombres_cursos as $item)
+                        <option value="{{$item}}"> {{$item}} </option>
+                    @endforeach
+                @else
+                    @foreach ($nombres_cursos as $item)
+                        <option value="{{$item}}" 
+                        @if (old('curso_sep', $pe->curso_sep) == $item)
+                            selected
+                        @endif>
+                        {{$item}}</option>
+                    @endforeach
+                @endif
+            </select>   
         @endif
 
         <hr>

@@ -27,14 +27,14 @@
                 <li><b>Título y cédula profesional o historial académico</b></li>
                 <li><b>Comprobantes de cursos técnicos</b></li>
                 <li><b>Comprobantes de cursos de formación docente</b></li>
-                <li><b>(Proyecto SEP) Comprobante por impartir curso de la SEP</b></li>
+                <li><b>(Proyecto SEP) Comprobante de curso de la SEP</b></li>
             </ul>
             <ul class="list-group list-group-flush">
                 @forelse ($element['academicos'] as $sd)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">
-                            {{$sd->nombre}}
+                            {{$sd->nombre_doc}}
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">
@@ -87,7 +87,7 @@
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
                         <b>Nombre de documento:</b>
                         <span class="text-info font-weight-bold">
-                            {{$sd->nombre}}
+                            {{$sd->nombre_doc}}
                         </span>
                         <br>
                         <span class="text-info font-weight-bold">

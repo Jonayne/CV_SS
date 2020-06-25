@@ -13,7 +13,7 @@ class CreateExtracurricularCoursesTable extends Migration {
     public function up() {
         Schema::create('extracurricular_courses', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre_curso');
             $table->string('anio');
             $table->string('documento_obtenido');
             $table->boolean('es_curso_tecnico');

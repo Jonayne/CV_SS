@@ -30,7 +30,7 @@
 
                         <b>Nombre de la certificación:</b> 
                         <span class="text-info font-weight-bold">
-                            {{ $cert->nombre }}
+                            {{ $cert->nombre_cert }}
                         </span>
                         <br>
 

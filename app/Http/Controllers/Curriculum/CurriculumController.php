@@ -21,6 +21,27 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 class CurriculumController extends Controller {
+
+    protected $lista_nombres_cursos_sep = [
+                "Automatización de Documentos para la Oficina",
+                "Conoce tu Computadora",
+                "Combinación de Herramientas para Elaborar Informes",
+                "Elaboración de Diagramas para la Oficina",
+                "Estadísticas con Excel",
+                "Elaboración de Formatos de Oficina con Word",
+                "Herramientas de TIC para Incrementar la Productividad",
+                "Módulo Básico de Cómputo con Internet y Windows",
+                "Módulo de Excel (Básico – Avanzado)",
+                "Módulo de Herramientas Contables y Administrativas",
+                "Módulo de Word (Básico – Avanzado)",
+                "Procesamiento y Manejo de Información con Word y Excel",
+                "Primeros Pasos en la Internet",
+                "Seguridad en el Manejo de Equipos de Cómputo",
+                "Taller de Actualización Profesional en TIC",
+                "Trabajo Colaborativo en la Nube",
+                "Taller de Elaboración de Reportes con Excel",
+                "Taller de Presentaciones Electrónicas Efectivas"
+            ];
     /**
      * Create a new controller instance.
      *
@@ -139,34 +160,20 @@ class CurriculumController extends Controller {
         $validatedData = $request->validated();
 
         $curriculum = Curriculum::findOrFail($id);
-
-        $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
-
         $curriculum_array = $curriculum->toArray();
-
         // Cambiamos el formato de la fecha en la que se actualizó el CV.
         $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
-
         $curriculum_array['updated_at'] = $updated_at;
         $curriculum_array['categoria_de_pago'] = $validatedData['categoria_de_pago'];
         
-        // Rellenamos lo que corresponde a cursos extracurriculares, docs probatorios, etc...
-        $this->putExtracurricularCoursesValues($curriculum_array['user_id'], $templateProcessor);
-        $this->putSubjectsValues($curriculum_array['user_id'], $templateProcessor);
-        $this->putPreviousExperienciesValues($curriculum_array['user_id'], $templateProcessor);
-
-        // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
-        $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
-        Arr::forget($curriculum_array, 'fotografia');
-        
-        $templateProcessor->setImageValue('fotografia', array( 
-            'path' => $photo_url,
-            'width' => 77,
-            'height' => 108,
-            'ratio' => false));
-        
-        // Pasamos los valores del curriculum al documento (y que se sustituyan 1 vez).
-        $templateProcessor->setValues($curriculum_array, 1);
+        // Obtenemos el template que corresponda al CV que descargaremos.
+        $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
+        // Cada CV requiere sus propio llenado, por lo que lo haremos en un método auxiliar.
+        if($validatedData['formato_curriculum'] == "curriculum_SEP") {
+            $this->fillCV_SEP($curriculum_array, $templateProcessor);
+        } else if ($validatedData['formato_curriculum'] == "FORMATO-CV-CE") {
+            $this->fillCV_CE($curriculum_array, $templateProcessor);
+        }
         
         $name = $curriculum->nombre."_".
                 $curriculum->apellido_paterno."_".
@@ -176,35 +183,61 @@ class CurriculumController extends Controller {
         
         $templateProcessor->saveAs($filenameDocx);
 
-        // pendiente... mejro pasar de docx a html y luego a pdf
-        if($validatedData['formato_descarga'] == "pdf") {
+        // // pendiente... mejro pasar de docx a html y luego a pdf
+        // if($validatedData['formato_descarga'] == "pdf") {
 
-            $domPDFPath = base_path('vendor/dompdf/dompdf');
-            \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPDFPath);
-            \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
+        //     $domPDFPath = base_path('vendor/dompdf/dompdf');
+        //     \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPDFPath);
+        //     \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
 
-            //Cargamos el archivo temporal... 
-            $phpWord = \PhpOffice\PhpWord\IOFactory::load($filenameDocx); 
+        //     //Cargamos el archivo temporal... 
+        //     $phpWord = \PhpOffice\PhpWord\IOFactory::load($filenameDocx); 
 
-            //Lo guardamos.
-            $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
-            $xmlWriter->save($name.'.pdf');
+        //     //Lo guardamos.
+        //     $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
+        //     $xmlWriter->save($name.'.pdf');
 
-            // Borramos el docx.
-            File::delete($filenameDocx);
+        //     // Borramos el docx.
+        //     File::delete($filenameDocx);
 
-        }
+        // }
 
         return response()->download($name.'.'.$validatedData['formato_descarga'])->
                            deleteFileAfterSend(true);
     }
     
-    // Sustituye en el template de word las experiencias previas guardadas.
-    private function putPreviousExperienciesValues($user_id, $templateProcessor) {
+    // Métoo auxiliar para llenar el CV de la SEP. Se debe hacer en el orden del template, si no
+    // no funcionan los bloques.
+    private function fillCV_SEP($curriculum_array, $templateProcessor) {
+        // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
+        $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
+        Arr::forget($curriculum_array, 'fotografia');
         
-        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
+        $templateProcessor->setImageValue('fotografia', array( 
+            'path' => $photo_url,
+            'width' => 77,
+            'height' => 108,
+            'ratio' => false));
+
+        // esto es necesario porque sino habrán bloques que no se podan clonar por el tamaño.
+        ini_set('pcre.backtrack_limit', "10000000");
+
+        $this->putSDAcademicFormation_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
+        $this->putPreviousExp_SEP($curriculum_array['user_id'], $templateProcessor);
+        $this->putPreviousExpDocs_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
+        $this->putCertifications($curriculum_array['user_id'], $templateProcessor);
+        $this->putSDPCourses($curriculum_array, $templateProcessor);
         
-        /* Por ej. si tenemos
+        $templateProcessor->setValues($curriculum_array);
+    }
+
+    // Sustituye en el template de word de la SEP las experiencias en capacitación.
+    private function putPreviousExp_SEP($user_id, $templateProcessor) {
+        
+        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->
+                                        where('curso_sep', '!=', '')->get();
+        
+        /* Por ej. si en el template tenemos
         {clone_block}
         Periodo: ${periodo}
         {/clone_block}
@@ -217,10 +250,119 @@ class CurriculumController extends Controller {
                                         count($previous_exp), true, true);
                             
         /* Esto se hizo a mano porque el método cloneBlock, con el que también se deberían
-         poder hacer los reemplazos no funciona bien :( en la versión 0.17.0
+         poder hacer los reemplazos no funciona bien :( en la versión 0.17.0 de phpword
          (Esta es la llamada que debería funcionar en vez del código anexado abajo)
          $templateProcessor->cloneBlock('experiencia_previa_bloque', 0, true, false, $previous_exp->toArray())
         */
+        $i = 1;
+        foreach ($previous_exp as $pe) {
+            $templateProcessor->setValue('curso_sep#'.$i, $pe->curso_sep);
+            $templateProcessor->setValue('periodo#'.$i, $pe->periodo);
+            $i += 1;
+        }
+
+    }
+
+    // Pone los nombres de los documentos probatorios en experiencia en capacitación
+    private function putPreviousExpDocs_SEP($user_id, $templateProcessor, $mode) {
+        $sds = SupportingDocument::where('user_id', '=', $user_id)
+                        ->where('nombre_doc', '=', "(Proyecto SEP) Comprobante por impartir curso de la SEP")
+                        ->get();                         
+
+        $templateProcessor->cloneBlock('capa_bloque', 
+                                        count($sds), true, true);
+        
+        if($mode == 'nombres') {
+            $i = 1;
+            foreach ($sds as $sd) {
+                $templateProcessor->setValue('nombre_doc#'.$i, "Comprobante de curso $i");
+                $i += 1;
+            }
+        } else {
+            // ponemos las imágenes
+            $i = 1;
+            // foreach ($sds as $sd) {
+            //     $templateProcessor->setValue('modalidad#'.$i, $sd->modalidad);
+            //     $templateProcessor->setValue('nombre_cert#'.$i, $sd->nombre_cert);
+            //     $templateProcessor->setValue('institucion_emisora#'.$i, $sd->institucion_emisora);
+            //     $i += 1;
+            // }
+        }
+        
+    }
+    
+    // Pone los nombres de los documentos probatorios en formación académica.
+    private function putSDAcademicFormation_SEP($user_id, $templateProcessor, $mode) {
+        $sds = SupportingDocument::where('user_id', '=', $user_id)
+                                ->where(function($query) {
+                                    $query->orWhere('nombre_doc', '=', "Título")
+                                            ->orWhere('nombre_doc', '=', "Cédula profesional")
+                                            ->orWhere('nombre_doc', '=', "Historial académico");
+                                })->get();                            
+
+        $templateProcessor->cloneBlock('aca_bloque', 
+                                        count($sds), true, true);
+        
+        if($mode == 'nombres') {
+            $i = 1;
+            foreach ($sds as $sd) {
+                $templateProcessor->setValue('nombre_doc#'.$i, $sd->nombre_doc);
+                $i += 1;
+            }
+        } else {
+            // ponemos las imágenes
+            $i = 1;
+            // foreach ($sds as $sd) {
+            //     $templateProcessor->setValue('modalidad#'.$i, $sd->modalidad);
+            //     $templateProcessor->setValue('nombre_cert#'.$i, $sd->nombre_cert);
+            //     $templateProcessor->setValue('institucion_emisora#'.$i, $sd->institucion_emisora);
+            //     $i += 1;
+            // }
+        }
+        
+    }
+
+    private function fillCV_CE($curriculum_array, $templateProcessor) {
+    }
+
+    private function putCertifications($user_id, $templateProcessor) {
+        $certifications = Certification::where('user_id', '=', $user_id)->get();
+        
+        $templateProcessor->cloneBlock('certificaciones_bloque', 
+                                        count($certifications), true, true);
+                            
+        $i = 1;
+        foreach ($certifications as $cert) {
+            $templateProcessor->setValue('modalidad#'.$i, $cert->modalidad);
+            $templateProcessor->setValue('nombre_cert#'.$i, $cert->nombre_cert);
+            $templateProcessor->setValue('institucion_emisora#'.$i, $cert->institucion_emisora);
+            $i += 1;
+        }
+    }
+
+    private function putSDPCourses($curriculum_array, $templateProcessor) {
+        $user_id = $curriculum_array['user_id'];
+
+        $sdpc_names = explode(',', $curriculum_array['cursos_impartir_sdpc']);
+        
+        $templateProcessor->cloneBlock('cursos_sdpc_bloque', 
+                                        count($sdpc_names), true, true);
+                            
+        $i = 1;
+        foreach ($sdpc_names as $nombre) {
+            $templateProcessor->setValue('nombre_curso#'.$i, $nombre);
+            $i += 1;
+        }
+    }
+
+    // Sustituye en el template de word CV-CE las experiencias profesionales.
+    private function putPreviousExperiencies_CE($user_id, $templateProcessor) {
+        
+        $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
+        
+        $templateProcessor->cloneBlock('experiencia_previa_bloque', 
+                                        count($previous_exp), true, true);
+                            
         $i = 1;
         foreach ($previous_exp as $pe) {
             $templateProcessor->setValue('periodo#'.$i, $pe->periodo);
@@ -233,7 +375,7 @@ class CurriculumController extends Controller {
     }
 
     // Método auxiliar para pasar a una sola cadena todos los cursos extracurriculares.
-    private function putExtracurricularCoursesValues($user_id, $templateProcessor) {
+    private function putExtracurricularCourses($user_id, $templateProcessor) {
 
         $te_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
                                             where('es_curso_tecnico', '=', true)->get();
@@ -268,7 +410,7 @@ class CurriculumController extends Controller {
     }
 
     // Método auxiliar para pasar a una sola cadena la lista de temas a impartir.
-    private function putSubjectsValues($user_id, $templateProcessor) {
+    private function putSubjects($user_id, $templateProcessor) {
         
         $subjects = Subject::where('user_id', '=', $user_id)->get();
         
@@ -393,31 +535,11 @@ class CurriculumController extends Controller {
     private function getFormElementCapture($request, $num, $user) {
         switch ($num) {
             case 1:
-                $lista_nombres_cursos = [
-                    "Automatización de Documentos para la Oficina",
-                    "Conoce tu Computadora",
-                    "Combinación de Herramientas para Elaborar Informes",
-                    "Elaboración de Diagramas para la Oficina",
-                    "Estadísticas con Excel",
-                    "Elaboración de Formatos de Oficina con Word",
-                    "Herramientas de TIC para Incrementar la Productividad",
-                    "Módulo Básico de Cómputo con Internet y Windows",
-                    "Módulo de Excel (Básico – Avanzado)",
-                    "Módulo de Herramientas Contables y Administrativas",
-                    "Módulo de Word (Básico – Avanzado)",
-                    "Procesamiento y Manejo de Información con Word y Excel",
-                    "Primeros Pasos en la Internet",
-                    "Seguridad en el Manejo de Equipos de Cómputo",
-                    "Taller de Actualización Profesional en TIC",
-                    "Trabajo Colaborativo en la Nube",
-                    "Taller de Elaboración de Reportes con Excel",
-                    "Taller de Presentaciones Electrónicas Efectivas"
-                ];
                 // esta variable nos servirá para saber a donde redireccionar (tener la página anterior).
                 // back() no nos sirve porque si alguna validación falla, se sobreescribe la URL anterior y
                 // ya nunca nos regresa donde debería.
                 $request->session()->put('previous_url', 1);
-                return $lista_nombres_cursos;
+                return $this->lista_nombres_cursos_sep;
 
             case 2:
                 $request->session()->put('previous_url', 2);
@@ -462,26 +584,7 @@ class CurriculumController extends Controller {
         $user = User::findOrFail($user_id);
         switch ($num) {
             case 1:
-                return [
-                    "Automatización de Documentos para la Oficina",
-                    "Conoce tu Computadora",
-                    "Combinación de Herramientas para Elaborar Informes",
-                    "Elaboración de Diagramas para la Oficina",
-                    "Estadísticas con Excel",
-                    "Elaboración de Formatos de Oficina con Word",
-                    "Herramientas de TIC para Incrementar la Productividad",
-                    "Módulo Básico de Cómputo con Internet y Windows",
-                    "Módulo de Excel (Básico – Avanzado)",
-                    "Módulo de Herramientas Contables y Administrativas",
-                    "Módulo de Word (Básico – Avanzado)",
-                    "Procesamiento y Manejo de Información con Word y Excel",
-                    "Primeros Pasos en la Internet",
-                    "Seguridad en el Manejo de Equipos de Cómputo",
-                    "Taller de Actualización Profesional en TIC",
-                    "Trabajo Colaborativo en la Nube",
-                    "Taller de Elaboración de Reportes con Excel",
-                    "Taller de Presentaciones Electrónicas Efectivas"
-                ];
+                return $this->lista_nombres_cursos_sep;
             case 3:
                 $curso_tecnico = $user->extracurricularCourses()
                                       ->where('es_curso_tecnico', '=', true)->get();

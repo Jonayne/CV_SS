@@ -12,6 +12,28 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class PreviousExperienceController extends Controller {   
+
+    protected $lista_nombres_cursos_sep = [
+        "Automatización de Documentos para la Oficina",
+        "Conoce tu Computadora",
+        "Combinación de Herramientas para Elaborar Informes",
+        "Elaboración de Diagramas para la Oficina",
+        "Estadísticas con Excel",
+        "Elaboración de Formatos de Oficina con Word",
+        "Herramientas de TIC para Incrementar la Productividad",
+        "Módulo Básico de Cómputo con Internet y Windows",
+        "Módulo de Excel (Básico – Avanzado)",
+        "Módulo de Herramientas Contables y Administrativas",
+        "Módulo de Word (Básico – Avanzado)",
+        "Procesamiento y Manejo de Información con Word y Excel",
+        "Primeros Pasos en la Internet",
+        "Seguridad en el Manejo de Equipos de Cómputo",
+        "Taller de Actualización Profesional en TIC",
+        "Trabajo Colaborativo en la Nube",
+        "Taller de Elaboración de Reportes con Excel",
+        "Taller de Presentaciones Electrónicas Efectivas"
+    ];
+
     /**
      * Create a new controller instance.
      *
@@ -38,7 +60,8 @@ class PreviousExperienceController extends Controller {
 
         return view('previous_experience.create', 
                         ['pe' => new PreviousExperience(),
-                        'curriculum' => $curriculum]);
+                        'curriculum' => $curriculum,
+                        'nombres_cursos' => $this->lista_nombres_cursos_sep]);
     
     }
 
@@ -74,12 +97,13 @@ class PreviousExperienceController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-        // TO-DO Seguir con esto y ps dejarlo chido
+
         $user_id = Auth::user()->id;
         $pe = PreviousExperience::findOrFail($id);
-        $curriculum = Curriculum::where('user_id', '=', $user_id)->get();
-
-        return view('previous_experience.edit', compact('pe', 'curriculum'));
+        $curriculum = Curriculum::select('proyecto_sep')->where('user_id', '=', $user_id)->
+                                    where('proyecto_sep', '=', true)->get()->first();
+        $nombres_cursos = $this->lista_nombres_cursos_sep;
+        return view('previous_experience.edit', compact('pe', 'curriculum', 'nombres_cursos'));
     }
 
     /**

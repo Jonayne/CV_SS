@@ -2,8 +2,8 @@
 
 <div class="container bg-primary text-black py-2">
     <div class="form-group">
-        <label class="required" for="nombre">Nombre del curso</label>
-        <input type="text" name="nombre" id="nombre" class="form-control" value="{{ old('nombre', $course->nombre)}}">
+        <label class="required" for="nombre_curso">Nombre del curso</label>
+        <input type="text" name="nombre_curso" id="nombre_curso" class="form-control" value="{{ old('nombre_curso', $course->nombre_curso)}}">
         <br>
         <label class="required" for="anio">Año del curso</label>
         <input type="text" name="anio" id="anio"  class="form-control" value="{{ old('anio', $course->anio)}}">
