@@ -219,15 +219,24 @@ class CurriculumController extends Controller {
             'height' => 108,
             'ratio' => false));
 
-        // esto es necesario porque sino habrán bloques que no se podan clonar por el tamaño.
+        // esto es necesario porque sino habrán bloques que no se podran clonar por el tamaño.
         ini_set('pcre.backtrack_limit', "10000000");
-
+        
+        /*  Estas llamadas son para llenar nuestros bloques en el template en el orden correcto.
+            Primero el bloque de documentos probatorios de formacion academica, después el de experiencia
+            en capacitación, luego los documentos probatorios de la experiencia en capacitacion,
+            despues el de certificaciones, cursos a impartir y finalmente las imagenes de
+            los documentos probatorios.
+        */
         $this->putSDAcademicFormation_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
         $this->putPreviousExp_SEP($curriculum_array['user_id'], $templateProcessor);
         $this->putPreviousExpDocs_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
         $this->putCertifications($curriculum_array['user_id'], $templateProcessor);
-        $this->putSDPCourses($curriculum_array, $templateProcessor);
+        $this->putCoursesSDPC($curriculum_array, $templateProcessor);
+        $this->putSDAcademicFormation_SEP($curriculum_array['user_id'], $templateProcessor, 'imgs');
+        $this->putPreviousExpDocs_SEP($curriculum_array['user_id'], $templateProcessor, 'imgs');
         
+        // Al final susituímos en el documentos los valores simples y listo.
         $templateProcessor->setValues($curriculum_array);
     }
 
@@ -251,7 +260,7 @@ class CurriculumController extends Controller {
                             
         /* Esto se hizo a mano porque el método cloneBlock, con el que también se deberían
          poder hacer los reemplazos no funciona bien :( en la versión 0.17.0 de phpword
-         (Esta es la llamada que debería funcionar en vez del código anexado abajo)
+         (Esta es la llamada que debería funcionar, pero como no, se hizo el foreach)
          $templateProcessor->cloneBlock('experiencia_previa_bloque', 0, true, false, $previous_exp->toArray())
         */
         $i = 1;
@@ -263,16 +272,15 @@ class CurriculumController extends Controller {
 
     }
 
-    // Pone los nombres de los documentos probatorios en experiencia en capacitación
+    // Pone los documentos probatorios de experiencia en capacitación
     private function putPreviousExpDocs_SEP($user_id, $templateProcessor, $mode) {
         $sds = SupportingDocument::where('user_id', '=', $user_id)
                         ->where('nombre_doc', '=', "(Proyecto SEP) Comprobante por impartir curso de la SEP")
                         ->get();                         
-
-        $templateProcessor->cloneBlock('capa_bloque', 
-                                        count($sds), true, true);
         
         if($mode == 'nombres') {
+            $templateProcessor->cloneBlock('capa_bloque', 
+                                        count($sds), true, true);
             $i = 1;
             foreach ($sds as $sd) {
                 $templateProcessor->setValue('nombre_doc#'.$i, "Comprobante de curso $i");
@@ -280,18 +288,22 @@ class CurriculumController extends Controller {
             }
         } else {
             // ponemos las imágenes
+            $templateProcessor->cloneBlock('docs_exp_bloque', 
+                                        count($sds), true, true);
             $i = 1;
-            // foreach ($sds as $sd) {
-            //     $templateProcessor->setValue('modalidad#'.$i, $sd->modalidad);
-            //     $templateProcessor->setValue('nombre_cert#'.$i, $sd->nombre_cert);
-            //     $templateProcessor->setValue('institucion_emisora#'.$i, $sd->institucion_emisora);
-            //     $i += 1;
-            // }
+            foreach ($sds as $sd) {
+                $templateProcessor->setValue('nombre_doc#'.$i, "Comprobante de curso $i");
+                $templateProcessor->setImageValue('imagen#'.$i, array( 
+                    'path' => 'storage/supporting_documents/'.$sd->documento,
+                    'width' => 300,
+                    'height' => ''));
+                $i += 1;
+            }
         }
         
     }
     
-    // Pone los nombres de los documentos probatorios en formación académica.
+    // Pone los documentos probatorios en formación académica.
     private function putSDAcademicFormation_SEP($user_id, $templateProcessor, $mode) {
         $sds = SupportingDocument::where('user_id', '=', $user_id)
                                 ->where(function($query) {
@@ -299,11 +311,10 @@ class CurriculumController extends Controller {
                                             ->orWhere('nombre_doc', '=', "Cédula profesional")
                                             ->orWhere('nombre_doc', '=', "Historial académico");
                                 })->get();                            
-
-        $templateProcessor->cloneBlock('aca_bloque', 
-                                        count($sds), true, true);
         
         if($mode == 'nombres') {
+            $templateProcessor->cloneBlock('aca_bloque', 
+                                        count($sds), true, true);
             $i = 1;
             foreach ($sds as $sd) {
                 $templateProcessor->setValue('nombre_doc#'.$i, $sd->nombre_doc);
@@ -311,13 +322,17 @@ class CurriculumController extends Controller {
             }
         } else {
             // ponemos las imágenes
+            $templateProcessor->cloneBlock('docs_formacion_bloque', 
+                                        count($sds), true, true);
             $i = 1;
-            // foreach ($sds as $sd) {
-            //     $templateProcessor->setValue('modalidad#'.$i, $sd->modalidad);
-            //     $templateProcessor->setValue('nombre_cert#'.$i, $sd->nombre_cert);
-            //     $templateProcessor->setValue('institucion_emisora#'.$i, $sd->institucion_emisora);
-            //     $i += 1;
-            // }
+            foreach ($sds as $sd) {
+                $templateProcessor->setValue('nombre_doc#'.$i, $sd->nombre_doc);
+                $templateProcessor->setImageValue('imagen#'.$i, array( 
+                    'path' => 'storage/supporting_documents/'.$sd->documento,
+                    'width' => 300,
+                    'height' => ''));
+                $i += 1;
+            }
         }
         
     }
@@ -340,7 +355,7 @@ class CurriculumController extends Controller {
         }
     }
 
-    private function putSDPCourses($curriculum_array, $templateProcessor) {
+    private function putCoursesSDPC($curriculum_array, $templateProcessor) {
         $user_id = $curriculum_array['user_id'];
 
         $sdpc_names = explode(',', $curriculum_array['cursos_impartir_sdpc']);
@@ -425,11 +440,6 @@ class CurriculumController extends Controller {
             $i += 1;
         }
 
-    }
-
-    // Método auxiliar para pasar a una sola cadena todos los cursos extracurriculares.
-    private function getDSAsString() {
-        // ?? Docs probatorios pendientes
     }
 
      // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
