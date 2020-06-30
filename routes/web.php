@@ -27,6 +27,9 @@ Route::group(['namespace' => 'Curriculum'], function () {
     // Ruta para descargar el curriculum.
     Route::post('/descargar_curriculum/{id}', 'CurriculumController@downloadCV')->name('curricula.downloadCV');
 
+    // Ruta para una vista de ayuda para exportar el descargable a PDF.
+    Route::get('/ayuda_pdf', 'CurriculumController@helpPDF')->name('curricula.helpPDF');
+
     // RUTA PARA ACTUALIZAR EL CV EN LA BASE
     Route::patch('/curriculum/{curriculum}', 'CurriculumController@save')->name('curricula.update');
 

@@ -106,8 +106,7 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case "download":
                 return [
-                    "categoria_de_pago" => "sometimes|nullable|string|max:255",
-                    "formato_descarga" => "required",
+                    "categoria_de_pago" => "required_if:formato_curriculum,FORMATO_CV-CE|nullable|string|max:255",
                     "formato_curriculum" => "required"
                 ];
                 break;
@@ -156,6 +155,7 @@ class CurriculumFormRequest extends FormRequest {
 
     public function messages() {
         return [
+            "categoria_de_pago.required_if" => "El campo Categoría de Pago es obligatorio al escoger el formato de curriculum CE",
             "fotografia.required_without_all" => "La fotografía es obligatoria",
             "fotografia.image" => "El formato de la fotografía es erroneo",
             "fotografia.max" => "El tamaño del archivo de la fotografía debe ser menor a 10MB",

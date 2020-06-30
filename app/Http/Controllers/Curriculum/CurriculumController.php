@@ -143,15 +143,22 @@ class CurriculumController extends Controller {
         return view('cv.show.step'.$formNum, 
                         compact('curriculum', 'element', 'formNum'));    
     }
-
+    
+    /**
+     * Renderiza la vista de ayuda de exportación a PDF. 
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function helpPDF() {
+        return view('cv.show.pdf_help');
+    }
 
     /**
      * Descarga el currículum bajo este id, con los parámetros requeridos en
      * la petición.
      * Usamos principalmente dos bibliotecas externas. PHPOffice/PHPWord y dompdf/dompdf.
      * Primero, con PHPOffice generamos el documento a partir de templates en docx, y luego pasamos
-     * las variables capturadas del curriculum. Ya teniendo el docx rellenado, decidimos qué hacer según
-     * el formato de descarga.
+     * las variables capturadas del curriculum. 
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -170,43 +177,13 @@ class CurriculumController extends Controller {
         $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
         // Cada CV requiere sus propio llenado, por lo que lo haremos en un método auxiliar.
         if($validatedData['formato_curriculum'] == "curriculum_SEP") {
-            $this->fillCV_SEP($curriculum_array, $templateProcessor);
+            return $this->fillCV_SEP($curriculum_array, $templateProcessor);
         } else if ($validatedData['formato_curriculum'] == "FORMATO-CV-CE") {
-            $this->fillCV_CE($curriculum_array, $templateProcessor);
+            return $this->fillCV_CE($curriculum_array, $templateProcessor);
         }
-        
-        $name = $curriculum->nombre."_".
-                $curriculum->apellido_paterno."_".
-                $curriculum->apellido_materno."_". "CV";
-
-        $filenameDocx = $name . '.docx';
-        
-        $templateProcessor->saveAs($filenameDocx);
-
-        // // pendiente... mejro pasar de docx a html y luego a pdf
-        // if($validatedData['formato_descarga'] == "pdf") {
-
-        //     $domPDFPath = base_path('vendor/dompdf/dompdf');
-        //     \PhpOffice\PhpWord\Settings::setPdfRendererPath($domPDFPath);
-        //     \PhpOffice\PhpWord\Settings::setPdfRendererName('DomPDF');
-
-        //     //Cargamos el archivo temporal... 
-        //     $phpWord = \PhpOffice\PhpWord\IOFactory::load($filenameDocx); 
-
-        //     //Lo guardamos.
-        //     $xmlWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord , 'PDF');
-        //     $xmlWriter->save($name.'.pdf');
-
-        //     // Borramos el docx.
-        //     File::delete($filenameDocx);
-
-        // }
-
-        return response()->download($name.'.'.$validatedData['formato_descarga'])->
-                           deleteFileAfterSend(true);
     }
     
-    // Métoo auxiliar para llenar el CV de la SEP. Se debe hacer en el orden del template, si no
+    // Método auxiliar para llenar el CV de la SEP. Se debe hacer en el orden del template, si no
     // no funcionan los bloques.
     private function fillCV_SEP($curriculum_array, $templateProcessor) {
         // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
@@ -221,23 +198,32 @@ class CurriculumController extends Controller {
 
         // esto es necesario porque sino habrán bloques que no se podran clonar por el tamaño.
         ini_set('pcre.backtrack_limit', "10000000");
-        
+
+        $user_id = $curriculum_array['user_id'];
+
         /*  Estas llamadas son para llenar nuestros bloques en el template en el orden correcto.
             Primero el bloque de documentos probatorios de formacion academica, después el de experiencia
             en capacitación, luego los documentos probatorios de la experiencia en capacitacion,
             despues el de certificaciones, cursos a impartir y finalmente las imagenes de
             los documentos probatorios.
         */
-        $this->putSDAcademicFormation_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
-        $this->putPreviousExp_SEP($curriculum_array['user_id'], $templateProcessor);
-        $this->putPreviousExpDocs_SEP($curriculum_array['user_id'], $templateProcessor, 'nombres');
-        $this->putCertifications($curriculum_array['user_id'], $templateProcessor);
-        $this->putCoursesSDPC($curriculum_array, $templateProcessor);
-        $this->putSDAcademicFormation_SEP($curriculum_array['user_id'], $templateProcessor, 'imgs');
-        $this->putPreviousExpDocs_SEP($curriculum_array['user_id'], $templateProcessor, 'imgs');
+        $this->putAcademicFormationDocs_SEP($user_id, $templateProcessor, 'nombres');
+        $this->putPreviousExp_SEP($user_id, $templateProcessor);
+        $this->putPreviousExpDocs_SEP($user_id, $templateProcessor, 'nombres');
+        $this->putCertifications($user_id, $templateProcessor);
+        $this->putCourses_SEP($curriculum_array, $templateProcessor);
+        $this->putAcademicFormationDocs_SEP($user_id, $templateProcessor, 'imgs');
+        $this->putPreviousExpDocs_SEP($user_id, $templateProcessor, 'imgs');
         
         // Al final susituímos en el documentos los valores simples y listo.
         $templateProcessor->setValues($curriculum_array);
+        $filenameDocx = $curriculum_array['nombre']."_".
+                        $curriculum_array['apellido_paterno']."_".
+                        $curriculum_array['apellido_materno']."_". "CV.docx";
+        
+        $templateProcessor->saveAs($filenameDocx);
+
+        return response()->download($filenameDocx)->deleteFileAfterSend(true);
     }
 
     // Sustituye en el template de word de la SEP las experiencias en capacitación.
@@ -272,7 +258,7 @@ class CurriculumController extends Controller {
 
     }
 
-    // Pone los documentos probatorios de experiencia en capacitación
+    // Pone los documentos probatorios de experiencia en capacitación, según el modo imágenes o nombres.
     private function putPreviousExpDocs_SEP($user_id, $templateProcessor, $mode) {
         $sds = SupportingDocument::where('user_id', '=', $user_id)
                         ->where('nombre_doc', '=', "(Proyecto SEP) Comprobante por impartir curso de la SEP")
@@ -303,8 +289,8 @@ class CurriculumController extends Controller {
         
     }
     
-    // Pone los documentos probatorios en formación académica.
-    private function putSDAcademicFormation_SEP($user_id, $templateProcessor, $mode) {
+    // Pone los documentos probatorios en formación académica, según el modo imágenes o nombres.
+    private function putAcademicFormationDocs_SEP($user_id, $templateProcessor, $mode) {
         $sds = SupportingDocument::where('user_id', '=', $user_id)
                                 ->where(function($query) {
                                     $query->orWhere('nombre_doc', '=', "Título")
@@ -337,9 +323,23 @@ class CurriculumController extends Controller {
         
     }
 
-    private function fillCV_CE($curriculum_array, $templateProcessor) {
+    // Pone los nombres de los cursos SEP que este profesor puede impartir.
+    private function putCourses_SEP($curriculum_array, $templateProcessor) {
+        $user_id = $curriculum_array['user_id'];
+
+        $sdpc_names = explode(',', $curriculum_array['cursos_impartir_sdpc']);
+        
+        $templateProcessor->cloneBlock('cursos_sdpc_bloque', 
+                                        count($sdpc_names), true, true);
+                            
+        $i = 1;
+        foreach ($sdpc_names as $nombre) {
+            $templateProcessor->setValue('nombre_curso#'.$i, $nombre);
+            $i += 1;
+        }
     }
 
+    // Pone las certificaciones obtenidas en cualquiera de las dos templates.
     private function putCertifications($user_id, $templateProcessor) {
         $certifications = Certification::where('user_id', '=', $user_id)->get();
         
@@ -355,23 +355,30 @@ class CurriculumController extends Controller {
         }
     }
 
-    private function putCoursesSDPC($curriculum_array, $templateProcessor) {
-        $user_id = $curriculum_array['user_id'];
-
-        $sdpc_names = explode(',', $curriculum_array['cursos_impartir_sdpc']);
+    // Método auxiliar que rellena el CV de formato CE.
+    private function fillCV_CE($curriculum_array, $templateProcessor) {
+        // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
+        $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
+        Arr::forget($curriculum_array, 'fotografia');
         
-        $templateProcessor->cloneBlock('cursos_sdpc_bloque', 
-                                        count($sdpc_names), true, true);
-                            
-        $i = 1;
-        foreach ($sdpc_names as $nombre) {
-            $templateProcessor->setValue('nombre_curso#'.$i, $nombre);
-            $i += 1;
-        }
+        $templateProcessor->setImageValue('fotografia', array( 
+            'path' => $photo_url,
+            'width' => 77,
+            'height' => 108,
+            'ratio' => false));
+
+        ini_set('pcre.backtrack_limit', "10000000");
+        $user_id = $curriculum_array['user_id'];
+        $this->putExtracurricularCourses_CE($user_id, $templateProcessor, 'nombres');
+        $this->putCertifications($user_id, $templateProcessor);
+        $this->putSubjects_CE($user_id, $templateProcessor, 'nombres');
+        $this->putPreviousExp_CE($user_id, $templateProcessor);
+        
+        $templateProcessor->setValues($curriculum_array);
     }
 
     // Sustituye en el template de word CV-CE las experiencias profesionales.
-    private function putPreviousExperiencies_CE($user_id, $templateProcessor) {
+    private function putPreviousExp_CE($user_id, $templateProcessor) {
         
         $previous_exp = PreviousExperience::where('user_id', '=', $user_id)->get();
         
@@ -389,8 +396,8 @@ class CurriculumController extends Controller {
 
     }
 
-    // Método auxiliar para pasar a una sola cadena todos los cursos extracurriculares.
-    private function putExtracurricularCourses($user_id, $templateProcessor) {
+    // Pone los cursos extracurriculares en el CV CE.
+    private function putExtracurricularCourses_CE($user_id, $templateProcessor) {
 
         $te_courses = ExtracurricularCourse::where('user_id', '=', $user_id)->
                                             where('es_curso_tecnico', '=', true)->get();
@@ -424,8 +431,8 @@ class CurriculumController extends Controller {
 
     }
 
-    // Método auxiliar para pasar a una sola cadena la lista de temas a impartir.
-    private function putSubjects($user_id, $templateProcessor) {
+    // Pone los temas a impartir en el CV CE.
+    private function putSubjects_CE($user_id, $templateProcessor) {
         
         $subjects = Subject::where('user_id', '=', $user_id)->get();
         
@@ -474,20 +481,14 @@ class CurriculumController extends Controller {
         if($curriculum->fotografia) {
             $completedList['form1'] = true;
         }
-
         if($curriculum->estudios_carrera) {
             $completedList['form2'] = true;
         }
-
         // Para los demás, basta con revisar que la relación exista para este usuario.
-        $completedList['form3'] = $user->extracurricularCourses()->exists();
-                        
+        $completedList['form3'] = $user->extracurricularCourses()->exists();          
         $completedList['form4'] = $user->certifications()->exists();
-
         $completedList['form5'] = $user->subjects()->exists();
-
         $completedList['form6'] = $user->previousExperiences()->exists();
-        
         $completedList['form7'] = $user->supportingDocuments()->exists();
 
         // Verificamos si todas los formularios ya están (o no) capturados
@@ -496,7 +497,7 @@ class CurriculumController extends Controller {
                 $curriculum->update(['status' => 'en_proceso']);
             }
             // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios.
-            $completedList['percentage'] = ($this->count_array_values($completedList, true)*100) / 7;
+            $completedList['percentage'] = ($this->countArrayValues($completedList, true)*100) / 7;
         } else {
             if($curriculum->status != 'completado') {
                 $curriculum->update(['status' => 'completado']);
@@ -529,7 +530,7 @@ class CurriculumController extends Controller {
 
     // Método auxiliar para contar el número de incidencias de una variable
     // en un array.
-    private function count_array_values($array, $val)  { 
+    private function countArrayValues($array, $val)  { 
         $count = 0; 
         
         foreach ($array as $key => $value) { 
