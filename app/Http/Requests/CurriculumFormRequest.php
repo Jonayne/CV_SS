@@ -106,7 +106,7 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case "download":
                 return [
-                    "categoria_de_pago" => "required_if:formato_curriculum,FORMATO_CV-CE|nullable|string|max:255",
+                    "categoria_de_pago" => "required_if:formato_curriculum,FORMATO_CV_CE|nullable|string|max:255",
                     "formato_curriculum" => "required"
                 ];
                 break;

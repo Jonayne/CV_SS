@@ -16,21 +16,19 @@
             <div class="col-md-6">
                 <select class="form-control" name="formato_curriculum" id="formato_curriculum">
                     @if (( old('formato_curriculum')) == 'curriculum_SEP')
-                            <option value="curriculum_SEP" selected>Formato curriculum SEP</option>
-                            <option value="FORMATO_CV-CE">Formato curriculum CE</option>
-                    @elseif(( old('formato_curriculum')) == 'FORMATO_CV-CE')
-                            <option value="curriculum_SEP">Formato curriculum SEP</option>
-                            <option value="FORMATO_CV-CE" selected>Formato curriculum CE</option>
+                            <option value="curriculum_SEP" selected>Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                            <option value="FORMATO_CV_CE">Formato curriculum CE</option>
+                    @elseif(( old('formato_curriculum')) == 'FORMATO_CV_CE')
+                            <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                            <option value="FORMATO_CV_CE" selected>Formato curriculum CE</option>
                     @else
                             <option value="" selected>Seleccionar</option>
-                            <option value="curriculum_SEP">Formato curriculum SEP</option>
-                            <option value="FORMATO_CV-CE">Formato curriculum CE</option>
+                            <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                            <option value="FORMATO_CV_CE">Formato curriculum CE</option>
                     @endif
                 </select>
             </div>
         </div>
-            <input type="hidden" id="formato_descarga" value="docx" name="formato_descarga" 
-                                            aria-describedby="pdf_help_block" disabled>
             
         <div class="text-center">
             <button type="submit" name="formNum" value="download" class="btn btn-outline-secondary btn-lg mt-3" aria-describedby="pdf_help_block">

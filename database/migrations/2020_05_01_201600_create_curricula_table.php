@@ -31,7 +31,6 @@ class CreateCurriculaTable extends Migration {
             $table->string('estudios_estatus')->nullable();
             $table->string('estudios_documento_obtenido')->nullable();
             $table->string('categoria_de_pago')->nullable();
-            $table->text('certificaciones_obtenidas')->nullable();
             $table->enum('tipo_contratacion', ['UNAM', 'Externo'])->nullable();
             $table->string('num_proveedor_UNAM')->nullable();
             $table->string('num_autorizacion_de_impresion')->nullable();

@@ -16,16 +16,32 @@
         </p>
         <hr>
         <ul class="list-unstyled">
-            <li>1 - Descargar el curriculum.</li>
+            <li>1 - Descargar el currículum.</li>
             <li>2 - Abrir el currículum en su programa de edición de textos.</li>
             <li>3 - Dar clic en <b>Archivo</b>.</li>
-            <li>4 - Dirigirse a la opción de <b>Exportar</b>.</li>
+            <ul>
+                <div class="text-center">
+                    <br>
+                    <img src="/pdf-help/1.png">
+                </div>
+            </ul>
+            <li><br>4 - Dirigirse a la opción de <b>Exportar</b>.</li>
             <li>5 - Seleccionar el formato de <b>PDF</b>.</li>
                 <ul>
-                    <li>En Word, tendrá la opción de <b>Crear documento PDF/XPS</b></li>
-                    <li>En otros editores, simplemente cambiar el tipo de archivo a <b>PDF</b></li>
+                    <li>En Word, tendrá la opción de <b>Crear documento PDF/XPS</b>.</li>
+                    <li>En otros editores, se abrirá una ventana (como en la del punto 6) en la que podrá cambiar el <b>tipo de archivo</b> a <b>PDF</b>.</li>
+                    <div class="text-center">
+                        <br>
+                        <img src="/pdf-help/2.png">
+                    </div>
                 </ul>
-            <li>6 - Escoger la ruta de su preferencia, y darle a <b>Guardar</b>.</li>
+            <li><br>6 - Escoger la ruta y el nombre de su preferencia y darle a <b>Publicar/Guardar</b>.</li>
+            <ul>
+                <div class="text-center">
+                    <br>
+                    <img src="/pdf-help/3.png">
+                </div>
+            </ul>
         </ul>
         <hr>
         <div class="text-center">

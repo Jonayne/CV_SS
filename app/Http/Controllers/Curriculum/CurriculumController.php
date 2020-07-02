@@ -166,19 +166,21 @@ class CurriculumController extends Controller {
     public function downloadCV(CurriculumFormRequest $request, $id) {
         $validatedData = $request->validated();
 
-        $curriculum = Curriculum::findOrFail($id);
-        $curriculum_array = $curriculum->toArray();
-        // Cambiamos el formato de la fecha en la que se actualizó el CV.
-        $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
-        $curriculum_array['updated_at'] = $updated_at;
-        $curriculum_array['categoria_de_pago'] = $validatedData['categoria_de_pago'];
-        
         // Obtenemos el template que corresponda al CV que descargaremos.
         $templateProcessor = new TemplateProcessor('word-templates/'.$validatedData['formato_curriculum'].'.docx');
+
+        $curriculum = Curriculum::findOrFail($id);
+        $curriculum_array = $curriculum->toArray();
+        
         // Cada CV requiere sus propio llenado, por lo que lo haremos en un método auxiliar.
         if($validatedData['formato_curriculum'] == "curriculum_SEP") {
+            $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
+            $curriculum_array['updated_at'] = $updated_at;
             return $this->fillCV_SEP($curriculum_array, $templateProcessor);
-        } else if ($validatedData['formato_curriculum'] == "FORMATO-CV-CE") {
+        } else if ($validatedData['formato_curriculum'] == "FORMATO_CV_CE") {
+            $updated_at = Carbon::parse($curriculum->updated_at)->format('d/m/Y');
+            $curriculum_array['updated_at'] = $updated_at;
+            $curriculum_array['categoria_de_pago'] = $validatedData['categoria_de_pago'];
             return $this->fillCV_CE($curriculum_array, $templateProcessor);
         }
     }
@@ -357,14 +359,24 @@ class CurriculumController extends Controller {
 
     // Método auxiliar que rellena el CV de formato CE.
     private function fillCV_CE($curriculum_array, $templateProcessor) {
+
+        if($curriculum_array['tipo_contratacion'] == 'UNAM') {
+            $curriculum_array = Arr::add($curriculum_array, 'contratacion_UNAM', ' X ');
+            $curriculum_array = Arr::add($curriculum_array, 'contratacion_EXTERNO', '__');
+        }
+        else {
+            $curriculum_array = Arr::add($curriculum_array, 'contratacion_UNAM', '__');
+            $curriculum_array = Arr::add($curriculum_array, 'contratacion_EXTERNO', ' X ');
+        }
+
         // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
         $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
         Arr::forget($curriculum_array, 'fotografia');
         
         $templateProcessor->setImageValue('fotografia', array( 
             'path' => $photo_url,
-            'width' => 77,
-            'height' => 108,
+            'width' => 100,
+            'height' => 80,
             'ratio' => false));
 
         ini_set('pcre.backtrack_limit', "10000000");
@@ -375,6 +387,14 @@ class CurriculumController extends Controller {
         $this->putPreviousExp_CE($user_id, $templateProcessor);
         
         $templateProcessor->setValues($curriculum_array);
+
+        $filenameDocx = $curriculum_array['nombre']."_".
+                        $curriculum_array['apellido_paterno']."_".
+                        $curriculum_array['apellido_materno']."_". "CV.docx";
+        
+        $templateProcessor->saveAs($filenameDocx);
+        // to do: pues que se opueda descargar en zip con los probatorios
+        return response()->download($filenameDocx)->deleteFileAfterSend(true);
     }
 
     // Sustituye en el template de word CV-CE las experiencias profesionales.
@@ -408,24 +428,24 @@ class CurriculumController extends Controller {
         $templateProcessor->cloneBlock('curso_extracurricular_tecnico_bloque', 
                                         count($te_courses), true, true);
 
-        $templateProcessor->cloneBlock('curso_extracurricular_docente_bloque', 
-                                        count($tc_courses), true, true);
-
         $i = 1;
         foreach ($te_courses as $course) {
             // el 1 al final indica que sólo se sustituya la primer incidencia.
             // están diferenciados por un id dentro de este bloque, pero no el otro.
-            $templateProcessor->setValue('nombre#'.$i, $course->nombre, 1);
-            $templateProcessor->setValue('anio#'.$i, $course->anio, 1);
-            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido, 1);
+            $templateProcessor->setValue('nombre_curso#'.$i, $course->nombre_curso);
+            $templateProcessor->setValue('anio#'.$i, $course->anio);
+            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido);
             $i += 1;
         }
 
+        $templateProcessor->cloneBlock('curso_extracurricular_docente_bloque', 
+                                        count($tc_courses), true, true);
+
         $i = 1;
         foreach ($tc_courses as $course) {
-            $templateProcessor->setValue('nombre#'.$i, $course->nombre, 1);
-            $templateProcessor->setValue('anio#'.$i, $course->anio, 1);
-            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido, 1);
+            $templateProcessor->setValue('nombre_curso#'.$i, $course->nombre_curso);
+            $templateProcessor->setValue('anio#'.$i, $course->anio);
+            $templateProcessor->setValue('documento_obtenido#'.$i, $course->documento_obtenido);
             $i += 1;
         }
 
@@ -441,9 +461,9 @@ class CurriculumController extends Controller {
 
         $i = 1;
         foreach ($subjects as $subject) {
-            $templateProcessor->setValue('periodo#'.$i, $subject->version);
-            $templateProcessor->setValue('institucion#'.$i, $subject->nivel);
-            $templateProcessor->setValue('cargo#'.$i, $subject->sistema_operativo);
+            $templateProcessor->setValue('version#'.$i, $subject->version);
+            $templateProcessor->setValue('nivel#'.$i, $subject->nivel);
+            $templateProcessor->setValue('sistema_operativo#'.$i, $subject->sistema_operativo);
             $i += 1;
         }
 
