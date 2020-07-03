@@ -39,8 +39,6 @@ class SupportingDocumentController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        
-
         return view('supporting_document.create', 
                         ['sd' => new SupportingDocument(), 
                           'nombres_docs' => $this->nombres_docs]);

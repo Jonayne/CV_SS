@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\TemplateProcessor;
+use ZipArchive;
 
 class CurriculumController extends Controller {
 
@@ -128,7 +129,7 @@ class CurriculumController extends Controller {
      */
     public function show($id, $formNum) {   
         $curriculum = Curriculum::findOrFail($id);
-
+        // Si es el usuario de este curriculum o tiene permisos para descargar cv's...
         if( !$this->isUsersCurriculum($curriculum) && Gate::denies('descargar-cv')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
@@ -156,8 +157,8 @@ class CurriculumController extends Controller {
     /**
      * Descarga el currículum bajo este id, con los parámetros requeridos en
      * la petición.
-     * Usamos principalmente dos bibliotecas externas. PHPOffice/PHPWord y dompdf/dompdf.
-     * Primero, con PHPOffice generamos el documento a partir de templates en docx, y luego pasamos
+     * Para esto, usamos la biblioteca PHPOffice/PHPWord.
+     * Generamos el documento a partir de templates en docx, y luego pasamos
      * las variables capturadas del curriculum. 
      *
      * @param  int  $id
@@ -219,6 +220,7 @@ class CurriculumController extends Controller {
         
         // Al final susituímos en el documentos los valores simples y listo.
         $templateProcessor->setValues($curriculum_array);
+
         $filenameDocx = $curriculum_array['nombre']."_".
                         $curriculum_array['apellido_paterno']."_".
                         $curriculum_array['apellido_materno']."_". "CV.docx";
@@ -241,7 +243,9 @@ class CurriculumController extends Controller {
 
         Con el método de abajo, dependiendo el tamaño del resultado de nuestra query,
         se crearán varias copias en el template docx, quedando así:
-        Periodo: ${periodo#i} con i=1, ... , count($previous_exp) 
+        Periodo: ${periodo#i}
+        
+        Periodo: ${periodo#i+1} ... con i={1, ... , count($previous_exp)} 
         */
         $templateProcessor->cloneBlock('experiencia_previa_bloque', 
                                         count($previous_exp), true, true);
@@ -387,14 +391,48 @@ class CurriculumController extends Controller {
         $this->putPreviousExp_CE($user_id, $templateProcessor);
         
         $templateProcessor->setValues($curriculum_array);
-
-        $filenameDocx = $curriculum_array['nombre']."_".
+        
+        $name = $curriculum_array['nombre']."_".
                         $curriculum_array['apellido_paterno']."_".
-                        $curriculum_array['apellido_materno']."_". "CV.docx";
+                        $curriculum_array['apellido_materno']."_". "CV";
+
+        $filenameDocx = $name.".docx";
         
         $templateProcessor->saveAs($filenameDocx);
-        // to do: pues que se opueda descargar en zip con los probatorios
-        return response()->download($filenameDocx)->deleteFileAfterSend(true);
+
+        return $this->createZip_CE($name, $user_id, $filenameDocx);
+    }
+
+    // Crea un ZIP con el curriculum y los documentos probatorios de esta persona.
+    private function createZip_CE($name, $user_id, $filenameDocx) {
+        $supporting_documents = SupportingDocument::where('user_id', '=', $user_id)->get();
+
+        $file_path = "storage/supporting_documents/";
+        $zip_file_name = $name.'.zip';
+        $zip = new ZipArchive;
+
+        if($zip->open(public_path($zip_file_name), ZipArchive::CREATE) === TRUE) {
+
+            $zip->addFile($filenameDocx);
+            $i = 1;
+            foreach($supporting_documents as $sd) {
+    
+                $sd_file_path = $file_path.$sd->documento;
+                $file_extension = File::extension($sd_file_path);
+                $sd_file_name = "$i - ".$sd->nombre_doc.".$file_extension";
+                // el primer arg es la ruta del documento, y el segundo su nombre (para que no
+                // tenga los confusos hashnames)
+                $zip->addFile($sd_file_path, $sd_file_name);
+
+                $i += 1;
+            }
+        }
+
+        $zip->close();
+
+        File::delete($filenameDocx);
+
+        return response()->download(public_path($zip_file_name))->deleteFileAfterSend(true);
     }
 
     // Sustituye en el template de word CV-CE las experiencias profesionales.
@@ -518,7 +556,8 @@ class CurriculumController extends Controller {
             }
             // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios.
             $completedList['percentage'] = ($this->countArrayValues($completedList, true)*100) / 7;
-        } else {
+        }
+        else {
             if($curriculum->status != 'completado') {
                 $curriculum->update(['status' => 'completado']);
             }
@@ -562,7 +601,7 @@ class CurriculumController extends Controller {
         return $count; 
     } 
 
-    // Para vista CAPTURE: Según el formulario actual, nos devuelve el elemento solicitado.
+    // Para vista CAPTURE: Según el formulario actual, nos devuelve el elemento correspondiente.
     private function getFormElementCapture($request, $num, $user) {
         switch ($num) {
             case 1:
@@ -610,7 +649,7 @@ class CurriculumController extends Controller {
         return "No-elemento";
     }
 
-    // Para vista SHOW
+    // Para vista SHOW: Según el formulario actual, nos devuelve el elemento correspondiente.
     private function getFormElementShow($num, $user_id) {
         $user = User::findOrFail($user_id);
         switch ($num) {
