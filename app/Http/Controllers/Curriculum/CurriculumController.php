@@ -69,6 +69,7 @@ class CurriculumController extends Controller {
         $user = Auth::user();
 
         $curriculum = $this->getOrCreateUserCurriculum($user, $request);
+        // element puede ser una lista que utilizan los formularios para indexar valores de la BD.
         $element = $this->getFormElementCapture($request, $formNum, $user);
 
         return view('cv.capture.step'.$formNum, 
@@ -173,7 +174,7 @@ class CurriculumController extends Controller {
         $curriculum = Curriculum::findOrFail($id);
         $curriculum_array = $curriculum->toArray();
         
-        // Cada CV requiere sus propio llenado, por lo que lo haremos en un método auxiliar.
+        // Cada CV requiere sus propio llenado y sus descargas son distintas.
         if($validatedData['formato_curriculum'] == "curriculum_SEP") {
             $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
             $curriculum_array['updated_at'] = $updated_at;
@@ -185,6 +186,10 @@ class CurriculumController extends Controller {
             return $this->fillCV_CE($curriculum_array, $templateProcessor);
         }
     }
+
+    /**
+     * METODOS DE LLENADO DE CV DE LA SEP -----V
+     */
     
     // Método auxiliar para llenar el CV de la SEP. Se debe hacer en el orden del template, si no
     // no funcionan los bloques.
@@ -361,6 +366,15 @@ class CurriculumController extends Controller {
         }
     }
 
+    /**
+     * TERMINAN METODOS LLENADO DE CV DE SEP
+    */
+
+    /**
+     * METODOS DE LLENADO DE CV CE Y CREACION DE SU ZIP -----V
+     */
+
+
     // Método auxiliar que rellena el CV de formato CE.
     private function fillCV_CE($curriculum_array, $templateProcessor) {
 
@@ -385,6 +399,7 @@ class CurriculumController extends Controller {
 
         ini_set('pcre.backtrack_limit', "10000000");
         $user_id = $curriculum_array['user_id'];
+
         $this->putExtracurricularCourses_CE($user_id, $templateProcessor, 'nombres');
         $this->putCertifications($user_id, $templateProcessor);
         $this->putSubjects_CE($user_id, $templateProcessor, 'nombres');
@@ -507,6 +522,10 @@ class CurriculumController extends Controller {
 
     }
 
+    /**
+     * TERMINAN METODOS LLENADO DE CV CE
+     */
+
      // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
     private function isUsersCurriculum($curriculum) {
         if($curriculum) {
@@ -517,7 +536,7 @@ class CurriculumController extends Controller {
 
             return true;
         }
-        return false;
+        abort(404);
     }
 
     // Método auxiliar que verifica el estado actual de la captura del curriculum y lo cambia en la BD.

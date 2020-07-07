@@ -19,13 +19,13 @@
                         Seguir capturando mi currículum
                     </a>
                 @else
-                    <h2 class="alert alert-success font-italic mt-5"> Su currículum ha sido capturado </h2>
+                    <h2 class="alert alert-success font-italic mt-5"> Su currículum se encuentra capturado </h2>
                     <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.show', array(auth()->user()->curriculum, 1)) }}">
                         Ir a mi currículum
                     </a>
                 @endif
             @else
-                <h2 class="alert alert-danger font-italic mt-5"> Su currículum no ha sido registrado </h2>
+                <h2 class="alert alert-danger font-italic mt-5"> Su currículum no está registrado </h2>
                 <a class="btn btn-primary btn-lg text-dark mt-5" href="{{ route('curricula.capture', 1) }}">
                     Capturar currículum
                 </a>

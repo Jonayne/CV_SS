@@ -22,7 +22,7 @@
                 <label class="form-check-label">
                         <input type="checkbox" name="sep" id="sep" class="form-check-input"
                              {{old('sep') 
-                                || $pe->curso_sep ? 
+                                || $pe->curso_sep || old('curso_sep') ?  
                                         'checked=true' : ''}}>
                         Esta experiencia cuenta como <b>Experiencia en capacitación</b>
                 </label>
