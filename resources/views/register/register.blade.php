@@ -68,7 +68,14 @@
                             @else
                                 <option value="control_escolar">Encargado(a) del Área de Control Escolar</option>
                             @endif
-                        @endcan  
+                        @endcan
+                        @can('registrar-admin')
+                            @if (old('role') == 'admin' )
+                                <option value="admin" selected>Administrador</option>
+                            @else
+                                <option value="admin">Administrador</option>
+                            @endif
+                        @endcan
                     </select>
                 </div>
             </div>

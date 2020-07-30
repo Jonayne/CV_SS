@@ -274,7 +274,7 @@
                                         @endforeach
                                 </select>
                                 <small id="nombre_cursos_help_block" class="form-text text-muted">TIP: Para seleccionar varios cursos, 
-                                        presiona la tecla <b>control (CTRL)</b> al momento de elegir otro curso. </small>
+                                        presiona la tecla <b>control (CTRL)</b> en Windows/Linux y la tecla <b>CMD</b> en MacOSX</b> al momento de elegir otro curso.</small>
                         </div>
                         <hr>
                         <div class="text-center">

@@ -34,14 +34,18 @@ class RegisterUserController extends Controller {
         // Si el usuario modificó el HTML de la página y quiso meter un rol no
         // permitido...
         if($validatedData['role'] !== "control_escolar" && 
-                    $validatedData['role'] !== "profesor") {
+                    $validatedData['role'] !== "profesor" && $validatedData['role'] !== "admin") {
             return redirect()->back()->with('status', 'Algo salió mal...')
                                      ->with('status_color', 'danger');
-        } 
+        }
+
         if($validatedData['role'] === "control_escolar" && Gate::denies('registrar-encargado-ce')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                             ->with('status_color', 'danger');
         } elseif($validatedData['role'] === "profesor" && Gate::denies('registrar-profesor')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                            ->with('status_color', 'danger');
+        } elseif($validatedData['role'] === "admin" && Gate::denies('registrar-admin')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                             ->with('status_color', 'danger');
         }
