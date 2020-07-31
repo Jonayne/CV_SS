@@ -13,6 +13,7 @@ class CreateSubjectsTable extends Migration {
     public function up() {
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
+            $table->string('nombre_tema');
             $table->string('version');
             $table->string('nivel');
             $table->string('sistema_operativo');

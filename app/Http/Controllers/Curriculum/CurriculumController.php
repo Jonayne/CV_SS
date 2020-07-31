@@ -371,7 +371,7 @@ class CurriculumController extends Controller {
     */
 
     /**
-     * METODOS DE LLENADO DE CV CE Y CREACION DE SU ZIP -----V
+     * METODOS DE LLENADO DE CV CE Y CREACION DE SU ZIP -----
      */
 
 
@@ -514,6 +514,7 @@ class CurriculumController extends Controller {
 
         $i = 1;
         foreach ($subjects as $subject) {
+            $templateProcessor->setValue('nombre_tema#'.$i, $subject->nombre_tema);
             $templateProcessor->setValue('version#'.$i, $subject->version);
             $templateProcessor->setValue('nivel#'.$i, $subject->nivel);
             $templateProcessor->setValue('sistema_operativo#'.$i, $subject->sistema_operativo);

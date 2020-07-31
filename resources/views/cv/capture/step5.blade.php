@@ -20,9 +20,12 @@
             <ul class="list-group list-group-flush">
                 @forelse ($element as $subject)
                     <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-primary">
-                            {{-- <span class="font-weight-bold">
-                                Nombre: {{ $subject->nombre }}
-                            </span> ??????? --}}
+                            <b>Nombre:</b>
+                            <span class="text-info font-weight-bold">
+                                {{ $subject->nombre_tema }}
+                            </span>
+                            <br>
+
                             <b>Versión:</b>
                             <span class="text-info font-weight-bold">
                                  {{ $subject->version }}

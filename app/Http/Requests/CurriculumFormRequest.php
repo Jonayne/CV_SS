@@ -84,6 +84,7 @@ class CurriculumFormRequest extends FormRequest {
                 break;
             case 5:
                 return [
+                    "nombre_tema" => "required|string|max:255",
                     "nivel" => "required",
                     "version" => "required",
                     "sistema_operativo" => "required"
@@ -118,6 +119,7 @@ class CurriculumFormRequest extends FormRequest {
         return [
             "nombre_doc" => 'nombre del documento',
             "nombre_cert" => 'nombre de la certificación',
+            "nombre_tema" => 'nombre del tema',
             "nombre_curso" => 'nombre del curso extracurricular',
             "categoria_de_pago" => 'Categoría de pago',
             "formato_descarga" => 'Formato de descarga',
@@ -175,7 +177,7 @@ class CurriculumFormRequest extends FormRequest {
             "certificaciones_obtenidas.min" => "El mínimo de texto son 10 letras",
             "certificaciones_obtenidas.max" => "Ha superado el límite de espacio (1000)",
             "nivel.required" => "El nivel del tema es obligatorio",
-            "version.required" => "La version del tema es obligatorio",
+            "version.required" => "La version del tema es obligatoria",
             "sistema_operativo.required" => "El sistema operativo es obligatorio",
             "periodo.required" => "El periodo de su experiencia es obligatorio",
             "institucion.required" => "La institución es obligatoria",
