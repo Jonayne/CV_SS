@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\Element\PreserveText;
+use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\TemplateProcessor;
 use ZipArchive;
 
@@ -176,12 +178,10 @@ class CurriculumController extends Controller {
         
         // Cada CV requiere sus propio llenado y sus descargas son distintas.
         if($validatedData['formato_curriculum'] == "curriculum_SEP") {
-            $updated_at = Carbon::parse($curriculum->updated_at)->format('m/Y');
-            $curriculum_array['updated_at'] = $updated_at;
+            $curriculum_array['updated_at'] = ucfirst($curriculum->updated_at->isoFormat('MMMM YYYY'));
             return $this->fillCV_SEP($curriculum_array, $templateProcessor);
         } else if ($validatedData['formato_curriculum'] == "FORMATO_CV_CE") {
-            $updated_at = Carbon::parse($curriculum->updated_at)->format('d/m/Y');
-            $curriculum_array['updated_at'] = $updated_at;
+            $curriculum_array['updated_at'] = $curriculum->updated_at->isoFormat('LL');
             $curriculum_array['categoria_de_pago'] = $validatedData['categoria_de_pago'];
             return $this->fillCV_CE($curriculum_array, $templateProcessor);
         }
@@ -261,9 +261,14 @@ class CurriculumController extends Controller {
          $templateProcessor->cloneBlock('experiencia_previa_bloque', 0, true, false, $previous_exp->toArray())
         */
         $i = 1;
+
+        // al parecer, cloneBlock se come un espacio al final de cada variable, por lo que se tiene
+        // que poner uno a mano... 
+        $space = new \PhpOffice\PhpWord\Element\PreserveText('<w:t xml:space="preserve"> </w:t>');
         foreach ($previous_exp as $pe) {
-            $templateProcessor->setValue('curso_sep#'.$i, $pe->curso_sep);
-            $templateProcessor->setValue('periodo#'.$i, $pe->periodo);
+            $templateProcessor->setValue('curso_sep#'.$i, $pe->curso_sep.'${space}');
+            $templateProcessor->setComplexValue('space', $space);
+            $templateProcessor->setValue('periodo#'.$i,  $pe->periodo);
             $i += 1;
         }
 

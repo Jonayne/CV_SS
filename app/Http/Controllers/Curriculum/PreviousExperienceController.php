@@ -79,6 +79,7 @@ class PreviousExperienceController extends Controller {
 
         $user_id = Auth::user()->id;
         $validation = Arr::add($request->validated(), 'user_id', $user_id);
+        $validation['periodo'] = " " . $validation['periodo'];
         PreviousExperience::create($validation);
         
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))

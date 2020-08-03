@@ -2,13 +2,13 @@
 <div class="container bg-primary text-black py-3">
     <div class="form-group">
         <label class="required" for="periodo">Periodo</label>
-        <input type="text" id="periodo" name="periodo" class="form-control" value="{{ old('periodo', $pe->periodo)}}">
+        <input type="text" id="periodo" name="periodo" class="form-control" value="{{ old('periodo', $pe->periodo)}}" placeholder="(ejemplo) 26 de mayo al 18 de junio de 2019">
         <br>
         <label class="required" for="institucion">Institución</label>
-        <input type="text" id="institucion" name="institucion" class="form-control" value="{{ old('institucion', $pe->institucion)}}">
+        <input type="text" id="institucion" name="institucion" class="form-control" value="{{ old('institucion', $pe->institucion)}}" placeholder="Institución">
         <br>
         <label class="required" for="cargo">Cargo</label>
-        <input type="text" id="cargo" name="cargo" class="form-control" value="{{old('cargo', $pe->cargo)}}">
+        <input type="text" id="cargo" name="cargo" class="form-control" value="{{old('cargo', $pe->cargo)}}" placeholder="Cargo">
         <br>
         <label class="required" for="actividades_principales">Actividades principales</label>
         <textarea id="actividades_principales" class="form-control" name="actividades_principales">{{old('actividades_principales', $pe->actividades_principales)}}</textarea>
