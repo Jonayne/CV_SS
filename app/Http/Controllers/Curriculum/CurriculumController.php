@@ -405,7 +405,7 @@ class CurriculumController extends Controller {
         ini_set('pcre.backtrack_limit', "10000000");
         $user_id = $curriculum_array['user_id'];
 
-        $this->putExtracurricularCourses_CE($user_id, $templateProcessor, 'nombres');
+        $this->putExtracurricularCourses_CE($user_id, $templateProcessor);
         $this->putCertifications($user_id, $templateProcessor);
         $this->putSubjects_CE($user_id, $templateProcessor, 'nombres');
         $this->putPreviousExp_CE($user_id, $templateProcessor);
@@ -553,14 +553,14 @@ class CurriculumController extends Controller {
         $completedList = $request->session()->get('completedList');
         
         if(empty($completedList)) {
-            $completedList = ['form1' => false, 'form2' => false, 'form3' => false,
+            $completedList = ['form1' => false, 'form2' => false, 'form3' => true,
                               'form4' => false, 'form5' => false,'form6' => false,
                               'form7' => false, 'percentage' => 0];
         }
 
         // Esta es una forma muy poco elegante para validar que los formulario 1 y 2 
         // están capturados... si esos campos ya están la base, significa que todas las
-        // validaciones de dicho formulario pasaron y por ende está capturado.                                                                                              
+        // validaciones de dicho formulario pasaron (porque son obligatorios) y por ende está capturado.                                                                                              
         if($curriculum->fotografia) {
             $completedList['form1'] = true;
         }
@@ -568,8 +568,13 @@ class CurriculumController extends Controller {
             $completedList['form2'] = true;
         }
         // Para los demás, basta con revisar que la relación exista para este usuario.
-        $completedList['form3'] = $user->extracurricularCourses()->exists();          
-        $completedList['form4'] = $user->certifications()->exists();
+        // En el caso de las certificaciones obtenidas, sólo son obligatorias para el que
+        // participa en el proyecto SEP.
+        if($curriculum->proyecto_sep) {
+            $completedList['form4'] = $user->certifications()->exists();
+        } else {
+            $completedList['form4'] = true;
+        }
         $completedList['form5'] = $user->subjects()->exists();
         $completedList['form6'] = $user->previousExperiences()->exists();
         $completedList['form7'] = $user->supportingDocuments()->exists();

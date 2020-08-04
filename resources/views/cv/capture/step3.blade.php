@@ -18,6 +18,8 @@
     @include('partials.form_errors')
     <div class="container bg-primary text-black py-3">
         <div class="text-center">
+            <h5 class="container font-italic text-muted"> Este apartado no es obligatorio. </h5>
+            <hr>
             <br>
             <h3>Cursos técnicos</h3>
             <ul class="list-group list-group-flush">
