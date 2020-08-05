@@ -280,7 +280,8 @@
                         <div class="text-center">
                                 <div class="btn-group">
                                         <a href={{route('home')}} class="btn btn-outline-danger btn-lg mx-5">Salir</a>
-                                        <button type="submit" name="formNum" value="1" class="btn btn-info btn-lg mx-5">Guardar cambios</button>        
+                                        <input type="hidden" id="formNumVal" name="formNumVal" value="1">
+                                        <button type="submit" name="formNum" id="formNum" class="btn btn-info btn-lg mx-5">Guardar cambios</button>        
                                 </div>
                         </div>
                 </div>

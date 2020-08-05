@@ -48,7 +48,7 @@
                         <br><br>
 
                         <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm mr-2" name="formNum" value="4" href="{{route('certifications.edit', $cert)}}">
+                            <a class="btn btn-outline-info btn-sm mr-2" href="{{route('certifications.edit', $cert)}}">
                                 Editar
                             </a>
 
@@ -65,7 +65,7 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg" name="formNum" value="4" href="{{route('certifications.create')}}">
+            <a class="btn btn-success btn-lg" href="{{route('certifications.create')}}">
                 Registrar certificación
             </a>
             <br>

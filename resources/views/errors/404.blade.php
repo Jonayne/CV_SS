@@ -15,7 +15,9 @@
     
     <div class="text-center">
         <div class="btn-group">
-                <a href={{ route('home') }} class="btn btn-secondary btn-lg">Ir al Inicio</a>
+                <a href={{ route('home') }} class="btn btn-info btn-lg mr-5">Ir al Inicio</a>
+
+                <a href={{ url()->previous() }} class="btn btn-info btn-lg">Regresar</a>
         </div>
     </div>
 </div>

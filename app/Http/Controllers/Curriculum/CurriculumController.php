@@ -584,8 +584,9 @@ class CurriculumController extends Controller {
             if($curriculum->status != 'en_proceso') {
                 $curriculum->update(['status' => 'en_proceso']);
             }
-            // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios.
-            $completedList['percentage'] = ($this->countArrayValues($completedList, true)*100) / 7;
+            // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios, pero 1
+            // no es obligatorio (cursos extracurriculares), por lo que ponemos 6.
+            $completedList['percentage'] = ($this->countArrayValues($completedList, true)*100) / 6;
         }
         else {
             if($curriculum->status != 'completado') {

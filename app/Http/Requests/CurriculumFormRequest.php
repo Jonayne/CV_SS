@@ -21,7 +21,7 @@ class CurriculumFormRequest extends FormRequest {
      * @return array
      */
     public function rules() {
-        switch($this->formNum) {
+        switch($this->formNumVal) {
             case 1:
                 return [
                     "fotografia" => "bail|required_without_all:edit|image|max:9999",

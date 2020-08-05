@@ -77,10 +77,14 @@ class PreviousExperienceController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        $user_id = Auth::user()->id;
-        $validation = Arr::add($request->validated(), 'user_id', $user_id);
-        $validation['periodo'] = " " . $validation['periodo'];
-        PreviousExperience::create($validation);
+        $random_token = $request->session()->get('random_token');
+        if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
+            $request->session()->forget('random_token');
+            $user_id = Auth::user()->id;
+            $validation = Arr::add($request->validated(), 'user_id', $user_id);
+            $validation['periodo'] = " " . $validation['periodo'];
+            PreviousExperience::create($validation);
+        }
         
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))
                                                 ->with('status', 'La experiencia profesional previa fue guardada con éxito.')

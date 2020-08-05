@@ -76,7 +76,8 @@
         <div class="text-center">
             <a class="btn btn-dark btn-lg" href="{{route('curricula.capture',session()->get('previous_url') ?? 'home')}}"> Cancelar </a>
             &nbsp;
-            <button class="btn btn-success btn-lg" name="formNum" value="5" type="submit"> {{ $btnTxt }} </button>
+            <input type="hidden" id="formNumVal" name="formNumVal" value="5">
+            <button class="btn btn-success btn-lg" name="formNum" id="formNum" type="submit"> {{ $btnTxt }} </button>
         </div>  
     </div>
 </div>

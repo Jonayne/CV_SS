@@ -10,7 +10,7 @@
     <body>
         <div id="app" class="d-flex flex-column h-screen justify-content-between">
             <header>
-                @include('partials/nav')
+                @include('partials.nav')
                 @include('partials.session_status')
             </header>
 
@@ -19,7 +19,7 @@
             </main>
             
             <footer class="text-center text-black-50 py-3 shadow">
-                {{ config('app.name') }} | Este es el footer {{ date('Y') }}
+                {{ config('app.name') }} | Footer {{ date('Y') }}
             </footer>
         </div>
     </body>

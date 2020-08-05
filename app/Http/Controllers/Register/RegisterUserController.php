@@ -49,19 +49,22 @@ class RegisterUserController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                             ->with('status_color', 'danger');
         }
+        $random_token = $request->session()->get('random_token');
+        if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
+            $request->session()->forget('random_token');
+            $rol = Role::where('nombre_rol', $validatedData['role'])->first();
 
-        $rol = Role::where('nombre_rol', $validatedData['role'])->first();
+            $new_user = User::create([
+                            'nombre' => $validatedData['nombre'],
+                            'apellido_paterno' => $validatedData['ap_paterno'],
+                            'apellido_materno' => $validatedData['ap_materno'],
+                            'email' => $validatedData['email'],
+                            'password' => Hash::make($validatedData['password']),
+                            'sede' => $validatedData['sede'] ?? ''
+                        ]);
 
-        $new_user = User::create([
-                        'nombre' => $validatedData['nombre'],
-                        'apellido_paterno' => $validatedData['ap_paterno'],
-                        'apellido_materno' => $validatedData['ap_materno'],
-                        'email' => $validatedData['email'],
-                        'password' => Hash::make($validatedData['password']),
-                        'sede' => $validatedData['sede'] ?? ''
-                    ]);
-
-        $new_user->roles()->attach($rol);
+            $new_user->roles()->attach($rol);
+        }
 
         return redirect()->route('home')->with('status', 'Usuario registrado exitosamente.')
                                             ->with('status_color', 'success');

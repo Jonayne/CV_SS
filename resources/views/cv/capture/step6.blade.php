@@ -58,7 +58,7 @@
                         @endif
                         
                         <div class="btn-group">
-                            <a class="btn btn-outline-info btn-sm" name="formNum" value="6" href="{{route('previous_experiences.edit', $pe)}}">
+                            <a class="btn btn-outline-info btn-sm" href="{{route('previous_experiences.edit', $pe)}}">
                                 Editar
                             </a>
                             &nbsp;
@@ -75,7 +75,7 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg" name="formNum" value="6" href="{{route('previous_experiences.create')}}">
+            <a class="btn btn-success btn-lg" href="{{route('previous_experiences.create')}}">
                 Registrar experiencia profesional
             </a>
             <br>

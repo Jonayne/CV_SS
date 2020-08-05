@@ -48,10 +48,14 @@ class SubjectController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-
-        $user_id = Auth::user()->id;
-        $validation = Arr::add($request->validated(), 'user_id', $user_id);
-        Subject::create($validation);
+        
+        $random_token = $request->session()->get('random_token');
+        if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
+            $request->session()->forget('random_token');
+            $user_id = Auth::user()->id;
+            $validation = Arr::add($request->validated(), 'user_id', $user_id);
+            Subject::create($validation);
+        }
         
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->
                                         with('status', 'El tema fue guardado con éxito.')

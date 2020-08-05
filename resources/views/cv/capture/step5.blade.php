@@ -42,7 +42,7 @@
                             </span>
                             <br><br>
                             <div class="btn-group">
-                                <a class="btn btn-outline-info btn-sm" name="formNum" value="5" href="{{route('subjects.edit', $subject)}}">
+                                <a class="btn btn-outline-info btn-sm" href="{{route('subjects.edit', $subject)}}">
                                     Editar
                                 </a>
                                 &nbsp;
@@ -59,7 +59,7 @@
                 @endforelse
             </ul>
             <hr>
-            <a class="btn btn-success btn-lg"  name="formNum" value="5" href="{{route('subjects.create')}}">
+            <a class="btn btn-success btn-lg" href="{{route('subjects.create')}}">
                 Agregar tema
             </a>
         </div>

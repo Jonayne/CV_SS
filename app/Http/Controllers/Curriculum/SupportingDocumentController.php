@@ -56,24 +56,28 @@ class SupportingDocumentController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        $user_id = Auth::user()->id;
-        $validation = Arr::add($request->validated(), 'user_id', $user_id);
+        $random_token = $request->session()->get('random_token');
+        if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
+            $request->session()->forget('random_token');
+            $user_id = Auth::user()->id;
+            $validation = Arr::add($request->validated(), 'user_id', $user_id);
 
-        $es_documento_academico = in_array($validation['nombre_doc'], ['Título', 'Cédula profesional', 
-                                                                   'Historial académico', 'Comprobante de curso técnico', 
-                                                                   'Comprobante de curso de formación docente', 
-                                                                   '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
+            $es_documento_academico = in_array($validation['nombre_doc'], ['Título', 'Cédula profesional', 
+                                                                    'Historial académico', 'Comprobante de curso técnico', 
+                                                                    'Comprobante de curso de formación docente', 
+                                                                    '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
 
-        $validation = Arr::add($validation, 'es_documento_academico', $es_documento_academico);
+            $validation = Arr::add($validation, 'es_documento_academico', $es_documento_academico);
 
-        if($request->file('documento') ) {
-            $hashName = $request->file('documento')->hashName();
-            
-            $path = $request->file('documento')->store('public/supporting_documents');
-            $validation['documento'] = $hashName;
+            if($request->file('documento') ) {
+                $hashName = $request->file('documento')->hashName();
+                
+                $path = $request->file('documento')->store('public/supporting_documents');
+                $validation['documento'] = $hashName;
+            }
+        
+            SupportingDocument::create($validation);
         }
-       
-        SupportingDocument::create($validation);
         
         return redirect()->route('curricula.capture', $request->session()->get('previous_url'))->with('status', 'El documento probatorio fue guardado con éxito.')
                                                      ->with('status_color', 'success');

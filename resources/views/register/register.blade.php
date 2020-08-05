@@ -9,9 +9,14 @@
       </svg></h1>
     @include('partials.form_errors')
     
-    <form method="POST" action="{{ route('registrar_usuario.registerUser') }}">
+    <form method="POST" action="{{ route('registrar_usuario.registerUser') }}" onsubmit='$("#formNum").attr("disabled", "true")'>
         @csrf 
-
+        @php
+            $random_token = Str::random(32);
+            session()->put('random_token', $random_token);
+        @endphp
+        <input type="hidden" id="unique_token" name="unique_token" value="{{$random_token}}">
+        
         <div class="container bg-primary text-black py-4">
             <div class="form-group row">
                 <label class="col-md-4 col-form-label text-md-right" for="nombre"><b>Nombre</b></label>
@@ -93,7 +98,7 @@
             
             <hr>
             <div class="text-center">
-                <button class="btn btn-success btn-lg mt-2" type="submit"> Registrar </button>
+                <button class="btn btn-success btn-lg mt-2" id="formNum" name="formNum" type="submit"> Registrar </button>
             </div>
         </div>
     </form>

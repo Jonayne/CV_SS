@@ -31,7 +31,8 @@
         </div>
             
         <div class="text-center">
-            <button type="submit" name="formNum" value="download" class="btn btn-outline-secondary btn-lg mt-3" aria-describedby="pdf_help_block">
+            <input type="hidden" id="formNumVal" name="formNumVal" value="download">
+            <button type="submit" class="btn btn-outline-secondary btn-lg mt-3" aria-describedby="pdf_help_block">
                 Descargar curriculum 
             </button>
             <small id="pdf_help_block" class="form-text">
