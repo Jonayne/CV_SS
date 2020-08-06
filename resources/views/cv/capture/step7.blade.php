@@ -27,7 +27,9 @@
                 <li><b>Título y cédula profesional o historial académico</b></li>
                 <li><b>Comprobantes de cursos técnicos</b></li>
                 <li><b>Comprobantes de cursos de formación docente</b></li>
-                <li><b>(Proyecto SEP) Comprobante de curso de la SEP</b></li>
+                @if (isset($curriculum->proyecto_sep) && $curriculum->proyecto_sep)
+                    <li><b>(Proyecto SEP) Comprobante de curso de la SEP</b></li>
+                @endif
             </ul>
             <ul class="list-group list-group-flush">
                 @forelse ($element['academicos'] as $sd)

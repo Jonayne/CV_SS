@@ -248,11 +248,15 @@
                                 <h3 class="text-secondary text-center font-weight-bold"> Sólo para participantes de proyecto SEP </h3>
                                 <div class="form-check text-center mb-3">
                                         <label class="form-check-label">
-                                                <input type="checkbox" name="proyecto_sep" id="proyecto_sep" class="form-check-input"
-                                                     {{old('proyecto_sep', $curriculum->proyecto_sep) 
-                                                        || old('cursos_impartir_sdpc', $curriculum->cursos_impartir_sdpc)
-                                                        || old('registro_secretaria_de_trabajo_y_prevision_social', $curriculum->registro_secretaria_de_trabajo_y_prevision_social) ? 
-                                                                'checked=true' : ''}}>
+                                                <input type="radio" name="proyecto_sep" id="proyecto_sep_no" value="false" class="form-check-input" checked> 
+                                                <b>NO</b> participo en Proyecto SEP <br><small class="text-muted">(no se tomarán en cuenta los campos de abajo)</small>
+                                        </label>
+                                </div>
+                                <div class="form-check text-center mb-3">
+                                        <label class="form-check-label">
+                                                <input type="radio" name="proyecto_sep" id="proyecto_sep_si" value="true" class="form-check-input"
+                                                        {{ (old('proyecto_sep', $curriculum->proyecto_sep) === "true" ||
+                                                           old('proyecto_sep', $curriculum->proyecto_sep) === true) ? 'checked=true' : ''}}>
                                                 Participo en Proyecto SEP
                                         </label>
                                 </div>

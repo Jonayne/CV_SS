@@ -11,15 +11,12 @@ use App\PreviousExperience;
 use App\Subject;
 use App\SupportingDocument;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpWord\Element\PreserveText;
-use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\TemplateProcessor;
 use ZipArchive;
 
@@ -95,10 +92,22 @@ class CurriculumController extends Controller {
 
         $curriculum = Curriculum::findOrFail($id);
 
-        // Si estamos capturando la lista de cursos SEP, la pasamos a una cadena y asi la guardamos.
-        if(array_key_exists('cursos_impartir_sdpc', $validatedData)) {
-            $validatedData['cursos_impartir_sdpc'] = implode(',', $validatedData['cursos_impartir_sdpc']);
-        }
+        //si participamos en  proyecto SEP
+        if(array_key_exists('proyecto_sep', $validatedData)) {
+            if($validatedData['proyecto_sep'] == "true") {
+                $validatedData['proyecto_sep'] = true;
+                $validatedData['cursos_impartir_sdpc'] = implode(',', $validatedData['cursos_impartir_sdpc']);
+            } else {
+                $validatedData['proyecto_sep'] = false;
+                if(array_key_exists('cursos_impartir_sdpc', $validatedData)) {
+                    $validatedData['cursos_impartir_sdpc'] = null;
+                }
+                if(array_key_exists('registro_secretaria_de_trabajo_y_prevision_social', $validatedData)) {
+                    $validatedData['registro_secretaria_de_trabajo_y_prevision_social'] = null;
+                }
+
+            }
+        }    
 
         // Para la fotografía.
         // La guardamos en nuestro sistema de archivos. En nuestra BD tendremos su hashname.
@@ -379,7 +388,6 @@ class CurriculumController extends Controller {
      * METODOS DE LLENADO DE CV CE Y CREACION DE SU ZIP -----
      */
 
-
     // Método auxiliar que rellena el CV de formato CE.
     private function fillCV_CE($curriculum_array, $templateProcessor) {
 
@@ -391,6 +399,11 @@ class CurriculumController extends Controller {
             $curriculum_array = Arr::add($curriculum_array, 'contratacion_UNAM', '__');
             $curriculum_array = Arr::add($curriculum_array, 'contratacion_EXTERNO', ' X ');
         }
+
+        //el nombre va todo en mayúsculas al inicio
+        $curriculum_array['nombre'] = mb_strtoupper($curriculum_array['nombre'], 'UTF-8');
+        $curriculum_array['apellido_paterno'] = mb_strtoupper($curriculum_array['apellido_paterno'], 'UTF-8');
+        $curriculum_array['apellido_materno'] = mb_strtoupper($curriculum_array['apellido_materno'], 'UTF-8');
 
         // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
         $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
@@ -440,8 +453,6 @@ class CurriculumController extends Controller {
                 $sd_file_path = $file_path.$sd->documento;
                 $file_extension = File::extension($sd_file_path);
                 $sd_file_name = "$i - ".$sd->nombre_doc.".$file_extension";
-                // el primer arg es la ruta del documento, y el segundo su nombre (para que no
-                // tenga los confusos hashnames)
                 $zip->addFile($sd_file_path, $sd_file_name);
 
                 $i += 1;

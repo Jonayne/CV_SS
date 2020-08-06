@@ -22,33 +22,25 @@ class UsersTableSeeder extends Seeder {
         
         // Algunos usuarios de prueba...
         $admin = User::create([
-            'nombre' => 'admin',
-            'apellido_paterno' => 'admin',
-            'apellido_materno' => 'admin',
+            'nombre' => 'Admin',
+            'apellido_paterno' => 'Prueba',
+            'apellido_materno' => 'Prueba',
             'email' => 'admin@admin.com',
             'password' => Hash::make('prueba')
             ]);
 
         $profesor = User::create([
-            'nombre' => 'profesor',
-            'apellido_paterno' => 'profesor',
-            'apellido_materno' => 'profesor',
+            'nombre' => 'Profesor',
+            'apellido_paterno' => 'Prueba',
+            'apellido_materno' => 'Prueba',
             'email' => 'profesor@profesor.com',
             'password' => Hash::make('prueba')
             ]);
 
-        $profesor2 = User::create([
-            'nombre' => 'profesor2',
-            'apellido_paterno' => 'profesor2',
-            'apellido_materno' => 'profesor2',
-            'email' => 'profesor2@profesor.com',
-            'password' => Hash::make('prueba')
-            ]);
-
         $ce= User::create([
-            'nombre' => 'ce',
-            'apellido_paterno' => 'ce',
-            'apellido_materno' => 'ce',
+            'nombre' => 'Encargado',
+            'apellido_paterno' => 'Prueba',
+            'apellido_materno' => 'Prueba',
             'email' => 'ce@ce.com',
             'password' => Hash::make('prueba'),
             'sede' => 'DGTIC'
@@ -56,7 +48,6 @@ class UsersTableSeeder extends Seeder {
 
         $admin->roles()->attach($adminRole);
         $profesor->roles()->attach($profesorRole);
-        $profesor2->roles()->attach($profesorRole);
         $ce->roles()->attach($ceRole);
 
     }

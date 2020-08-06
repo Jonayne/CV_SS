@@ -48,7 +48,7 @@ class ExtracurricularCourseController extends Controller {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
-        
+        // para que evitar multiple submissions (desde el servidor, también se tomó acción desde el front)
         $random_token = $request->session()->get('random_token');
         if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
             $request->session()->forget('random_token');

@@ -53,8 +53,8 @@ class CurriculumFormRequest extends FormRequest {
                     "tipo_contratacion" => "required",
                     "registro_secretaria_de_trabajo_y_prevision_social" => "sometimes|nullable",
                     "ocupacion_actual" => "bail|required|string",
-                    "cursos_impartir_sdpc" => "required_if:proyecto_sep,on",
-                    "proyecto_sep" => "sometimes"
+                    "cursos_impartir_sdpc" => "required_if:proyecto_sep,true",
+                    "proyecto_sep" => "required"
                 ];
                 break;
             case 2:
