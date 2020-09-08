@@ -38,15 +38,15 @@ class CurriculumFormRequest extends FormRequest {
                     "tel_oficina" => "required|bail|digits_between:8,12|numeric",
                     "tel_recado" => "required|bail|digits_between:8,12|numeric",
                     "celular" => "required|bail|digits_between:8,12|numeric",
-                    "email_personal" => "required|email",
+                    "email_personal" => "required|email|unique:curricula,email_personal,{$this->curriculum}",
                     "email_cursos_linea" => "sometimes|nullable|email",
                     "twitter" => "sometimes|nullable",
                     "fecha_nacimiento" => "required|date_format:Y-m-d|before:today|after:1900-01-01",
                     "disponibilidad_horario" => "required|string|max:255",
                     "dias_disponibles" => "required|string|max:255",
                     "nacionalidad" => "required|string|max:255",
-                    "rfc" => "bail|required|alpha_num|size:13",
-                    "curp" => "bail|required|alpha_num|size:18",
+                    "rfc" => "bail|required|alpha_num|size:13|unique:curricula,rfc,{$this->curriculum}",
+                    "curp" => "bail|required|alpha_num|size:18|unique:curricula,curp,{$this->curriculum}",
                     "num_ife" => "required|bail|numeric|digits_between:10,13",
                     "num_proveedor_UNAM" => "sometimes|nullable",
                     "num_autorizacion_de_impresion" => "sometimes|nullable",
@@ -64,7 +64,7 @@ class CurriculumFormRequest extends FormRequest {
                     "estudios_carrera" => "bail|required|string|max:255",
                     "estudios_estatus" => "bail|required|string|max:255",
                     "estudios_documento_obtenido" => "bail|required|string|max:255",
-                    "cedula_profesional" => "bail|sometimes|nullable|string|max:255"
+                    "cedula_profesional" => "required_if:estudios_estatus,titulado|nullable|string|max:255"
                 ];
                 break;
             case 3:
@@ -157,6 +157,7 @@ class CurriculumFormRequest extends FormRequest {
 
     public function messages() {
         return [
+            "cedula_profesional.required_if" => "La cédula profesional es obligatoria si marca su estatus como \"Titulado(a)\"",
             "categoria_de_pago.required_if" => "El campo Categoría de Pago es obligatorio al escoger el formato de curriculum CE",
             "fotografia.required_without_all" => "La fotografía es obligatoria",
             "fotografia.image" => "El formato de la fotografía es erroneo",
@@ -166,7 +167,7 @@ class CurriculumFormRequest extends FormRequest {
             "estudios_grado_maximo_estudios.required" => "El grado máximo de estudios es obligatorio",
             "estudios_escuela.required" => "La escuela es obligatoria",
             "estudios_carrera.required" => "La carrera es obligatoria",
-            "estudios_estatus.required" => "El estatus es obligatoria",
+            "estudios_estatus.required" => "El estatus es obligatorio",
             "estudios_documento_obtenido.required" => "El documento obtenido es obligatorio",
             "anio.required" => "El año del curso es obligatorio",
             "anio.date_format" => "El año del curso debe tener el formato Y (ej. 2018)",

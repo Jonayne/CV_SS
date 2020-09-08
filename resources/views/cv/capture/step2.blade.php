@@ -34,13 +34,28 @@
                                 value="{{ old('estudios_carrera', $curriculum->estudios_carrera) }}">
                         <br>
                         <label class="required" for="estudios_estatus">Estatus</label>
-                        <input type="text" name="estudios_estatus" id="estudios_estatus" class="form-control" placeholder="Estatus" 
-                                value="{{ old('estudios_estatus', $curriculum->estudios_estatus) }}">
+                        <select class="form-control" name="estudios_estatus" id="estudios_estatus">
+                                <option value="" selected>Seleccionar...</option>
+                                @if (old('estudios_estatus', $curriculum->estudios_estatus) == 'pasante' )
+                                        <option value="pasante" selected>Pasante</option>
+                                @else
+                                        <option value="pasante">Pasante</option>
+                                @endif
+                                @if (old('estudios_estatus', $curriculum->estudios_estatus) == 'titulado' )
+                                        <option value="titulado" selected>Titulado(a)</option>
+                                @else
+                                        <option value="titulado">Titulado(a)</option>
+                                @endif
+                        </select>
                         <br>
+
                         <label class="required" for="estudios_documento_obtenido">Documento obtenido</label>
                         <input type="text" name="estudios_documento_obtenido" id="estudios_documento_obtenido" class="form-control" placeholder="Documento obtenido" 
                                 value="{{ old('estudios_documento_obtenido', $curriculum->estudios_documento_obtenido) }}">
-                        <br>
+                        
+                        <hr>
+                        <h3 class="text-black text-center text-muted">Sólo obligatoria si su estatus es "Titulado(a)"</h3><br>
+
                         <label class="required" for="cedula_profesional">Cédula profesional</label>
                         <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
                                 value="{{ old('cedula_profesional', $curriculum->cedula_profesional) }}">

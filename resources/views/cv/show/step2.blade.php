@@ -32,16 +32,29 @@
                         value="{{$curriculum->estudios_carrera}}">
                         <br>
                         <label for="estudios_estatus">Estatus</label>
-                        <input type="text" name="estudios_estatus" id="estudios_estatus" class="form-control" placeholder="Estatus" 
-                        value="{{$curriculum->estudios_estatus}}">
+                        <select class="form-control" name="estudios_estatus" id="estudios_estatus">
+                                @if ($curriculum->estudios_estatus == 'pasante')
+                                        <option value="pasante" selected>Pasante</option>
+                                @else
+                                        <option value="pasante">Pasante</option>
+                                @endif
+                                @if ($curriculum->estudios_estatus == 'titulado' )
+                                        <option value="titulado" selected>Titulado(a)</option>
+                                @else
+                                        <option value="titulado">Titulado(a)</option>
+                                @endif
+                        </select>
                         <br>
                         <label for="estudios_documento_obtenido">Documento obtenido</label>
                         <input type="text" name="estudios_documento_obtenido" id="estudios_documento_obtenido" class="form-control" placeholder="Documento obtenido" 
                         value="{{$curriculum->estudios_documento_obtenido}}">
                         <br>
-                        <label for="cedula_profesional">Cédula profesional</label>
-                        <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
-                        value="{{$curriculum->cedula_profesional}}">
+                        @if ($curriculum->estudios_estatus == "titulado")
+                                <label for="cedula_profesional">Cédula profesional</label>
+                                <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
+                                value="{{$curriculum->cedula_profesional}}">
+                        @endif
+                        
                 </div>
 
         </fieldset>

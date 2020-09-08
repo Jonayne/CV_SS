@@ -23,7 +23,7 @@ class RegisterUserRequest extends FormRequest {
         return [
             'nombre' => 'required|string|max:255',
             'ap_paterno' => 'required|string|max:255',
-            'ap_materno' => 'required|string|max:255',
+            'ap_materno' => 'sometimes|nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required',
