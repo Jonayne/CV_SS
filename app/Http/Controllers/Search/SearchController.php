@@ -11,6 +11,18 @@ use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller {
 
+    protected $cat_pago_list = ['Académico de otra dependencia de la UNAM que expide recibo de honorarios (Tiempo completo o asignatura) (Ei)',
+                        'Interno Auxiliar que expide recibo de honorarios (IAX)',
+                        'Interno Asociado que expide recibo de honorarios (IAS)',
+                        'Interno Titular que expide recibo de honorarios (ITT)',
+                        'Interno Investigador que expide recibo de honorarios (IIN)',
+                        'Interno Investigador que emite factura (IIF)',
+                        'No tiene relación con la UNAM y SÍ emite recibo de honorarios (Evi)',
+                        'No tiene relación con la UNAM Emite factura (Ev)',
+                        'Es becario de la DGTIC que expide recibo de honorarios (Eiii)',
+                        'Es personal de honorarios de la DGTIC que expide recibo de honorarios (Eii)',
+                        'Es Académico de la UNAM que emite factura (Eviii)',
+                        'Caso especial (Z)'];
     /**
      * Create a new controller instance.
      *
@@ -26,7 +38,9 @@ class SearchController extends Controller {
                                                 ->with('status_color', 'danger');
         }
 
-        return view('search/search');
+        $cat_pago_list = $this->cat_pago_list;
+
+        return view('search/search', compact('cat_pago_list'));
     }
 
     public function searchOnDB(SearchProfessorRequest $request) {   
@@ -37,6 +51,7 @@ class SearchController extends Controller {
         $correo = $request->email;
         $rfc = $request->rfc;
         $curp = $request->curp;
+        $categoria_de_pago = $request->categoria_de_pago;
 
         // Al ser los profesores los únicos con un curriculum, son los 
         // únicos que entrarán en el filtro.
@@ -44,7 +59,9 @@ class SearchController extends Controller {
                     leftJoin('users', 'curricula.user_id', '=', 'users.id')
                     ->select('curricula.id', 'curricula.nombre', 'curricula.apellido_paterno', 'curricula.apellido_materno', 
                         'users.nombre', 'users.apellido_paterno', 'users.apellido_materno', 'curp',
-                        'rfc', 'users.email', 'curricula.email_personal', 'status');
+                        'rfc', 'users.email', 'curricula.email_personal', 'status', 'categoria_de_pago');
+    
+        //$tabla = $users->get()->all();
 
         if($nombre) {
             // ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
@@ -78,6 +95,10 @@ class SearchController extends Controller {
             $users->where('curp', 'ILIKE', '%'.$curp.'%');
         }
 
+        if($categoria_de_pago) {
+            $users->where('categoria_de_pago', ''.$categoria_de_pago.'');
+        }
+
         $users->orderBy('curricula.id')->orderByDesc('status');
 
         return view('search/result')->
@@ -85,6 +106,7 @@ class SearchController extends Controller {
                 with('nombre', $nombre)->
                 with('rfc', $rfc)->
                 with('curp', $curp)->
-                with('correo', $correo);
+                with('correo', $correo)->
+                with('categoria_de_pago', $categoria_de_pago);
     }
 }

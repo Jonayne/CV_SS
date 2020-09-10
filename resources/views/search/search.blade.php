@@ -24,21 +24,38 @@
             <div class="form-group">
 
                 <label for="name">Nombre del profesor</label>
-                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}">
+                <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" placeholder="Nombre del profesor">
                 <br>
 
                 <label for="email">Email</label>
-                <input type="text" id="email" name="email" class="form-control" value="{{ old('email')}}">
+                <input type="text" id="email" name="email" class="form-control" value="{{ old('email')}}" placeholder="Email personal">
                 <br>
 
                 <label for="rfc">RFC</label>
-                <input type="text" id="rfc" name="rfc" class="form-control" value="{{ old('rfc')}}">
+                <input type="text" id="rfc" name="rfc" class="form-control" value="{{ old('rfc')}}" placeholder="RFC">
                 <br>
 
                 <label for="curp">CURP</label>
-                <input type="text" id="curp" name="curp" class="form-control" value="{{ old('curp')}}">
+                <input type="text" id="curp" name="curp" class="form-control" value="{{ old('curp')}}" placeholder="CURP">
                 <br>
                 
+                <label for="categoria_de_pago">Categoría de Pago</label>
+                <select class="form-control" name="categoria_de_pago" id="categoria_de_pago">
+                    @if (!old('categoria_de_pago'))
+                        <option value="" selected>Seleccionar...</option>
+                        @foreach ($cat_pago_list as $item)
+                            <option value="{{$item}}"> {{$item}} </option>
+                        @endforeach
+                    @else
+                        @foreach ($cat_pago_list as $item)
+                            <option value="{{$item}}" 
+                            @if (old('categoria_de_pago') == $item)
+                                selected
+                            @endif>
+                            {{$item}}</option>
+                        @endforeach
+                    @endif
+                </select>
                 <br>
             </div>
             <div class="text-center">

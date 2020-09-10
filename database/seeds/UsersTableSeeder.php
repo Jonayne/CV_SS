@@ -17,7 +17,6 @@ class UsersTableSeeder extends Seeder {
         DB::table('role_user')->truncate();
 
         $adminRole = Role::where('nombre_rol', 'admin')->first();
-        $profesorRole = Role::where('nombre_rol', 'profesor')->first();
         $ceRole = Role::where('nombre_rol', 'control_escolar')->first();
         
         // Algunos usuarios de prueba...
@@ -26,14 +25,6 @@ class UsersTableSeeder extends Seeder {
             'apellido_paterno' => 'Prueba',
             'apellido_materno' => 'Prueba',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('prueba')
-            ]);
-
-        $profesor = User::create([
-            'nombre' => 'Profesor',
-            'apellido_paterno' => 'Prueba',
-            'apellido_materno' => 'Prueba',
-            'email' => 'profesor@profesor.com',
             'password' => Hash::make('prueba')
             ]);
 
@@ -47,7 +38,6 @@ class UsersTableSeeder extends Seeder {
             ]);
 
         $admin->roles()->attach($adminRole);
-        $profesor->roles()->attach($profesorRole);
         $ce->roles()->attach($ceRole);
 
     }

@@ -15,11 +15,12 @@ class CreateUsersTable extends Migration {
             $table->id();
             $table->string('nombre');
             $table->string('apellido_paterno');
-            $table->string('apellido_materno');
+            $table->string('apellido_materno')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('sede')->nullable();
+            $table->string('categoria_de_pago')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

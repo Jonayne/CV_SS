@@ -21,10 +21,11 @@ class SearchProfessorRequest extends FormRequest {
      */
     public function rules() {
         return [
-            'name' => 'required_without_all:email,rfc,curp|string|nullable',
-            'email' => 'required_without_all:name,rfc,curp|nullable',
-            'rfc' => 'required_without_all:name,email,curp|alpha_num|nullable',
-            'curp' => 'required_without_all:name,email,rfc|alpha_num|nullable',
+            'name' => 'required_without_all:email,rfc,curp,categoria_de_pago|string|nullable',
+            'email' => 'required_without_all:name,rfc,curp,categoria_de_pago|nullable',
+            'rfc' => 'required_without_all:name,email,curp,categoria_de_pago|alpha_num|nullable',
+            'curp' => 'required_without_all:name,email,rfc,categoria_de_pago|alpha_num|nullable',
+            'categoria_de_pago' => 'required_without_all:name,email,rfc,curp|nullable'
         ];
     }
 

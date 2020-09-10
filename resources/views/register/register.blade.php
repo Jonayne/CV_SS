@@ -86,7 +86,39 @@
                     </select>
                 </div>
             </div>
+            <hr>
+            <h3 class="text-black text-center text-muted">Sólo obligatorio al registrar Profesores</h3><br>
+            <div class="form-group row">
+                <label for="cat_pago" class="col-md-4 col-form-label text-md-right required"><b>Categoría de Pago </b></label>
+                <div class="col-md-6">
+                    <select class="form-control" name="cat_pago" id="cat_pago">
+                        @if (!old('cat_pago'))
+                            <option value="" selected>Ninguno</option>
+                            @foreach ($cat_pago_list as $item)
+                                <option value="{{$item}}"> {{$item}} </option>
+                            @endforeach
+                        @else
+                            <option value="" >Ninguno</option>
+                            @foreach ($cat_pago_list as $item)
+                                <option value="{{$item}}" 
+                                @if (old('cat_pago') == $item)
+                                    selected
+                                @endif>
+                                {{$item}}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </div>
 
+            <div class="form-check row">
+                <label for="cat_pago_despues" class="col-md-4 col-form-label text-md-right form-check-label">
+                    <small>Alternativamente, puede <b>introducir<br> después la Categoría de Pago</small>
+                    <input type="checkbox" name="cat_pago_despues" id="cat_pago_despues" class="form-check-input col-md-6"
+                    {{ (old('cat_pago_despues') ||
+                        old('cat_pago_despues') === true) ? 'checked=true' : ''}}></label>
+            </div>
+            
             @can('registrar-encargado-ce')
                 <hr>
                 <h3 class="text-black text-center text-muted">Sólo obligatorio al registrar encargados(as) del Área de Control Escolar</h3><br>

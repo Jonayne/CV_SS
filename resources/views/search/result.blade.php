@@ -21,24 +21,39 @@
                 @if ($rfc)
                     <li> RFC: <b> {{$rfc}} </b></li>
                 @endif 
+                @if ($categoria_de_pago)
+                    <li> Categoría de Pago: <b> {{$categoria_de_pago}} </b></li>
+                @endif
             </ul>
         </h5>
         <ul class="list-group">
             @forelse ($result as $user)
                 @if ($user->id)
                         @if (($user->status) == 'en_proceso')
-                            <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
+                            <li class="list-group-item list-group-item-light list-group-item-action">
                                 Nombre registrado: <strong>{{formatName($user)}}</strong><br>
                                 Email registrado: <strong>{{$user->email}}</strong><br>
                                 Estado del currículum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
-                            </a>
+                                <hr>
+                                <div class="text-center">
+                                    <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', $user->id)}}">
+                                        Actualizar Categoría de Pago
+                                    </a>
+                                </div>
+                            </li>
                         @else
-                            <a class="list-group-item list-group-item-light list-group-item-action" href="{{route('curricula.show', array($user->id, 1))}}">
+                            <a class="list-group-item list-group-item-light list-group-item-action">
                                 Nombre completo: <strong>{{formatName($user)}}</strong><br>
                                 Email personal: <strong>{{$user->email}}</strong><br>
                                 CURP: <strong>{{$user->curp}}</strong><br>
                                 RFC: <strong>{{$user->rfc}}</strong><br>
                                 Estado del currículum: <span class="text-info"><strong> CAPTURADO </strong></span>
+                                <div class="btn-group">
+                                    <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', $user->id)}}">
+                                        Actualizar Categoría de Pago
+                                    </a>
+                                    <a href="{{route('curricula.show', array($user->id, 1))}}" class="btn btn-outline-info btn-sm"> Ver currículum </button>
+                                </div>
                             </a>
                         @endif                 
                 @else
@@ -54,8 +69,7 @@
                     No se encontraron coincidencias para su búsqueda. 
 
                     <br>Verifique que los filtros de su búsqueda sean correctos. (Tome en cuenta acentos)<br>
-                    También es posible que el profesor aún no haya registrado su currículum.
-                    
+                        También es posible que el profesor aún no haya registrado su currículum.
                 </li>
             @endforelse
             <hr>

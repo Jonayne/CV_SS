@@ -43,6 +43,11 @@
                                 @else
                                         <option value="titulado">Titulado(a)</option>
                                 @endif
+                                @if ($curriculum->estudios_estatus == 'estudiante')
+                                        <option value="estudiante" selected>Estudiante</option>
+                                @else
+                                        <option value="estudiante">Estudiante</option>
+                                @endif
                         </select>
                         <br>
                         <label for="estudios_documento_obtenido">Documento obtenido</label>

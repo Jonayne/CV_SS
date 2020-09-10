@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Register;
 
+use App\Curriculum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterUserRequest;
 use App\Role;
@@ -11,6 +12,20 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterUserController extends Controller {
+
+    protected $cat_pago_list = ['Académico de otra dependencia de la UNAM que expide recibo de honorarios (Tiempo completo o asignatura) (Ei)',
+                        'Interno Auxiliar que expide recibo de honorarios (IAX)',
+                        'Interno Asociado que expide recibo de honorarios (IAS)',
+                        'Interno Titular que expide recibo de honorarios (ITT)',
+                        'Interno Investigador que expide recibo de honorarios (IIN)',
+                        'Interno Investigador que emite factura (IIF)',
+                        'No tiene relación con la UNAM y SÍ emite recibo de honorarios (Evi)',
+                        'No tiene relación con la UNAM Emite factura (Ev)',
+                        'Es becario de la DGTIC que expide recibo de honorarios (Eiii)',
+                        'Es personal de honorarios de la DGTIC que expide recibo de honorarios (Eii)',
+                        'Es Académico de la UNAM que emite factura (Eviii)',
+                        'Caso especial (Z)'];
+    
     /**
      * Create a new controller instance.
      *
@@ -26,7 +41,9 @@ class RegisterUserController extends Controller {
                                           ->with('status_color', 'danger');
         }
 
-        return view('register/register');
+        $cat_pago_list = $this->cat_pago_list;
+
+        return view('register/register', compact('cat_pago_list'));
     }
 
     public function registerUser(RegisterUserRequest $request) {
@@ -57,11 +74,19 @@ class RegisterUserController extends Controller {
             $new_user = User::create([
                             'nombre' => $validatedData['nombre'],
                             'apellido_paterno' => $validatedData['ap_paterno'],
-                            'apellido_materno' => $validatedData['ap_materno'],
+                            'apellido_materno' => $validatedData['ap_materno'] ?? '',
                             'email' => $validatedData['email'],
                             'password' => Hash::make($validatedData['password']),
-                            'sede' => $validatedData['sede'] ?? ''
+                            'sede' => $validatedData['sede'] ?? '',
+                            'categoria_de_pago' => $validatedData['cat_pago'] ?? ''
                         ]);
+
+            if ($validatedData['role'] === "profesor") {
+                $curriculum = new Curriculum();
+                $curriculum->user_id = $new_user->id;
+                $curriculum->status = 'en_proceso';
+                $curriculum->save();
+            }
 
             $new_user->roles()->attach($rol);
         }
@@ -69,6 +94,36 @@ class RegisterUserController extends Controller {
         return redirect()->route('home')->with('status', 'Usuario registrado exitosamente.')
                                             ->with('status_color', 'success');
 
+    }
+
+    public function indexCatPago($id) {   
+        if( Gate::denies('registrar-profesor')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                          ->with('status_color', 'danger');
+        }
+
+        $user = User::findOrFail($id);
+        $cat_pago_list = $this->cat_pago_list;
+
+        return view('register/update_cat_pago', compact('cat_pago_list', 'user'));
+    }
+
+    public function saveCatPago(Request $request, $id) {
+        if(Gate::denies('registrar-profesor')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                          ->with('status_color', 'danger');
+        }
+
+        $validatedData = $request->validate([
+            'categoria_de_pago' => 'required'
+        ]);
+
+        $user = User::findOrFail($id);   
+
+        $user->update($validatedData);
+
+        return redirect()->route('buscar_profesor.index')->with('status', 'Usuario actualizado exitosamente.')
+                                            ->with('status_color', 'success');
     }
     
 }
