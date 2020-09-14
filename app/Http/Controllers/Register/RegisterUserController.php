@@ -121,8 +121,8 @@ class RegisterUserController extends Controller {
         $user = User::findOrFail($id);   
 
         $user->update($validatedData);
-
-        return redirect()->route('buscar_profesor.index')->with('status', 'Usuario actualizado exitosamente.')
+            //registrar con el request a ke pajina se ara el back redirectttt
+        return redirect()->back()->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
     }
     

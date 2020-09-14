@@ -150,11 +150,11 @@ class CurriculumController extends Controller {
             return redirect()->route('home')->with('status', 'No se puede mostrar el recurso solicitado porque sigue en proceso de captura')
                                           ->with('status_color', 'danger');
         }
-
-        $element = $this->getFormElementShow($formNum, $curriculum->user_id);
+        $usuario = User::findOrFail($curriculum->user_id);
+        $element = $this->getFormElementShow($formNum, $usuario);
 
         return view('cv.show.step'.$formNum, 
-                        compact('curriculum', 'element', 'formNum'));    
+                        compact('curriculum', 'element', 'formNum', 'usuario'));  
     }
     
     /**
@@ -560,18 +560,18 @@ class CurriculumController extends Controller {
     private function updateCVStatus($user, $request, $curriculum) {
 
         // Esta lista nos ayuda a tener control sobre los formularios que ya 
-        // han sido validados, y el porcentaje (para la barra de progreso).
+        // han sido validados.
         $completedList = $request->session()->get('completedList');
         
         if(empty($completedList)) {
             $completedList = ['form1' => false, 'form2' => false, 'form3' => true,
                               'form4' => false, 'form5' => false,'form6' => false,
-                              'form7' => false, 'percentage' => 0];
+                              'form7' => false];
         }
 
         // Esta es una forma muy poco elegante para validar que los formulario 1 y 2 
         // están capturados... si esos campos ya están la base, significa que todas las
-        // validaciones de dicho formulario pasaron (porque son obligatorios) y por ende está capturado.                                                                                              
+        // validaciones de dicho formulario pasaron (porque son obligatorios) y por ende están capturados.                                                                                              
         if($curriculum->fotografia) {
             $completedList['form1'] = true;
         }
@@ -595,16 +595,11 @@ class CurriculumController extends Controller {
             if($curriculum->status != 'en_proceso') {
                 $curriculum->update(['status' => 'en_proceso']);
             }
-            // Calculamos el porcentaje que llevamos hasta ahora. 7 es el núm de formularios, pero 1
-            // no es obligatorio (cursos extracurriculares), por lo que ponemos 6.
-            $completedList['percentage'] = ($this->countArrayValues($completedList, true)*100) / 6;
         }
         else {
             if($curriculum->status != 'completado') {
                 $curriculum->update(['status' => 'completado']);
             }
-
-            $completedList['percentage'] = 100;
         }
 
         $request->session()->put('completedList', $completedList);
@@ -628,20 +623,6 @@ class CurriculumController extends Controller {
 
         return $curriculum;
     }
-
-    // Método auxiliar para contar el número de incidencias de una variable
-    // en un array.
-    private function countArrayValues($array, $val)  { 
-        $count = 0; 
-        
-        foreach ($array as $key => $value) { 
-            if ($value === $val) { 
-                $count++; 
-            } 
-        } 
-        
-        return $count; 
-    } 
 
     // Para vista CAPTURE: Según el formulario actual, nos devuelve el elemento correspondiente.
     private function getFormElementCapture($request, $num, $user) {
@@ -692,8 +673,7 @@ class CurriculumController extends Controller {
     }
 
     // Para vista SHOW: Según el formulario actual, nos devuelve el elemento correspondiente.
-    private function getFormElementShow($num, $user_id) {
-        $user = User::findOrFail($user_id);
+    private function getFormElementShow($num, $user) {
         switch ($num) {
             case 1:
                 return $this->lista_nombres_cursos_sep;

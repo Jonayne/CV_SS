@@ -57,11 +57,9 @@ class SearchController extends Controller {
         // únicos que entrarán en el filtro.
         $users = DB::table('curricula')->
                     leftJoin('users', 'curricula.user_id', '=', 'users.id')
-                    ->select('curricula.id', 'curricula.nombre', 'curricula.apellido_paterno', 'curricula.apellido_materno', 
+                    ->select('curricula.id as id_curriculum', 'users.id as id_user', 'curricula.nombre', 'curricula.apellido_paterno', 'curricula.apellido_materno', 
                         'users.nombre', 'users.apellido_paterno', 'users.apellido_materno', 'curp',
                         'rfc', 'users.email', 'curricula.email_personal', 'status', 'categoria_de_pago');
-    
-        //$tabla = $users->get()->all();
 
         if($nombre) {
             // ILIKE sólo funciona en Postgresql, busca sin diferenciar entre mayúsculas y minúsculas. Otra 
@@ -99,7 +97,7 @@ class SearchController extends Controller {
             $users->where('categoria_de_pago', ''.$categoria_de_pago.'');
         }
 
-        $users->orderBy('curricula.id')->orderByDesc('status');
+        $users->orderBy('status');
 
         return view('search/result')->
                 with('result', $users->get())->

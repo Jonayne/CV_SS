@@ -27,38 +27,39 @@
             </ul>
         </h5>
         <ul class="list-group">
-            @forelse ($result as $user)
-                @if ($user->id)
-                        @if (($user->status) == 'en_proceso')
+            @forelse ($result as $usuario)
+                @if ($usuario->id_curriculum)
+                        @if (($usuario->status) == 'en_proceso')
                             <li class="list-group-item list-group-item-light list-group-item-action">
-                                Nombre registrado: <strong>{{formatName($user)}}</strong><br>
-                                Email registrado: <strong>{{$user->email}}</strong><br>
+                                Nombre registrado: <strong>{{formatName($usuario)}}</strong><br>
+                                Email registrado: <strong>{{$usuario->email}}</strong><br>
                                 Estado del currículum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
                                 <hr>
                                 <div class="text-center">
-                                    <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', $user->id)}}">
+                                    <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', $usuario->id_user)}}">
                                         Actualizar Categoría de Pago
                                     </a>
                                 </div>
                             </li>
                         @else
-                            <a class="list-group-item list-group-item-light list-group-item-action">
-                                Nombre completo: <strong>{{formatName($user)}}</strong><br>
-                                Email personal: <strong>{{$user->email}}</strong><br>
-                                CURP: <strong>{{$user->curp}}</strong><br>
-                                RFC: <strong>{{$user->rfc}}</strong><br>
+                            <li class="list-group-item list-group-item-light list-group-item-action">
+                                Nombre completo: <strong>{{formatName($usuario)}}</strong><br>
+                                Email personal: <strong>{{$usuario->email}}</strong><br>
+                                CURP: <strong>{{$usuario->curp}}</strong><br>
+                                RFC: <strong>{{$usuario->rfc}}</strong><br>
                                 Estado del currículum: <span class="text-info"><strong> CAPTURADO </strong></span>
-                                <div class="btn-group">
-                                    <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', $user->id)}}">
+                                <hr>
+                                <div class="text-center">
+                                    <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', $usuario->id_user)}}">
                                         Actualizar Categoría de Pago
                                     </a>
-                                    <a href="{{route('curricula.show', array($user->id, 1))}}" class="btn btn-outline-info btn-sm"> Ver currículum </button>
+                                    <a href="{{route('curricula.show', array($usuario->id_curriculum, 1))}}" class="btn btn-outline-success btn-sm"> Ver currículum </a>
                                 </div>
-                            </a>
+                            </li>
                         @endif                 
                 @else
                     <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
-                        Email registrado: <strong>{{$user->email}}</strong><br>
+                        Email registrado: <strong>{{$usuario->email}}</strong><br>
                         Estado del currículum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
                     </a>
                 @endif
