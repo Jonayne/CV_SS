@@ -6,9 +6,15 @@
     <h1 class="text-secondary text-center">Actualizar "Categoría de Pago" de usuario.</h1>
     @include('partials.form_errors')
     
-    <form method="POST" action=" {{route('actualizar_cat_pago.saveCatPago', $user->id)}} ">
+    <form method="POST" action=" {{route('actualizar_cat_pago.saveCatPago', array('id'=>$user->id, 'backPage'=>$backPage ))}} ">
         @method('PATCH')
         
+        <input type="hidden" name="nombre" id="nombre" value="{{$nombre}}">
+        <input type="hidden" name="correo" id="correo" value="{{$correo}}">
+        <input type="hidden" name="curp" id="curp" value="{{$curp}}">
+        <input type="hidden" name="rfc" id="rfc" value="{{$rfc}}">
+        <input type="hidden" name="categoria_de_pago" id="categoria_de_pago" value="{{$categoria_de_pago}}">
+
         @csrf 
         <div class="container bg-primary text-black py-2">
             <div class="form-group">
@@ -32,7 +38,13 @@
                 <hr>
                 <br>
                 <div class="text-center">
-                    <a class="btn btn-dark btn-lg mr-5" href="{{ url()->previous() }}"> Regresar </a>
+                    @if ($backPage && $backPage === 'download_cv')
+                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('curricula.show', array('id'=>$curriculum_id, 'formNum'=>1)) }}"> Regresar </a>
+                    @elseif($backPage && $backPage === 'result')
+                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.index') }}"> Realizar otra búsqueda </a>
+                    @else
+                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('home') }}"> Regresar </a>
+                    @endif
                     <button class="btn btn-success btn-lg" name="update_cat" id="update_cat" type="submit"> Actualizar </button>
                 </div>  
             </div>

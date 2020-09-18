@@ -5,7 +5,7 @@
         @if (!($usuario->categoria_de_pago))
             <div class="alert alert-info text-center">
                 <h5 class="text-secondary">Parece que este profesor aún no tiene registrada su <b>Categoría de Pago</b>.</h5>
-                <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', $usuario->id)}}">
+                <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id, 'backPage'=>'download_cv'))}}">
                     Registrar Categoría de Pago
                 </a>
             </div>

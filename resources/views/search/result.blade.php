@@ -6,6 +6,7 @@
 
     <h1 class="text-secondary text-center">Resultado de la búsqueda</h1>
 
+    <form method="GET" action="{{ route('buscar_profesor.index') }}">
     <div class="container bg-primary text-black py-4">
         <h5 class="text-black text-center">Con filtros: 
             <ul>
@@ -26,6 +27,13 @@
                 @endif
             </ul>
         </h5>
+
+        <input type="hidden" name="nombre" id="nombre" value="{{$nombre}}">
+        <input type="hidden" name="correo" id="correo" value="{{$correo}}">
+        <input type="hidden" name="curp" id="curp" value="{{$curp}}">
+        <input type="hidden" name="rfc" id="rfc" value="{{$rfc}}">
+        <input type="hidden" name="categoria_de_pago" id="categoria_de_pago" value="{{$categoria_de_pago}}">
+
         <ul class="list-group">
             @forelse ($result as $usuario)
                 @if ($usuario->id_curriculum)
@@ -36,7 +44,7 @@
                                 Estado del currículum: <span class="text-danger"><strong> EN PROCESO DE CAPTURA </strong></span>
                                 <hr>
                                 <div class="text-center">
-                                    <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', $usuario->id_user)}}">
+                                    <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
                                         Actualizar Categoría de Pago
                                     </a>
                                 </div>
@@ -50,10 +58,10 @@
                                 Estado del currículum: <span class="text-info"><strong> CAPTURADO </strong></span>
                                 <hr>
                                 <div class="text-center">
-                                    <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', $usuario->id_user)}}">
+                                    <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
                                         Actualizar Categoría de Pago
                                     </a>
-                                    <a href="{{route('curricula.show', array($usuario->id_curriculum, 1))}}" class="btn btn-outline-success btn-sm"> Ver currículum </a>
+                                    <a href="{{route('curricula.show', array('id'=>$usuario->id_curriculum, 'formNum'=>1))}}" class="btn btn-outline-success btn-sm"> Ver currículum </a>
                                 </div>
                             </li>
                         @endif                 
@@ -76,11 +84,11 @@
             <hr>
         </ul>
         <div class="text-center">
-            <a href="{{ route('buscar_profesor.index') }}" class="btn btn-secondary btn-lg">
+            <button type="submit" class="btn btn-secondary btn-lg">
                 Regresar y hacer otra búsqueda
-            </a>
+            </button>
         </div>        
 
     </div>
-
+    </form>
 @endsection

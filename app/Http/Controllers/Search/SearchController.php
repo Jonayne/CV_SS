@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Search;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\SearchProfessorRequest;
-use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,26 +30,35 @@ class SearchController extends Controller {
         $this->middleware('auth');
     }
 
-    public function index() {   
+    public function index(Request $request) {   
         if( Gate::denies('buscar-profesor')) {
                   return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                                 ->with('status_color', 'danger');
         }
 
+        $nombre = $request->input('nombre');
+        $correo = $request->input('correo');
+        $rfc = $request->input('rfc');
+        $curp = $request->input('curp');
+        $categoria_de_pago = $request->input('categoria_de_pago');
+
         $cat_pago_list = $this->cat_pago_list;
 
-        return view('search/search', compact('cat_pago_list'));
+        return view('search/search', compact('cat_pago_list', 'nombre', 'correo', 'rfc', 'curp', 'categoria_de_pago'));
     }
 
-    public function searchOnDB(SearchProfessorRequest $request) {   
-        // Validamos los datos.
-        $request->validated();
+    public function searchOnDB(Request $request) {   
 
-        $nombre = $request->name;
-        $correo = $request->email;
-        $rfc = $request->rfc;
-        $curp = $request->curp;
-        $categoria_de_pago = $request->categoria_de_pago;
+        $nombre = $request->input('nombre');
+        $correo = $request->input('correo');
+        $rfc = $request->input('rfc');
+        $curp = $request->input('curp');
+        $categoria_de_pago = $request->input('categoria_de_pago');
+
+        if(!$nombre && !$correo && !$rfc && !$curp && !$categoria_de_pago) {
+            return redirect()->route('buscar_profesor.index')->with('status', 'Introduzca al menos un campo de búsqueda.')
+                                                ->with('status_color', 'danger');
+        }
 
         // Al ser los profesores los únicos con un curriculum, son los 
         // únicos que entrarán en el filtro.

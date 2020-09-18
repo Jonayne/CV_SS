@@ -157,6 +157,8 @@ class CurriculumFormRequest extends FormRequest {
 
     public function messages() {
         return [
+            "curp.unique" => "El CURP introducido ya ha sido registrado previamente.",
+            "rfc.unique" => "El RFC introducido ya ha sido registrado previamente.",
             "cedula_profesional.required_if" => "La cédula profesional es obligatoria si marca su estatus como \"Titulado(a)\"",
             "categoria_de_pago.required_if" => "El campo Categoría de Pago es obligatorio al escoger el formato de curriculum CE",
             "fotografia.required_without_all" => "La fotografía es obligatoria",

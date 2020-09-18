@@ -96,7 +96,7 @@ class RegisterUserController extends Controller {
 
     }
 
-    public function indexCatPago($id) {   
+    public function indexCatPago(Request $request, $id, $backPage) {  
         if( Gate::denies('registrar-profesor')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
@@ -104,11 +104,12 @@ class RegisterUserController extends Controller {
 
         $user = User::findOrFail($id);
         $cat_pago_list = $this->cat_pago_list;
+        $curriculum_id = $user->curriculum()->first()->id;
 
-        return view('register/update_cat_pago', compact('cat_pago_list', 'user'));
+        return view('register/update_cat_pago', compact('cat_pago_list', 'user', 'backPage',  'curriculum_id'));
     }
 
-    public function saveCatPago(Request $request, $id) {
+    public function saveCatPago(Request $request, $id, $backPage) {
         if(Gate::denies('registrar-profesor')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
@@ -121,9 +122,21 @@ class RegisterUserController extends Controller {
         $user = User::findOrFail($id);   
 
         $user->update($validatedData);
-            //registrar con el request a ke pajina se ara el back redirectttt
-        return redirect()->back()->with('status', 'Usuario actualizado exitosamente.')
+        
+        if($backPage && $backPage === 'download_cv') {
+            return redirect()->route('curricula.show', array('id'=>$user->curriculum()->first()->id, 'formNum'=>1))->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
+        } 
+        // Intentar regresar a la última petición GET, si no ya así y GG.
+        else if ($backPage && $backPage === 'result') {
+            return redirect()->route('buscar_profesor.index')->with('status', 'Usuario actualizado exitosamente.')
+                                            ->with('status_color', 'success');
+        }
+        else {
+            return redirect()->route('home')->with('status', 'Usuario actualizado exitosamente.')
+                                            ->with('status_color', 'success');
+        }
+        
     }
     
 }

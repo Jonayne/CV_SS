@@ -12,7 +12,7 @@ Route::get('/', 'HomeController@index')->name('home');
 // Rutas para la funcionalidad de "Buscar CV"
 Route::group(['namespace' => 'Search'], function () {
     Route::get('/buscar_profesor', 'SearchController@index')->name('buscar_profesor.index');
-    Route::post('/buscar_profesor', 'SearchController@searchOnDB')->name('buscar_profesor.searchOnDB');
+    Route::get('/resultados_busqueda', 'SearchController@searchOnDB')->name('buscar_profesor.searchOnDB');
 });
 
 // Rutas para toda la funcionalidad en la parte del Curriculum, 
@@ -58,6 +58,6 @@ Route::group(['namespace' => 'Curriculum'], function () {
 Route::group(['namespace' => 'Register'], function () {
     Route::get('/registrar_usuario', 'RegisterUserController@index')->name('registrar_usuario.index');
     Route::post('/registrar_usuario', 'RegisterUserController@registerUser')->name('registrar_usuario.registerUser');
-    Route::get('/actualizar_cat_pago/{id}', 'RegisterUserController@indexCatPago')->name('actualizar_cat_pago.indexCatPago');
-    Route::patch('/actualizar_cat_pago/{id}', 'RegisterUserController@saveCatPago')->name('actualizar_cat_pago.saveCatPago');
+    Route::get('/actualizar_cat_pago/{id}/{backPage}', 'RegisterUserController@indexCatPago')->name('actualizar_cat_pago.indexCatPago');
+    Route::patch('/actualizar_cat_pago/{id}/{backPage}', 'RegisterUserController@saveCatPago')->name('actualizar_cat_pago.saveCatPago');
 });
