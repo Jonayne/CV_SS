@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 // Deshabilitamos la ruta de register que viene por defecto, pues no se podrá usar el sistema
 // a menos que uno se encuentre loggeado.
-Auth::routes(['register' => false]);
+Auth::routes(['register' => false,
+                'reset' => false]);
 
 Route::get('/', 'HomeController@index')->name('home');
 

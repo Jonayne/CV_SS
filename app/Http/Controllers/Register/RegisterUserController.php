@@ -35,12 +35,13 @@ class RegisterUserController extends Controller {
         $this->middleware('auth');
     }
 
-    public function index() {   
+    public function index(Request $request) {   
         if( Gate::denies('registrar-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
 
+        $request->session()->forget('searchDataList');
         $cat_pago_list = $this->cat_pago_list;
 
         return view('register/register', compact('cat_pago_list'));
@@ -127,9 +128,13 @@ class RegisterUserController extends Controller {
             return redirect()->route('curricula.show', array('id'=>$user->curriculum()->first()->id, 'formNum'=>1))->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
         } 
-        // Intentar regresar a la última petición GET, si no ya así y GG.
         else if ($backPage && $backPage === 'result') {
-            return redirect()->route('buscar_profesor.index')->with('status', 'Usuario actualizado exitosamente.')
+            return redirect()->route('buscar_profesor.searchOnDB', array('nombre' => session('searchDataList.nombre'),
+                                                                        'correo' => session('searchDataList.correo'),
+                                                                        'rfc' => session('searchDataList.rfc'),
+                                                                        'curp' => session('searchDataList.curp'),
+                                                                        'categoria_de_pago' => session('searchDataList.categoria_de_pago')))
+                                            ->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
         }
         else {

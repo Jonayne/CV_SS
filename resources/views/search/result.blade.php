@@ -71,14 +71,14 @@
                         Estado del currículum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
                     </a>
                 @endif
-                    
-                    <hr>
+                <hr>
             @empty
+            <hr>
                 <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger text-center">
                     No se encontraron coincidencias para su búsqueda. 
-
-                    <br>Verifique que los filtros de su búsqueda sean correctos. (Tome en cuenta acentos)<br>
-                        También es posible que el profesor aún no haya registrado su currículum.
+                    <br>
+                    <br>Verifique que los filtros introducidos sean correctos. Tome en cuenta los acentos.<br>
+                        También es posible que se haya actualizado la información del profesor y que no concuerde con la introducida.
                 </li>
             @endforelse
             <hr>

@@ -8,12 +8,6 @@
     
     <form method="POST" action=" {{route('actualizar_cat_pago.saveCatPago', array('id'=>$user->id, 'backPage'=>$backPage ))}} ">
         @method('PATCH')
-        
-        <input type="hidden" name="nombre" id="nombre" value="{{$nombre}}">
-        <input type="hidden" name="correo" id="correo" value="{{$correo}}">
-        <input type="hidden" name="curp" id="curp" value="{{$curp}}">
-        <input type="hidden" name="rfc" id="rfc" value="{{$rfc}}">
-        <input type="hidden" name="categoria_de_pago" id="categoria_de_pago" value="{{$categoria_de_pago}}">
 
         @csrf 
         <div class="container bg-primary text-black py-2">
@@ -41,7 +35,12 @@
                     @if ($backPage && $backPage === 'download_cv')
                         <a class="btn btn-dark btn-lg mr-5" href="{{ route('curricula.show', array('id'=>$curriculum_id, 'formNum'=>1)) }}"> Regresar </a>
                     @elseif($backPage && $backPage === 'result')
-                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.index') }}"> Realizar otra búsqueda </a>
+                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.searchOnDB', 
+                                        array('nombre' => session('searchDataList.nombre'),
+                                            'correo' => session('searchDataList.correo'),
+                                            'rfc' => session('searchDataList.rfc'),
+                                            'curp' => session('searchDataList.curp'),
+                                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> Regresar </a>
                     @else
                         <a class="btn btn-dark btn-lg mr-5" href="{{ route('home') }}"> Regresar </a>
                     @endif

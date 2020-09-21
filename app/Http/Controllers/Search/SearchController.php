@@ -35,12 +35,33 @@ class SearchController extends Controller {
                   return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                                 ->with('status_color', 'danger');
         }
-
+        
         $nombre = $request->input('nombre');
         $correo = $request->input('correo');
         $rfc = $request->input('rfc');
         $curp = $request->input('curp');
         $categoria_de_pago = $request->input('categoria_de_pago');
+
+        // Si el usuario quiere limpiar los campos de búsqueda.
+        // Todo esto se podría hacer con Javascript, y mejorar, pero mhneee. 8)
+        if(!$request->input('cls') === '') {
+            $searchDataList = $request->session()->get('searchDataList');
+        
+            // Para guardar los datos de búsqueda.
+            if($nombre || $correo  || $rfc || $curp || $categoria_de_pago) {
+                $searchDataList = $request->all();
+                $request->session()->put('searchDataList', $searchDataList);
+            }
+            else if(!empty($searchDataList)) {
+                $nombre = $searchDataList['nombre'];
+                $correo = $searchDataList['correo'];
+                $rfc = $searchDataList['rfc'];
+                $curp = $searchDataList['curp'];
+                $categoria_de_pago = $searchDataList['categoria_de_pago'];
+            } 
+        } else {
+            $request->session()->forget('searchDataList');
+        }
 
         $cat_pago_list = $this->cat_pago_list;
 
@@ -55,9 +76,22 @@ class SearchController extends Controller {
         $curp = $request->input('curp');
         $categoria_de_pago = $request->input('categoria_de_pago');
 
-        if(!$nombre && !$correo && !$rfc && !$curp && !$categoria_de_pago) {
+        $searchDataList = $request->session()->get('searchDataList');
+
+        if(!$nombre && !$correo && !$rfc && !$curp && !$categoria_de_pago && empty($searchDataList)) {
             return redirect()->route('buscar_profesor.index')->with('status', 'Introduzca al menos un campo de búsqueda.')
                                                 ->with('status_color', 'danger');
+        } 
+        else if(!empty($searchDataList) && !$nombre && !$correo && !$rfc && !$curp && !$categoria_de_pago) {
+            $nombre = $searchDataList['nombre'];
+            $correo = $searchDataList['correo'];
+            $rfc = $searchDataList['rfc'];
+            $curp = $searchDataList['curp'];
+            $categoria_de_pago = $searchDataList['categoria_de_pago'];
+        } 
+        else {
+            $searchDataList = $request->all();
+            $request->session()->put('searchDataList', $searchDataList);
         }
 
         // Al ser los profesores los únicos con un curriculum, son los 
@@ -82,7 +116,6 @@ class SearchController extends Controller {
                         orWhere('users.apellido_paterno', 'ILIKE', '%'.$nombre.'%')->
                         orWhere('users.apellido_materno', 'ILIKE', '%'.$nombre.'%');
             });
-                
         }
 
         if($correo) {

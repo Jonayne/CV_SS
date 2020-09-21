@@ -17,14 +17,14 @@
                 <div class="col-md-6">
                     <select class="form-control" name="formato_curriculum" id="formato_curriculum">
                         @if (( old('formato_curriculum')) == 'curriculum_SEP')
-                                <option value="curriculum_SEP" selected>Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                                <option value="curriculum_SEP" selected>Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(Este profesor no participa en el proyecto SEP)'}}</option>
                                 <option value="FORMATO_CV_CE">Formato curriculum CE</option>
                         @elseif(( old('formato_curriculum')) == 'FORMATO_CV_CE')
-                                <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                                <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(Este profesor no participa en el proyecto SEP)'}}</option>
                                 <option value="FORMATO_CV_CE" selected>Formato curriculum CE</option>
                         @else
                                 <option value="" selected>Seleccionar</option>
-                                <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(No participa en proyecto SEP)'}}</option>
+                                <option value="curriculum_SEP">Formato curriculum SEP {{$curriculum->proyecto_sep ? '' : '(Este profesor no participa en el proyecto SEP)'}}</option>
                                 <option value="FORMATO_CV_CE">Formato curriculum CE</option>
                         @endif
                     </select>
@@ -32,7 +32,16 @@
             </div>
                 
             <div class="text-center">
+                <hr>
                 <input type="hidden" id="formNumVal" name="formNumVal" value="download">
+                <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.searchOnDB', 
+                        array('nombre' => session('searchDataList.nombre'),
+                            'correo' => session('searchDataList.correo'),
+                            'rfc' => session('searchDataList.rfc'),
+                            'curp' => session('searchDataList.curp'),
+                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> 
+                    Regresar a la búsqueda </a>
+                <br>
                 <button type="submit" class="btn btn-outline-secondary btn-lg mt-3" aria-describedby="pdf_help_block">
                     Descargar curriculum 
                 </button>

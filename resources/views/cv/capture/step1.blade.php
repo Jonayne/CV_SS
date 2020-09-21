@@ -56,7 +56,7 @@
                                                 value="{{ (old('apellido_paterno', $curriculum->apellido_paterno)) ?? ucfirst(auth()->user()->apellido_paterno) }}">
                                 </div>
                                 <div class="col-md-4">
-                                        <label class="required" for="apellido_materno">Apellido materno</label>
+                                        <label for="apellido_materno">Apellido materno</label>
                                         <input type="text" name="apellido_materno" id="apellido_materno" class="form-control" placeholder="Ap. materno"
                                                 value="{{ (old('apellido_materno', $curriculum->apellido_materno)) ?? ucfirst(auth()->user()->apellido_materno) }}">
                                 </div>

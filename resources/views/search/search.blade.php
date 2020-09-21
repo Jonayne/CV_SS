@@ -51,11 +51,12 @@
                 <label for="categoria_de_pago">Categoría de Pago</label>
                 <select class="form-control" name="categoria_de_pago" id="categoria_de_pago">
                     @if (!old('categoria_de_pago', $categoria_de_pago))
-                        <option value="" selected>Seleccionar...</option>
+                        <option value="" selected>Ninguno</option>
                         @foreach ($cat_pago_list as $item)
                             <option value="{{$item}}"> {{$item}} </option>
                         @endforeach
                     @else
+                        <option value="" selected>Ninguno</option>
                         @foreach ($cat_pago_list as $item)
                             <option value="{{$item}}" 
                             @if (old('categoria_de_pago', $categoria_de_pago) == $item)
@@ -67,9 +68,12 @@
                 </select>
                 <br>
             </div>
+            <hr>
             <div class="text-center">
-                <button class="btn btn-info btn-lg" type="submit"> Buscar </button>
-            </div>
+                <button class="btn btn-info btn-lg mt-1 mb-4" type="submit"> Buscar </button>
+                <br>
+                <a class="btn btn-outline-dark btn" href="{{ route('buscar_profesor.index', array('cls')) }}"> Limpiar campos </a>
+            </div>    
         </div>
     </form>
 @endsection

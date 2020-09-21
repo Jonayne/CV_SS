@@ -236,8 +236,7 @@ class CurriculumController extends Controller {
         $templateProcessor->setValues($curriculum_array);
 
         $filenameDocx = $curriculum_array['nombre']."_".
-                        $curriculum_array['apellido_paterno']."_".
-                        $curriculum_array['apellido_materno']."_". "CV.docx";
+                        $curriculum_array['apellido_paterno']."_"."CV.docx";
         
         $templateProcessor->saveAs($filenameDocx);
 
@@ -403,7 +402,9 @@ class CurriculumController extends Controller {
         //el nombre va todo en mayúsculas al inicio
         $curriculum_array['nombre'] = mb_strtoupper($curriculum_array['nombre'], 'UTF-8');
         $curriculum_array['apellido_paterno'] = mb_strtoupper($curriculum_array['apellido_paterno'], 'UTF-8');
-        $curriculum_array['apellido_materno'] = mb_strtoupper($curriculum_array['apellido_materno'], 'UTF-8');
+        if(array_key_exists('apellido_materno', $curriculum_array)) {
+            $curriculum_array['apellido_materno'] = mb_strtoupper($curriculum_array['apellido_materno'], 'UTF-8');
+        }
 
         // Obtenemos la url de la fotografía del profesor y la pasamos al documento.
         $photo_url = 'storage/images/'.$curriculum_array['fotografia'];
@@ -426,8 +427,7 @@ class CurriculumController extends Controller {
         $templateProcessor->setValues($curriculum_array);
         
         $name = $curriculum_array['nombre']."_".
-                        $curriculum_array['apellido_paterno']."_".
-                        $curriculum_array['apellido_materno']."_". "CV";
+                        $curriculum_array['apellido_paterno']."_"."CV";
 
         $filenameDocx = $name.".docx";
         

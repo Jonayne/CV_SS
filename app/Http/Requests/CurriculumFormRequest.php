@@ -27,7 +27,7 @@ class CurriculumFormRequest extends FormRequest {
                     "fotografia" => "bail|required_without_all:edit|image|max:9999",
                     "nombre" => "required|string|max:255",
                     "apellido_paterno" => "required|string|max:255",
-                    "apellido_materno" => "required|string|max:255",
+                    "apellido_materno" => "sometimes|nullable|string|max:255",
                     "domicilio_calle" => "required|string|max:255",
                     "domicilio_num_ext" => "required|numeric",
                     "domicilio_num_int" => "sometimes|nullable|numeric",
