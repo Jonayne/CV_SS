@@ -3,9 +3,9 @@
 @section('title', 'Actualizar usuario')
 
 @section('content')
-    <h1 class="text-secondary text-center">Actualizar "Categoría de Pago" de usuario.</h1>
+    <h1 class="text-secondary text-center">Actualizar -Categoría de Pago- de usuario</h1>
     @include('partials.form_errors')
-    
+    <hr>
     <form method="POST" action=" {{route('actualizar_cat_pago.saveCatPago', array('id'=>$user->id, 'backPage'=>$backPage ))}} ">
         @method('PATCH')
 

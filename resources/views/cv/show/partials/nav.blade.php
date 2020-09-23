@@ -1,5 +1,5 @@
 <div class="container">
-    <nav class="navbar navbar-light navbar-expand-lg bg-primary shadow-sm">
+    <nav class="navbar navbar-dark navbar-expand-lg shadow-sm" style="background-color: rgba(11, 81, 187, 0.548)">
         <ul class="nav nav-pills nav-fill justify-content-center">
             <li class="nav-item">
                 <a href="{{route('curricula.show', array($curriculum->id, 1))}}" 

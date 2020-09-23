@@ -70,9 +70,9 @@
             </div>
             <hr>
             <div class="text-center">
-                <button class="btn btn-info btn-lg mt-1 mb-4" type="submit"> Buscar </button>
+                <button class="btn btn-secondary btn-lg mt-1 mb-4" type="submit"> Buscar </button>
                 <br>
-                <a class="btn btn-outline-dark btn" href="{{ route('buscar_profesor.index', array('cls')) }}"> Limpiar campos </a>
+                <a class="btn btn-dark btn" href="{{ route('buscar_profesor.index', array('cls')) }}"> Limpiar campos </a>
             </div>    
         </div>
     </form>

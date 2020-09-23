@@ -18,7 +18,7 @@
                 @yield('content')
             </main>
             
-            <footer class="text-center text-black-50 py-3 shadow">
+            <footer class="text-center text-white-50 py-3 shadow">
                 {{ config('app.name') }} | Footer {{ date('Y') }}
             </footer>
         </div>

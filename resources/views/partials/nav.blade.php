@@ -1,4 +1,5 @@
-<nav class="navbar navbar-light navbar-expand-lg bg-primary shadow-sm">
+<nav class="navbar navbar-dark navbar-expand-lg shadow-sm" style="background-color: rgba(64, 11, 187, 0.692)">
+
     <div class="container">
 
         <a class="navbar-brand" href="{{ route('home') }}">
@@ -6,7 +7,7 @@
         </a>
         <ul class="nav nav-pills">
             @auth
-                <li><a class="nav-link btn btn-outline-danger btn-sm" href="#" onclick="event.preventDefault();
+                <li><a class="nav-link btn btn-danger btn-sm" href="#" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">
                     Cerrar sesión</a></li>  
             @endauth     

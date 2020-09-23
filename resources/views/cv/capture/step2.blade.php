@@ -61,7 +61,7 @@
                                 value="{{ old('estudios_documento_obtenido', $curriculum->estudios_documento_obtenido) }}">
                         <br>
 
-                        <label class="required" for="cedula_profesional">Cédula profesional <small class="text-muted">Obligatoria si su estatus es "Titulado(a)"</small></label>
+                        <label class="required" for="cedula_profesional">Cédula profesional <small>(Obligatoria si su estatus es "Titulado(a)")</small></label>
                         <input type="text" name="cedula_profesional" id="cedula_profesional" class="form-control" placeholder="Cédula profesional" 
                                 value="{{ old('cedula_profesional', $curriculum->cedula_profesional) }}">
                 </div>

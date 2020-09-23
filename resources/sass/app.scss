@@ -16,3 +16,11 @@
     color: red;
     padding-left: 3px;
 }
+
+body {
+    background: url('/assets/background.jpg') no-repeat top center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+  }

@@ -18,9 +18,9 @@
     <div class="container bg-primary text-black py-3">
         <div class="text-center">
             @if (! (isset($curriculum->proyecto_sep) && $curriculum->proyecto_sep))
-                <h5 class="container font-italic text-muted"> Este apartado no es obligatorio. </h5>
+                <h5 class="container font-italic text-secondary"> Apartado opcional </h5>
             @else
-                <h5 class="container font-italic text-muted"> Usted participa en el <b>Proyecto SEP</b>.<br> Por favor registre certificaciones obtenidas en el ámbito de la capacitación. </h5>
+                <h5 class="container font-italic text-secondary"> Usted participa en el <b>Proyecto SEP</b>.<br> Por favor registre <b>certificaciones obtenidas en el ámbito de la capacitación.</b> </h5>
             @endif
             <hr>
             <br>

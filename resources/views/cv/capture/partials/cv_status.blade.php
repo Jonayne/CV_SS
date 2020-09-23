@@ -1,6 +1,6 @@
 <div class="container py-1">
     @if (($curriculum->status) == 'en_proceso')
-        <div class="alert alert-danger text-center">
+        <div class="alert alert-info text-center">
             <h5><strong> Currículum incompleto </strong></h5>
         </div>
     @else

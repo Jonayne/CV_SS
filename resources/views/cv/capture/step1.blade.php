@@ -249,7 +249,7 @@
                                 <div class="form-check text-center mb-3">
                                         <label class="form-check-label">
                                                 <input type="radio" name="proyecto_sep" id="proyecto_sep_no" value="false" class="form-check-input" checked> 
-                                                <b>NO</b> participo en Proyecto SEP <br><small class="text-muted">(no se tomarán en cuenta los campos de abajo)</small>
+                                                <b>NO</b> participo en Proyecto SEP <br><small>(no se tomarán en cuenta los campos de abajo)</small>
                                         </label>
                                 </div>
                                 <div class="form-check text-center mb-3">
@@ -277,7 +277,7 @@
                                             >{{$curso}}</option>
                                         @endforeach
                                 </select>
-                                <small id="nombre_cursos_help_block" class="form-text text-muted">TIP: Para seleccionar varios cursos, 
+                                <small id="nombre_cursos_help_block" class="form-text text-dark">TIP: Para seleccionar varios cursos, 
                                         presiona la tecla <b>control (CTRL)</b> en Windows/Linux y la tecla <b>CMD</b> en MacOSX</b> al momento de elegir otro curso.</small>
                         </div>
                         <hr>
