@@ -21,6 +21,10 @@ class SearchController extends Controller {
                         'Es personal de honorarios de la DGTIC que expide recibo de honorarios (Eii)',
                         'Es Académico de la UNAM que emite factura (Eviii)',
                         'Caso especial (Z)'];
+    
+    protected $sede_list = [ 'Ciudad Universitaria', 'Centro Mascarones', 'Centro San Agustín', 
+                            'Centro Polanco', 'Sede Virtual' ];
+
     /**
      * Create a new controller instance.
      *
@@ -68,7 +72,103 @@ class SearchController extends Controller {
         return view('search/search', compact('cat_pago_list', 'nombre', 'correo', 'rfc', 'curp', 'categoria_de_pago'));
     }
 
-    public function searchOnDB(Request $request) {   
+    public function indexUser(Request $request) {   
+        if( Gate::denies('editar-cualquier-usuario')) {
+                  return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                                ->with('status_color', 'danger');
+        }
+
+        $cat_pago_list = $this->cat_pago_list;
+        $sede_list = $this->sede_list;
+
+        $nombre = $request->input('nombre');
+        $correo = $request->input('correo');
+        $rfc = $request->input('rfc');
+        $curp = $request->input('curp');
+        $categoria_de_pago = $request->input('categoria_de_pago');
+        $rol_usuario = $request->input('rol_usuario');
+        $sede = $request->input('sede');
+        $status_user = $request->input('status_user');
+
+        if(!$request->input('cls') === '') {
+            $searchDataList = $request->session()->get('searchDataList');
+        
+            // Para guardar los datos de búsqueda.
+            if($nombre || $correo  || $rfc || $curp || $categoria_de_pago) {
+                $searchDataList = $request->all();
+                $request->session()->put('searchDataList', $searchDataList);
+            }
+            else if(!empty($searchDataList)) {
+                $nombre = $searchDataList['nombre'];
+                $correo = $searchDataList['correo'];
+                $rfc = $searchDataList['rfc'];
+                $curp = $searchDataList['curp'];
+                $categoria_de_pago = $searchDataList['categoria_de_pago'];
+                $rol_usuario = $searchDataList['rol_usuario'];
+                $sede = $searchDataList['sede'];
+                $status_user = $searchDataList['status_user'];
+            } 
+        } else {
+            $request->session()->forget('searchDataList');
+        }
+
+        $users = DB::table('users')->
+                    leftJoin('curricula', 'curricula.user_id', '=', 'users.id')
+                    ->leftJoin('role_user', 'users.id', '=', 'role_user.user_id')
+                    ->leftJoin('roles', 'role_user.role_id', '=', 'roles.id')
+                    ->select('curricula.id as id_curriculum', 'users.id as id_user', 
+                        'users.nombre', 'users.apellido_paterno', 'users.apellido_materno', 'curp',
+                        'rfc', 'users.email', 'curricula.email_personal', 'habilitado', 'categoria_de_pago', 'sede', 'nombre_rol', 'status');
+
+        if($nombre) {
+            $users->where(function($query) use ($nombre) {
+                $query->orWhere('users.nombre', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('users.apellido_paterno', 'ILIKE', '%'.$nombre.'%')->
+                        orWhere('users.apellido_materno', 'ILIKE', '%'.$nombre.'%');
+            });
+        }
+
+        if($correo) {
+            $users->where(function($query) use ($correo) {
+                $query->orWhere('users.email', 'ILIKE', '%'.$correo.'%');
+            });
+        }
+        
+        if($rfc) {
+            $users->where('rfc', 'ILIKE', '%'.$rfc.'%');
+        }
+
+        if($curp) {
+            $users->where('curp', 'ILIKE', '%'.$curp.'%');
+        }
+
+        if($categoria_de_pago) {
+            $users->where('categoria_de_pago', ''.$categoria_de_pago.'');
+        }
+
+        if($status_user) {
+            $users->where('habilitado', ''.$status_user.'');
+        }
+
+        if($sede) {
+            $users->where('sede', ''.$sede.'');
+        }
+
+        if($rol_usuario) {
+            $users->where('nombre_rol', ''.$rol_usuario.'');
+        }
+
+        $users->orderBy('habilitado');
+
+        //$users->dump(); 
+
+        $users_list = $users->get();
+
+        return view('search/search', compact('cat_pago_list', 'nombre', 'correo', 'rfc', 'curp', 
+                        'categoria_de_pago', 'rol_usuario', 'sede_list', 'sede', 'status_user' , 'users_list'));
+    }
+
+    public function searchOnDBProf(Request $request) {   
 
         $nombre = $request->input('nombre');
         $correo = $request->input('correo');

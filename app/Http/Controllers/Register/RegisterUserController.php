@@ -26,7 +26,10 @@ class RegisterUserController extends Controller {
                         'Es Académico de la UNAM que emite factura (Eviii)',
                         'Caso especial (Z)'];
     
-    /**
+    protected $sede_list = [ 'Ciudad Universitaria', 'Centro Mascarones', 'Centro San Agustín', 
+                            'Centro Polanco', 'Sede Virtual' ];
+    
+                        /**
      * Create a new controller instance.
      *
      * @return void
@@ -43,8 +46,9 @@ class RegisterUserController extends Controller {
 
         $request->session()->forget('searchDataList');
         $cat_pago_list = $this->cat_pago_list;
+        $sede_list = $this->sede_list;
 
-        return view('register/register', compact('cat_pago_list'));
+        return view('register/register', compact('cat_pago_list', 'sede_list'));
     }
 
     public function registerUser(RegisterUserRequest $request) {
@@ -79,7 +83,8 @@ class RegisterUserController extends Controller {
                             'email' => $validatedData['email'],
                             'password' => Hash::make($validatedData['password']),
                             'sede' => $validatedData['sede'] ?? '',
-                            'categoria_de_pago' => $validatedData['cat_pago'] ?? ''
+                            'categoria_de_pago' => $validatedData['cat_pago'] ?? '',
+                            'habilitado' => true
                         ]);
 
             if ($validatedData['role'] === "profesor") {
@@ -128,8 +133,20 @@ class RegisterUserController extends Controller {
             return redirect()->route('curricula.show', array('id'=>$user->curriculum()->first()->id, 'formNum'=>1))->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
         } 
+        else if ($backPage && $backPage === 'result' && !Gate::denies('editar-cualquier-usuario')) {
+            return redirect()->route('buscar_profesor.indexUser', array('nombre' => session('searchDataList.nombre'),
+                                                                        'correo' => session('searchDataList.correo'),
+                                                                        'rfc' => session('searchDataList.rfc'),
+                                                                        'curp' => session('searchDataList.curp'),
+                                                                        'categoria_de_pago' => session('searchDataList.categoria_de_pago'),
+                                                                        'rol_usuario' => session('searchDataList.rol_usuario'),
+                                                                        'sede' => session('searchDataList.sede'),
+                                                                        'status_user' => session('searchDataList.status_user')))
+                                            ->with('status', 'Usuario actualizado exitosamente.')
+                                            ->with('status_color', 'success');
+        }
         else if ($backPage && $backPage === 'result') {
-            return redirect()->route('buscar_profesor.searchOnDB', array('nombre' => session('searchDataList.nombre'),
+            return redirect()->route('buscar_profesor.searchOnDBProf', array('nombre' => session('searchDataList.nombre'),
                                                                         'correo' => session('searchDataList.correo'),
                                                                         'rfc' => session('searchDataList.rfc'),
                                                                         'curp' => session('searchDataList.curp'),

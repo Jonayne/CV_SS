@@ -13,7 +13,8 @@ Route::get('/', 'HomeController@index')->name('home');
 // Rutas para la funcionalidad de "Buscar CV"
 Route::group(['namespace' => 'Search'], function () {
     Route::get('/buscar_profesor', 'SearchController@index')->name('buscar_profesor.index');
-    Route::get('/resultados_busqueda', 'SearchController@searchOnDB')->name('buscar_profesor.searchOnDB');
+    Route::get('/resultados_busqueda_prof', 'SearchController@searchOnDBProf')->name('buscar_profesor.searchOnDBProf');
+    Route::get('/lista_usuarios', 'SearchController@indexUser')->name('buscar_profesor.indexUser');
 });
 
 // Rutas para toda la funcionalidad en la parte del Curriculum, 

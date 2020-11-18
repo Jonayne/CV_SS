@@ -50,6 +50,10 @@ class AuthServiceProvider extends ServiceProvider {
             return $user->hasRole('admin');
         });
 
+        Gate::define('editar-cualquier-usuario', function($user) {
+            return $user->hasRole('admin');
+        });
+
         Gate::define('registrar-usuario', function($user) {
             return $user->hasAnyRoles(['control_escolar', 'admin']);
         });

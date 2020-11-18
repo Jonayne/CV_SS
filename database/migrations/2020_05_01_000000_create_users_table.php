@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration {
             $table->string('password');
             $table->string('sede')->nullable();
             $table->string('categoria_de_pago')->nullable();
+            $table->boolean('habilitado')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

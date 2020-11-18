@@ -35,12 +35,24 @@
                     @if ($backPage && $backPage === 'download_cv')
                         <a class="btn btn-dark btn-lg mr-5" href="{{ route('curricula.show', array('id'=>$curriculum_id, 'formNum'=>1)) }}"> Regresar </a>
                     @elseif($backPage && $backPage === 'result')
-                        <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.searchOnDB', 
-                                        array('nombre' => session('searchDataList.nombre'),
-                                            'correo' => session('searchDataList.correo'),
-                                            'rfc' => session('searchDataList.rfc'),
-                                            'curp' => session('searchDataList.curp'),
-                                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> Regresar </a>
+                        @can('editar-cualquier-usuario')
+                            <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.indexUser', 
+                                array('nombre' => session('searchDataList.nombre'),
+                                    'correo' => session('searchDataList.correo'),
+                                    'rfc' => session('searchDataList.rfc'),
+                                    'curp' => session('searchDataList.curp'),
+                                    'categoria_de_pago' => session('searchDataList.categoria_de_pago'),
+                                    'rol_usuario' => session('searchDataList.rol_usuario'),
+                                    'sede' => session('searchDataList.sede'),
+                                    'status_user' => session('searchDataList.status_user'))) }}"> Regresar </a>
+                        @elsecan('buscar-profesor') 
+                            <a class="btn btn-dark btn-lg mr-5" href="{{ route('buscar_profesor.searchOnDBProf', 
+                                array('nombre' => session('searchDataList.nombre'),
+                                    'correo' => session('searchDataList.correo'),
+                                    'rfc' => session('searchDataList.rfc'),
+                                    'curp' => session('searchDataList.curp'),
+                                    'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> Regresar </a>
+                        @endcan
                     @else
                         <a class="btn btn-dark btn-lg mr-5" href="{{ route('home') }}"> Regresar </a>
                     @endif

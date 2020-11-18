@@ -34,7 +34,7 @@
             <div class="text-center">
                 <hr>
                 <input type="hidden" id="formNumVal" name="formNumVal" value="download">
-                <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.searchOnDB', 
+                <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.searchOnDBProf', 
                         array('nombre' => session('searchDataList.nombre'),
                             'correo' => session('searchDataList.correo'),
                             'rfc' => session('searchDataList.rfc'),

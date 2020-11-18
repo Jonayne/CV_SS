@@ -25,7 +25,8 @@ class UsersTableSeeder extends Seeder {
             'apellido_paterno' => 'Prueba',
             'apellido_materno' => 'Prueba',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('prueba')
+            'password' => Hash::make('prueba'),
+            'habilitado' => true
             ]);
 
         $ce= User::create([
@@ -34,7 +35,8 @@ class UsersTableSeeder extends Seeder {
             'apellido_materno' => 'Prueba',
             'email' => 'ce@ce.com',
             'password' => Hash::make('prueba'),
-            'sede' => 'DGTIC'
+            'sede' => 'DGTIC',
+            'habilitado' => true
             ]);
 
         $admin->roles()->attach($adminRole);

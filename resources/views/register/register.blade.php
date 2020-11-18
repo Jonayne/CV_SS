@@ -3,7 +3,7 @@
 @section('title', 'Registar usuario')
 
 @section('content')
-    <h1 class="text-secondary text-center">Registrar usuario &nbsp;<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <h1 class="text-secondary text-center">@can('editar-cualquier-usuario') Registrar Usuario @elsecan('registrar-profesor') Registrar Instructor @endcan &nbsp;<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-person-plus-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.5-3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
         <path fill-rule="evenodd" d="M13 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0v-2z"/>
       </svg></h1>
@@ -61,29 +61,35 @@
             <div class="form-group row">
                 <label for="role" class="col-md-4 col-form-label text-md-right required"><b>Rol del usuario</b></label>
                 <div class="col-md-6">
-                    <select class="form-control" name="role" id="role">
-                        @can('registrar-profesor')
-                            @if (old('role') == 'profesor' )
-                                <option value="profesor" selected>Profesor</option>
-                            @else
-                                <option value="profesor">Profesor</option>
-                            @endif
-                        @endcan
-                        @can('registrar-encargado-ce')
-                            @if (old('role') == 'control_escolar' )
-                                <option value="control_escolar" selected>Encargado(a) del Área de Control Escolar</option>
-                            @else
-                                <option value="control_escolar">Encargado(a) del Área de Control Escolar</option>
-                            @endif
-                        @endcan
-                        @can('registrar-admin')
-                            @if (old('role') == 'admin' )
-                                <option value="admin" selected>Administrador</option>
-                            @else
-                                <option value="admin">Administrador</option>
-                            @endif
-                        @endcan
-                    </select>
+                    @can('editar-cualquier-usuario') 
+                        <select class="form-control" name="role" id="role">
+                            @can('registrar-profesor')
+                                @if (old('role') == 'profesor' )
+                                    <option value="profesor" selected>Profesor</option>
+                                @else
+                                    <option value="profesor">Profesor</option>
+                                @endif
+                            @endcan
+                            @can('registrar-encargado-ce')
+                                @if (old('role') == 'control_escolar' )
+                                    <option value="control_escolar" selected>Encargado(a) del Área de Control Escolar</option>
+                                @else
+                                    <option value="control_escolar">Encargado(a) del Área de Control Escolar</option>
+                                @endif
+                            @endcan
+                            @can('registrar-admin')
+                                @if (old('role') == 'admin' )
+                                    <option value="admin" selected>Administrador</option>
+                                @else
+                                    <option value="admin">Administrador</option>
+                                @endif
+                            @endcan
+                        </select>
+                    @elsecan('registrar-profesor') 
+                        <input type="hidden" id="role" name="role" value="profesor">
+                        <input type="text" class="form-control" value="Profesor" disabled>
+                    @endcan
+                    
                 </div>
             </div>
             <hr>
@@ -125,7 +131,22 @@
                 <div class="form-group row">
                     <label class="col-md-4 col-form-label text-md-right required" for="sede"><b>Sede</b></label>
                     <div class="col-md-6">
-                        <input type="text" id="sede" name="sede" class="form-control" value="{{ old('sede') }}">
+                        <select class="form-control" name="sede" id="sede">
+                            @if (!old('sede'))
+                                <option value="" selected>Ninguna</option>
+                                @foreach ($sede_list as $item)
+                                    <option value="{{$item}}"> {{$item}} </option>
+                                @endforeach
+                            @else
+                                @foreach ($sede_list as $item)
+                                    <option value="{{$item}}" 
+                                    @if (old('sede') == $item)
+                                        selected
+                                    @endif>
+                                    {{$item}}</option>
+                                @endforeach
+                            @endif
+                        </select>
                     </div>
                 </div>
             @endcan
