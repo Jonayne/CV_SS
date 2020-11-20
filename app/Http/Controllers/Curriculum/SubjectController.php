@@ -28,7 +28,7 @@ class SubjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
-        if(Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -44,7 +44,7 @@ class SubjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function store(CurriculumFormRequest $request) {
-        if(Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -52,7 +52,12 @@ class SubjectController extends Controller {
         $random_token = $request->session()->get('random_token');
         if($random_token && !empty($random_token) && (hash_equals($request->unique_token, $random_token))) {
             $request->session()->forget('random_token');
-            $user_id = Auth::user()->id;
+            if(!Gate::denies('editar-cualquier-usuario')) {
+                $user_id = $request->session()->get('admin_prof_edit');
+            }
+            else {
+                $user_id = Auth::user()->id;
+            }
             $validation = Arr::add($request->validated(), 'user_id', $user_id);
             Subject::create($validation);
         }
@@ -69,7 +74,7 @@ class SubjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit($id) {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id) && Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -87,7 +92,7 @@ class SubjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function update($id, CurriculumFormRequest $request) {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id) && Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -107,7 +112,7 @@ class SubjectController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function destroy($id, Request $request) {
-        if(!$this->isOwner($id) || Gate::denies('capturar-cv')) {
+        if(!$this->isOwner($id) && Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }

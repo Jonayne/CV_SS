@@ -34,13 +34,24 @@
             <div class="text-center">
                 <hr>
                 <input type="hidden" id="formNumVal" name="formNumVal" value="download">
-                <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.searchOnDBProf', 
+                @can('editar-cualquier-usuario')
+                    <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.indexUser', 
                         array('nombre' => session('searchDataList.nombre'),
                             'correo' => session('searchDataList.correo'),
                             'rfc' => session('searchDataList.rfc'),
                             'curp' => session('searchDataList.curp'),
-                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> 
-                    Regresar a la búsqueda </a>
+                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'),
+                            'rol_usuario' => session('searchDataList.rol_usuario'),
+                            'sede' => session('searchDataList.sede'),
+                            'status_user' => session('searchDataList.status_user'))) }}"> Regresar a la lista de usuarios </a>
+                @elsecan('buscar-profesor') 
+                    <a class="btn btn-outline-dark mb-2 mt-1" href="{{ route('buscar_profesor.searchOnDBProf', 
+                        array('nombre' => session('searchDataList.nombre'),
+                            'correo' => session('searchDataList.correo'),
+                            'rfc' => session('searchDataList.rfc'),
+                            'curp' => session('searchDataList.curp'),
+                            'categoria_de_pago' => session('searchDataList.categoria_de_pago'))) }}"> Regresar a la búsqueda </a>
+                @endcan
                 <br>
                 <button type="submit" class="btn btn-outline-secondary btn-lg mt-3" aria-describedby="pdf_help_block">
                     Descargar curriculum 

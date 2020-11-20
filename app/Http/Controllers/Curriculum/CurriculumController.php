@@ -61,11 +61,17 @@ class CurriculumController extends Controller {
     public function capture(Request $request, $formNum) {
         // Con esto revisamos si el rol asociado a este usuario tiene permisos para realizar
         // esta acción.
-        if(Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción')
                                           ->with('status_color', 'danger');
         }
-        $user = Auth::user();
+        if(!Gate::denies('editar-cualquier-usuario')) {
+            $user_id = $request->session()->get('admin_prof_edit');
+            $user = User::findOrFail($user_id);
+        }
+        else {
+            $user = Auth::user();
+        }
 
         $curriculum = $this->getOrCreateUserCurriculum($user, $request);
         // element puede ser una lista que utilizan los formularios para indexar valores de la BD.
@@ -83,7 +89,7 @@ class CurriculumController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function save(CurriculumFormRequest $request, $id) {
-        if(Gate::denies('capturar-cv')) {
+        if(Gate::denies('capturar-cv') && Gate::denies('editar-cualquier-usuario')) {
             return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
                                           ->with('status_color', 'danger');
         }
@@ -127,7 +133,7 @@ class CurriculumController extends Controller {
         
         $curriculum->update($validatedData);
 
-        return redirect(route('curricula.capture', $request->session()->get('previous_url')))
+        return redirect(route('curricula.capture', array($request->session()->get('previous_url'))))
                                  ->with('status', 'Información guardada con éxito.')
                                  ->with('status_color', 'success');
     }
@@ -544,10 +550,11 @@ class CurriculumController extends Controller {
      */
 
      // Método auxiliar que verifica que este curriculum sea del usuario autentificado.
+     // ... o si es admin
     private function isUsersCurriculum($curriculum) {
         if($curriculum) {
             $user_id = Auth::user()->id;
-            if ($user_id != $curriculum->user_id) {
+            if (Gate::denies('editar-cualquier-usuario') && $user_id != $curriculum->user_id) {
                 return false;
             }
 

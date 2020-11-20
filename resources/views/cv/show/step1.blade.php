@@ -222,9 +222,18 @@
                         <hr>
                 </fieldset>
                 @if ($curriculum->user_id == auth()->user()->id)
-                <div class="text-center">
-                        <a class="btn btn-info btn-lg" href="{{route('curricula.capture', 1)}}">Editar CV</a>
-                </div>
+                        <div class="text-center">
+                                <a class="btn btn-info btn-lg" href="{{route('curricula.capture', array( 1))}}">Editar CV</a>
+                        </div>
+                @else
+                        @can('editar-cualquier-usuario')
+                                <div class="text-center">
+                                        <a class="btn btn-info btn-lg" href="{{route('curricula.capture', array( 1))}}">Editar CV</a>
+                                </div>
+                                @php
+                                    session()->put('admin_prof_edit', $curriculum->user_id);
+                                @endphp
+                        @endcan
                 @endif
         </div>
 @endsection
