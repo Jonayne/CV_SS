@@ -1,5 +1,8 @@
 @csrf 
 <div class="container bg-primary text-black py-2">
+    <br>
+    <h3 class="text-danger text-center">Recuerde que sólo se aceptan documentos probatorios con <strong>formato PDF o imágenes</strong></h3>
+    <br>
     <div class="form-group">
         <label class="required" for="nombre_doc">Documento</label>
         <select class="form-control" name="nombre_doc" id="nombre_doc">

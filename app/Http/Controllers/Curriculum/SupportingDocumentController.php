@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 class SupportingDocumentController extends Controller {
 
     protected $nombres_docs = ['Título', 'Cédula profesional', 'Historial académico',
-                                'Comprobante de curso técnico', 'Comprobante de curso de formación docente',
+                                'Comprobante de curso extracurricular',
                                 '(Proyecto SEP) Comprobante por impartir curso de la SEP',
                                 'Constancia de situación fiscal', 'CURP', 'IFE', 
                                 '(Personal de la UNAM) Último talón de pago'];
@@ -68,8 +68,7 @@ class SupportingDocumentController extends Controller {
             $validation = Arr::add($request->validated(), 'user_id', $user_id);
 
             $es_documento_academico = in_array($validation['nombre_doc'], ['Título', 'Cédula profesional', 
-                                                                    'Historial académico', 'Comprobante de curso técnico', 
-                                                                    'Comprobante de curso de formación docente', 
+                                                                    'Historial académico', 'Comprobante de curso extracurricular',
                                                                     '(Proyecto SEP) Comprobante por impartir curso de la SEP']);
 
             $validation = Arr::add($validation, 'es_documento_academico', $es_documento_academico);

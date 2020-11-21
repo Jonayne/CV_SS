@@ -18,8 +18,10 @@
                 @yield('content')
             </main>
             
-            <footer class="text-center text-white-50 py-3 shadow">
-                {{ config('app.name') }} | Footer {{ date('Y') }}
+            <footer class="footer text-center">
+                <div class="container alert">
+                    <a class="text-warning font-weight-bold" href="https://www.tic.unam.mx/avisosprivacidad/"> Avisos de privacidad | Portal TIC UNAM </a>
+                </div>
             </footer>
         </div>
     </body>

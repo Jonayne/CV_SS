@@ -594,8 +594,22 @@ class CurriculumController extends Controller {
             $completedList['form4'] = true;
         }
         $completedList['form5'] = $user->subjects()->exists();
-        $completedList['form6'] = $user->previousExperiences()->exists();
-        $completedList['form7'] = $user->supportingDocuments()->exists();
+        $completedList['form6'] = $user->previousExperiences()->exists(); 
+
+        $supportingDocumentsStatus = $this->createOrUpdateSupportingDocumentsRequiredList($request, $curriculum, $user);
+
+        $supportingDocumentsRequired = array_filter($supportingDocumentsStatus, function($v, $k)
+                                        {return $v['Obligatorio'] == true;}, ARRAY_FILTER_USE_BOTH);
+
+        $supportingDocumentsNUploaded = array_filter($supportingDocumentsRequired, function($v, $k)
+                                        {return $v['Subido'] == false;}, ARRAY_FILTER_USE_BOTH);
+        
+        if(count($supportingDocumentsNUploaded) > 0) {
+            $completedList['form7'] = false;
+        }
+        else {
+            $completedList['form7'] = true;
+        }
 
         // Verificamos si todas los formularios ya están (o no) capturados
         if(in_array(false, $completedList, true)) {
@@ -612,6 +626,71 @@ class CurriculumController extends Controller {
         $request->session()->put('completedList', $completedList);
 
         return $curriculum;
+    }
+
+    // Método que actualiza la lista de los documentos probatorios obligatorios y subidos.
+    private function createOrUpdateSupportingDocumentsRequiredList($request, $curriculum, $user) {
+        $supportingDocumentsRequired = $request->session()->get('supportingDocumentsRequired');
+        
+        if(empty($supportingDocumentsRequired)) {
+            $supportingDocumentsRequired = ['Título' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'academico', 'nombre_doc' => 'Título'], 
+                              'Cédula profesional' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'academico', 'nombre_doc' => 'Cédula profesional'], 
+                              'Historial académico' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'academico', 'nombre_doc' => 'Historial académico'],
+                              'Comprobante de curso extracurricular' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'academico', 'nombre_doc' => 'Comprobante de curso extracurricular'], 
+                              '(Proyecto SEP) Comprobante por impartir curso de la SEP' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'academico', 'nombre_doc' => '(Proyecto SEP) Comprobante por impartir curso de la SEP'],
+                              'Constancia de situación fiscal' => ['Obligatorio' => true, 'Subido' => false, 'Tipo' => 'personal', 'nombre_doc' => 'Constancia de situación fiscal'],
+                              'CURP' => ['Obligatorio' => true, 'Subido' => false, 'Tipo' => 'personal', 'nombre_doc' => 'CURP'],
+                              'IFE' => ['Obligatorio' => true, 'Subido' => false, 'Tipo' => 'personal', 'nombre_doc' => 'IFE'],
+                              '(Personal de la UNAM) Último talón de pago' => ['Obligatorio' => false, 'Subido' => false, 'Tipo' => 'personal', 'nombre_doc' => '(Personal de la UNAM) Último talón de pago']];
+        }
+
+        if($curriculum->proyecto_sep) {
+            $supportingDocumentsRequired['(Proyecto SEP) Comprobante por impartir curso de la SEP']['Obligatorio'] = true;
+        } 
+        else {
+            $supportingDocumentsRequired['(Proyecto SEP) Comprobante por impartir curso de la SEP']['Obligatorio'] = false;
+        }
+
+        if($curriculum->estudios_estatus && $curriculum->estudios_estatus == 'titulado') {
+            $supportingDocumentsRequired['Título']['Obligatorio'] = true;
+            $supportingDocumentsRequired['Cédula profesional']['Obligatorio'] = true;
+            $supportingDocumentsRequired['Historial académico']['Obligatorio'] = false;
+        } 
+        else if($curriculum->estudios_estatus) {
+            $supportingDocumentsRequired['Historial académico']['Obligatorio'] = true;
+            $supportingDocumentsRequired['Título']['Obligatorio'] = false;
+            $supportingDocumentsRequired['Cédula profesional']['Obligatorio'] = false;
+        }
+
+        if($user->extracurricularCourses()->exists()) {
+            $supportingDocumentsRequired['Comprobante de curso extracurricular']['Obligatorio'] = true;
+        } 
+        else {
+            $supportingDocumentsRequired['Comprobante de curso extracurricular']['Obligatorio'] = false;
+        }
+        
+        // Comprobamos si están subidos o no.
+        $supportindDocumentsUploaded = $user->supportingDocuments()->get()->toArray();
+        $columnArray = array_column($supportindDocumentsUploaded, 'nombre_doc');
+        
+        $supportingDocumentsRequired['Comprobante de curso extracurricular']
+                            ['Subido'] = array_search('Comprobante de curso extracurricular', $columnArray) !== false;
+        $supportingDocumentsRequired['Historial académico']['Subido'] = array_search('Historial académico', $columnArray) !== false;
+        $supportingDocumentsRequired['Título']['Subido'] = array_search('Título', $columnArray) !== false;
+        $supportingDocumentsRequired['Cédula profesional']['Subido'] = array_search('Cédula profesional', $columnArray) !== false;
+        $supportingDocumentsRequired['(Proyecto SEP) Comprobante por impartir curso de la SEP']
+                ['Subido'] = array_search('(Proyecto SEP) Comprobante por impartir curso de la SEP', $columnArray) !== false;
+
+        $supportingDocumentsRequired['Constancia de situación fiscal']
+                        ['Subido'] = array_search('Constancia de situación fiscal', $columnArray) !== false;
+        $supportingDocumentsRequired['CURP']['Subido'] = array_search('CURP', $columnArray) !== false;
+        $supportingDocumentsRequired['IFE']['Subido'] = array_search('IFE', $columnArray) !== false;
+        $supportingDocumentsRequired['(Personal de la UNAM) Último talón de pago']
+                        ['Subido'] = array_search('(Personal de la UNAM) Último talón de pago', $columnArray) !== false;
+
+        $request->session()->put('supportingDocumentsRequired', $supportingDocumentsRequired);
+
+        return $supportingDocumentsRequired;
     }
 
     // Método auxiliar que devuelve el curriculum del usuario indicado, si no existe, lo crea y guarda.
@@ -672,8 +751,15 @@ class CurriculumController extends Controller {
                                    ->where('es_documento_academico', '=', false)->get();
                 $academicos = $user->supportingDocuments()
                                    ->where('es_documento_academico', '=', true)->get();
+                $supportingDocumentsRequired = $request->session()->get('supportingDocumentsRequired');
+                $supportingDocumentsAca = array_filter($supportingDocumentsRequired, function($v, $k)
+                                            {return $v['Tipo'] == 'academico';}, ARRAY_FILTER_USE_BOTH);
+                $supportingDocumentPers = array_filter($supportingDocumentsRequired, function($v, $k)
+                                            {return $v['Tipo'] == 'personal';}, ARRAY_FILTER_USE_BOTH);
                 return ['personales' => $personales, 
-                        'academicos' => $academicos];
+                        'academicos' => $academicos,
+                        'supportingDocumentAca' => $supportingDocumentsAca,
+                        'supportingDocumentPers' => $supportingDocumentPers];
         }
 
         return "No-elemento";

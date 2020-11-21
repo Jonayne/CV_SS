@@ -19,17 +19,38 @@
 
     <div class="container bg-primary text-black py-3">
         <div class="text-center">
-            <h2 class="text-secondary">Sólo se aceptan documentos probatorios con formato de imagen</h2>
+            <h6 class="text-right font-italic required"> Documentos obligatorios </h6>
+            <h6 class="text-right font-italic"> Documentos subidos <span class="text-secondary"> &nbsp;<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1 0 13.5 8a.5.5 0 0 1 1 0 6.5 6.5 0 1 1-3.25-5.63.5.5 0 1 1-.5.865A5.472 5.472 0 0 0 8 2.5z"/>
+            </svg> </h6>
+            <h6 class="text-center font-italic"> La obligatoriedad de los documentos por anexar varía según la información capturada hasta el momento. <br>
+                                                Por favor asegúrese de llenar esta sección hasta el final. </h6>
+            <hr>
+            <h2 class="text-secondary">Sólo se aceptan documentos probatorios con <strong>formato PDF o imágenes</strong></h2>
             <hr>
             <h3>Documentos probatorios académicos</h3>
             <p> Por anexar, copias de:</p>
             <ul>
-                <li><b>Título y cédula profesional o historial académico</b></li>
-                <li><b>Comprobantes de cursos técnicos</b></li>
-                <li><b>Comprobantes de cursos de formación docente</b></li>
-                @if (isset($curriculum->proyecto_sep) && $curriculum->proyecto_sep)
-                    <li><b>(Proyecto SEP) Comprobante de curso de la SEP</b></li>
-                @endif
+                @forelse ($element['supportingDocumentAca'] as $sda)
+                        <li>
+                            @if ($sda['Obligatorio'] == true)
+                                <span class="required"> {{$sda['nombre_doc']}} </span>
+                            @else
+                                <span> {{$sda['nombre_doc']}} </span>
+                            @endif
+                            @if ($sda['Subido'] == true)
+                                    <span class="text-secondary"> &nbsp;<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                        <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1 0 13.5 8a.5.5 0 0 1 1 0 6.5 6.5 0 1 1-3.25-5.63.5.5 0 1 1-.5.865A5.472 5.472 0 0 0 8 2.5z"/>
+                                    </svg> </span>
+                            @endif
+                        </li>
+                    @empty
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
+                            Algo salió mal...
+                        </li>
+                @endforelse
             </ul>
             <ul class="list-group list-group-flush">
                 @forelse ($element['academicos'] as $sd)
@@ -78,11 +99,25 @@
             <h3> Documentos probatorios personales </h3>
             <p> Por anexar, copias de:</p>
             <ul>
-                <li><b>Constancia de situación fiscal</b></li>
-                <li><b>CURP</b></li>
-                <li><b>IFE</b></li>
-                
-                <li><b> (Personal de la UNAM) Último talón de pago</b></li>
+                @forelse ($element['supportingDocumentPers'] as $sda)
+                        <li>
+                            @if ($sda['Obligatorio'] == true)
+                                <span class="required"> {{$sda['nombre_doc']}} </span>
+                            @else
+                                <span> {{$sda['nombre_doc']}} </span>
+                            @endif
+                            @if ($sda['Subido'] == true)
+                                    <span class="text-secondary"> &nbsp;<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                        <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1 0 13.5 8a.5.5 0 0 1 1 0 6.5 6.5 0 1 1-3.25-5.63.5.5 0 1 1-.5.865A5.472 5.472 0 0 0 8 2.5z"/>
+                                    </svg> </span>
+                            @endif
+                        </li>
+                    @empty
+                        <li class="list-group-item border-0 mb-3 shadow-sm list-group-item-danger">
+                            Algo salió mal...
+                        </li>
+                @endforelse
             </ul>
             <ul class="list-group list-group-flush">
                 @forelse ($element['personales'] as $sd)
