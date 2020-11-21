@@ -62,4 +62,6 @@ Route::group(['namespace' => 'Register'], function () {
     Route::post('/registrar_usuario', 'RegisterUserController@registerUser')->name('registrar_usuario.registerUser');
     Route::get('/actualizar_cat_pago/{id}/{backPage}', 'RegisterUserController@indexCatPago')->name('actualizar_cat_pago.indexCatPago');
     Route::patch('/actualizar_cat_pago/{id}/{backPage}', 'RegisterUserController@saveCatPago')->name('actualizar_cat_pago.saveCatPago');
+    Route::get('/actualizar_usuario/{id}/', 'RegisterUserController@indexUpdateUser')->name('registrar_usuario.indexUpdateUser');
+    Route::patch('/actualizar_usuario/{id}', 'RegisterUserController@updateUser')->name('registrar_usuario.updateUser');
 });

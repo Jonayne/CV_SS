@@ -158,7 +158,7 @@ class SearchController extends Controller {
             $users->where('nombre_rol', ''.$rol_usuario.'');
         }
 
-        $users->orderBy('habilitado');
+        $users->orderByDesc('habilitado');
 
         //$users->dump(); 
 

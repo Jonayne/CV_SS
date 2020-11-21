@@ -20,16 +20,32 @@ class RegisterUserRequest extends FormRequest {
      * @return array
      */
     public function rules() {
-        return [
-            'nombre' => 'required|string|max:255',
-            'ap_paterno' => 'required|string|max:255',
-            'ap_materno' => 'sometimes|nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required',
-            'sede' => 'required_if:role,control_escolar',
-            'cat_pago' => 'exclude_if:role,control_escolar|exclude_if:role,admin|required_unless:cat_pago_despues,on'
-        ];
+        switch($this->formNumVal) {
+            case "register":
+                return [
+                    'nombre' => 'required|string|max:255',
+                    'ap_paterno' => 'required|string|max:255',
+                    'ap_materno' => 'sometimes|nullable|string|max:255',
+                    'email' => 'required|string|email|max:255|unique:users',
+                    'password' => 'required|string|min:8|confirmed',
+                    'role' => 'required',
+                    'sede' => 'required_if:role,control_escolar',
+                    'cat_pago' => 'exclude_if:role,control_escolar|exclude_if:role,admin|required_unless:cat_pago_despues,on'
+                ];
+                break;
+            case "update":
+                return [
+                    'nombre' => 'required|string|max:255',
+                    'apellido_paterno' => 'required|string|max:255',
+                    'apellido_materno' => 'sometimes|nullable|string|max:255',
+                    'email' => "required|string|email|max:255|unique:users,email,$this->formUserId",
+                    'password' => 'nullable|string|min:8|confirmed',
+                    'role' => 'required',
+                    'sede' => 'required_if:role,control_escolar',
+                    'habilitado' => 'required'
+                ];
+                break;
+        }
     }
 
     public function attributes() {
@@ -37,6 +53,8 @@ class RegisterUserRequest extends FormRequest {
             "nombre" => "nombre",
             "ap_paterno" => "apellido paterno",
             "ap_materno" => "apellido materno",
+            "apellido_paterno" => "apellido paterno",
+            "apellido_materno" => "apellido materno"
         ];
     }
 

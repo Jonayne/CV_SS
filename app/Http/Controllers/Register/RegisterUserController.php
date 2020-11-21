@@ -8,6 +8,7 @@ use App\Http\Requests\RegisterUserRequest;
 use App\Role;
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -49,6 +50,18 @@ class RegisterUserController extends Controller {
         $sede_list = $this->sede_list;
 
         return view('register/register', compact('cat_pago_list', 'sede_list'));
+    }
+
+    public function indexUpdateUser(Request $request, $id) {   
+        if( Gate::denies('editar-cualquier-usuario')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                          ->with('status_color', 'danger');
+        }
+
+        $sede_list = $this->sede_list;
+        $user = User::findOrFail($id);
+
+        return view('register/update_user', compact('sede_list', 'user'));
     }
 
     public function registerUser(RegisterUserRequest $request) {
@@ -98,6 +111,45 @@ class RegisterUserController extends Controller {
         }
 
         return redirect()->route('home')->with('status', 'Usuario registrado exitosamente.')
+                                            ->with('status_color', 'success');
+
+    }
+
+    public function updateUser(RegisterUserRequest $request, $id) {
+        if(Gate::denies('editar-cualquier-usuario')) {
+            return redirect()->route('home')->with('status', 'No tiene permisos para realizar esta acción.')
+                                            ->with('status_color', 'danger');
+        }
+
+        $validatedData = $request->validated();
+
+        $user = User::findOrFail($id);
+
+        if($validatedData['password']) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } 
+        else {
+            Arr::forget($validatedData, 'password');
+        }
+        
+        if($user->roles->toArray()[0]['nombre_rol'] != $validatedData['role']) {
+            $user->roles()->detach();
+            $rol = Role::where('nombre_rol', $validatedData['role'])->first();
+            $user->roles()->attach($rol);
+        }
+        Arr::forget($validatedData, 'role');
+
+        $user->update($validatedData);
+
+        return redirect()->route('buscar_profesor.indexUser', array('nombre' => session('searchDataList.nombre'),
+                                                                        'correo' => session('searchDataList.correo'),
+                                                                        'rfc' => session('searchDataList.rfc'),
+                                                                        'curp' => session('searchDataList.curp'),
+                                                                        'categoria_de_pago' => session('searchDataList.categoria_de_pago'),
+                                                                        'rol_usuario' => session('searchDataList.rol_usuario'),
+                                                                        'sede' => session('searchDataList.sede'),
+                                                                        'status_user' => session('searchDataList.status_user')))
+                                            ->with('status', 'Usuario actualizado exitosamente.')
                                             ->with('status_color', 'success');
 
     }

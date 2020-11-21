@@ -153,6 +153,7 @@
             
             <hr>
             <div class="text-center">
+                <input type="hidden" id="formNumVal" name="formNumVal" value="register">
                 <button class="btn btn-success btn-lg mt-2" id="formNum" name="formNum" type="submit"> Registrar </button>
             </div>
         </div>
