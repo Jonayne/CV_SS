@@ -1,6 +1,10 @@
 @extends('layout')
 
-@section('title', 'Buscar profesor')
+@can('editar-cualquier-usuario')
+    @section('title', 'Lista de usuarios')   
+@elsecan('buscar-profesor')
+    @section('title', 'Buscar profesor')
+@endcan
 
 @section('content')
     <h1 class="text-secondary text-center">
@@ -128,12 +132,12 @@
                     <label for="categoria_de_pago">Categoría de Pago</label>
                     <select class="form-control" name="categoria_de_pago" id="categoria_de_pago">
                         @if (!old('categoria_de_pago', $categoria_de_pago))
-                            <option value="" selected>Ninguno</option>
+                            <option value="" selected>Todas</option>
                             @foreach ($cat_pago_list as $item)
                                 <option value="{{$item}}"> {{$item}} </option>
                             @endforeach
                         @else
-                            <option value="" selected>Ninguno</option>
+                            <option value="" selected>Todas</option>
                             @foreach ($cat_pago_list as $item)
                                 <option value="{{$item}}" 
                                 @if (old('categoria_de_pago', $categoria_de_pago) == $item)
@@ -158,38 +162,62 @@
 
         <div class="container bg-primary text-black py-4">
             <h2 class="text-center">Usuarios registrados en el sistema</h2>
-
+            <hr>
             <ul class="list-group">
                 @forelse ($users_list as $usuario)
-                    <li class="list-group-item list-group-item-light list-group-item-action">
-                        Nombre: <strong>{{formatName($usuario)}}</strong><br>
-                        Email: <strong>{{$usuario->email}}</strong><br>
-                        Rol: <strong>{{$usuario->nombre_rol == 'admin' ? 'Administrador' 
-                                                : ($usuario->nombre_rol == 'control_escolar' ? 'Control Escolar' : 'Profesor')}}</strong><br>
-                        Estatus: <strong>{{$usuario->habilitado == true ? 'Habilitado' 
-                                            : 'Deshabilitado'}}</strong><br>
-                        <hr>
-                        <div class="text-center">
-                            <a class="btn btn-outline-secondary btn-sm mr-5" 
-                                href="{{route('registrar_usuario.indexUpdateUser', 
-                                            array('id'=>$usuario->id_user))}}">
-                                Editar datos de usuario
-                            </a>
-                            @if ($usuario->categoria_de_pago)
-                                <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
-                                    Actualizar Categoría de Pago
+                    @if ($usuario->id_user == auth()->user()->id)
+                        <li class="list-group-item list-group-item-light list-group-item-action">
+                            <span class="text-secondary font-weight-bold">Este usuario es usted.</span><br>
+                            Mi nombre: <strong>{{formatName($usuario)}}</strong><br>
+                            Mi email: <strong>{{$usuario->email}}</strong><br>
+                            Mi rol: <strong>Administrador</strong><br>
+                            <hr>
+                            <div class="text-center">
+                                <a class="btn btn-outline-secondary btn-sm mr-5" 
+                                    href="{{route('registrar_usuario.indexUpdateUser', 
+                                                array('id'=>$usuario->id_user))}}">
+                                    Editar mis datos
                                 </a>
-                            @elseif(!$usuario->categoria_de_pago && $usuario->nombre_rol == "profesor")
-                                <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
-                                    <strong>(Este profesor no tiene su categoría de pago registrada)</strong><br> Registrar Categoría de Pago
+                            </div>
+                        </li>
+                    @else
+                        <li class="list-group-item list-group-item-light list-group-item-action">
+                            Nombre: <strong>{{formatName($usuario)}}</strong><br>
+                            Email: <strong>{{$usuario->email}}</strong><br>
+                            Rol: <strong>{{$usuario->nombre_rol == 'admin' ? 'Administrador' 
+                                                    : ($usuario->nombre_rol == 'control_escolar' ? 'Control Escolar' : 'Profesor')}}</strong><br>
+                            @if ($usuario->habilitado == true)
+                                Estatus: <span class="text-success font-weight-bold">Habilitado</span>
+                            @else
+                                Estatus: <span class="text-danger font-weight-bold">Deshabilitado</span>
+                            @endif
+                            <hr>
+                            <div class="text-center">
+                                <a class="btn btn-outline-secondary btn-sm mr-5" 
+                                    href="{{route('registrar_usuario.indexUpdateUser', 
+                                                array('id'=>$usuario->id_user))}}">
+                                    Editar datos de usuario
                                 </a>
-                            @endif
-                            @if ($usuario->id_curriculum && $usuario->status && $usuario->status != "en_proceso" )
-                                <a href="{{route('curricula.show', array('id'=>$usuario->id_curriculum, 'formNum'=>1))}}" class="btn btn-outline-success btn-sm"> Ver currículum </a>
-                            @endif
-                            {{-- checar que onda con esto para que los admins puedan modificar los cvs. zzzz x_x --}}
-                        </div>
-                    </li>
+                                @if ($usuario->habilitado == true)
+                                    @if ($usuario->categoria_de_pago)
+                                        <a class="btn btn-outline-info btn-sm mr-5" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
+                                            Actualizar Categoría de Pago
+                                        </a>
+                                    @elseif(!$usuario->categoria_de_pago && $usuario->nombre_rol == "profesor")
+                                        <a class="btn btn-outline-info btn-sm" href="{{route('actualizar_cat_pago.indexCatPago', array('id'=>$usuario->id_user, 'backPage'=>'result'))}}">
+                                            <strong>(Este profesor no tiene su categoría de pago registrada)</strong><br> Registrar Categoría de Pago
+                                        </a>
+                                    @endif
+                                    @if ($usuario->id_curriculum && $usuario->status && $usuario->status != "en_proceso" )
+                                        <a href="{{route('curricula.show', array('id'=>$usuario->id_curriculum, 'formNum'=>1))}}" class="btn btn-outline-success btn-sm"> Ver currículum </a>
+                                    @elseif($usuario->id_curriculum && $usuario->status && $usuario->status == "en_proceso")
+                                        <button class="btn btn-outline-dark btn-sm" disabled> Ver currículum<br><b>(En proceso de captura)</b></button>
+                                    @endif
+                                @endif
+                            </div>
+                        </li> 
+                    @endif
+                    
                     <hr>
                 @empty
                 <hr>
@@ -226,12 +254,12 @@
                     <label for="categoria_de_pago">Categoría de Pago</label>
                     <select class="form-control" name="categoria_de_pago" id="categoria_de_pago">
                         @if (!old('categoria_de_pago', $categoria_de_pago))
-                            <option value="" selected>Ninguno</option>
+                            <option value="" selected>Todas</option>
                             @foreach ($cat_pago_list as $item)
                                 <option value="{{$item}}"> {{$item}} </option>
                             @endforeach
                         @else
-                            <option value="" selected>Ninguno</option>
+                            <option value="" selected>Todas</option>
                             @foreach ($cat_pago_list as $item)
                                 <option value="{{$item}}" 
                                 @if (old('categoria_de_pago', $categoria_de_pago) == $item)

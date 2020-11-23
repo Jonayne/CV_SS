@@ -36,7 +36,14 @@
 
         <ul class="list-group">
             @forelse ($result as $usuario)
-                @if ($usuario->id_curriculum)
+                @if ($usuario->habilitado == false)
+                    <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
+                            <span class="text-danger font-weight-bold">PROFESOR DESHABILITADO</span><br>
+                            Nombre registrado: <strong>{{formatName($usuario)}}</strong><br>
+                            Email registrado: <strong>{{$usuario->email}}</strong><br>
+                    </a>
+                @else
+                    @if ($usuario->id_curriculum)
                         @if (($usuario->status) == 'en_proceso')
                             <li class="list-group-item list-group-item-light list-group-item-action">
                                 Nombre registrado: <strong>{{formatName($usuario)}}</strong><br>
@@ -65,11 +72,12 @@
                                 </div>
                             </li>
                         @endif                 
-                @else
-                    <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
-                        Email registrado: <strong>{{$usuario->email}}</strong><br>
-                        Estado del currículum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
-                    </a>
+                    @else
+                        <a class="list-group-item list-group-item-light list-group-item-action disabled" href="#">
+                            Email registrado: <strong>{{$usuario->email}}</strong><br>
+                            Estado del currículum: <span class="text-danger"><strong> NO CAPTURADO </strong></span>
+                        </a>
+                    @endif          
                 @endif
                 <hr>
             @empty

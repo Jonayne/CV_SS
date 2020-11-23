@@ -72,6 +72,11 @@ class CurriculumController extends Controller {
         else {
             $user = Auth::user();
         }
+        
+        if($user->habilitado == false) {
+            return redirect()->back()->with('status', 'Este usuario se encuentra deshabilitado.')
+                                          ->with('status_color', 'danger');
+        }
 
         $curriculum = $this->getOrCreateUserCurriculum($user, $request);
         // element puede ser una lista que utilizan los formularios para indexar valores de la BD.
@@ -157,6 +162,12 @@ class CurriculumController extends Controller {
                                           ->with('status_color', 'danger');
         }
         $usuario = User::findOrFail($curriculum->user_id);
+
+        if($usuario->habilitado == false) {
+            return redirect()->back()->with('status', 'Este usuario se encuentra deshabilitado.')
+                                          ->with('status_color', 'danger');
+        }
+
         $element = $this->getFormElementShow($formNum, $usuario);
 
         return view('cv.show.step'.$formNum, 
@@ -601,6 +612,7 @@ class CurriculumController extends Controller {
         $supportingDocumentsRequired = array_filter($supportingDocumentsStatus, function($v, $k)
                                         {return $v['Obligatorio'] == true;}, ARRAY_FILTER_USE_BOTH);
 
+        // esta es una lista con los documentos probatorios obligatorios que NO se han subido. 
         $supportingDocumentsNUploaded = array_filter($supportingDocumentsRequired, function($v, $k)
                                         {return $v['Subido'] == false;}, ARRAY_FILTER_USE_BOTH);
         
